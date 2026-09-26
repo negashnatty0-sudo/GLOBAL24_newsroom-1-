@@ -19,10 +19,10 @@ ADMIN_PASSWORD = os.getenv(
     "admin123"
 )
 
-# Your API key stays in Railway Variables
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
-NEWS_API_URL = "https://newsapi.org/v2/top-headlines"
+TOP_HEADLINES_URL = "https://newsapi.org/v2/top-headlines"
+EVERYTHING_URL = "https://newsapi.org/v2/everything"
 
 
 # =========================================================
@@ -33,7 +33,7 @@ NEWS = [
     {
         "title": "GLOBAL24 Newsroom Is Live",
         "category": "WORLD",
-        "summary": "Your 24/7 international news dashboard is ready.",
+        "summary": "Your international news dashboard is ready.",
         "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
         "breaking": True,
         "url": ""
@@ -62,17 +62,74 @@ NEWS = [
 # =========================================================
 
 CATEGORY_SEARCH = {
-    "WORLD": "world",
+    "WORLD": "world OR international",
     "AFRICA": "Africa",
     "ETHIOPIA": "Ethiopia",
-    "BUSINESS": "business",
-    "TECHNOLOGY": "technology",
-    "SPORT": "sports"
+    "BUSINESS": "business OR economy OR finance",
+    "TECHNOLOGY": "technology OR tech",
+    "SPORT": "sports OR football OR soccer"
 }
 
 
 # =========================================================
-# GET NEWS FROM API
+# FALLBACK IMAGE
+# =========================================================
+
+DEFAULT_IMAGE = (
+    "https://images.unsplash.com/"
+    "photo-1504711434969-e33886168f5c"
+    "?auto=format&fit=crop&w=1200&q=80"
+)
+
+
+# =========================================================
+# CONVERT ARTICLE
+# =========================================================
+
+def convert_article(article, category):
+
+    title = article.get("title")
+
+    if not title:
+        return None
+
+    if title == "[Removed]":
+        return None
+
+    return {
+        "title": title,
+
+        "category": category,
+
+        "summary": (
+            article.get("description")
+            or "Read the latest story from GLOBAL24."
+        ),
+
+        "image": (
+            article.get("urlToImage")
+            or DEFAULT_IMAGE
+        ),
+
+        "breaking": False,
+
+        "url": article.get("url") or "",
+
+        "publishedAt": (
+            article.get("publishedAt")
+            or ""
+        ),
+
+        "source": (
+            article.get("source", {})
+            .get("name")
+            or ""
+        )
+    }
+
+
+# =========================================================
+# GET NEWS
 # =========================================================
 
 def get_news(category="WORLD"):
@@ -81,10 +138,9 @@ def get_news(category="WORLD"):
 
     query = CATEGORY_SEARCH.get(
         category,
-        "world"
+        "world OR international"
     )
 
-    # API key has not been configured
     if not NEWS_API_KEY:
 
         print("NEWS_API_KEY is not configured.")
@@ -94,15 +150,26 @@ def get_news(category="WORLD"):
 
     try:
 
+        # -------------------------------------------------
+        # AFRICA / ETHIOPIA / WORLD / BUSINESS /
+        # TECHNOLOGY / SPORT
+        #
+        # Use EVERYTHING for topic searches.
+        # -------------------------------------------------
+
         response = requests.get(
-            NEWS_API_URL,
+            EVERYTHING_URL,
+            headers={
+                "X-Api-Key": NEWS_API_KEY,
+                "X-No-Cache": "true"
+            },
             params={
-                "apiKey": NEWS_API_KEY,
                 "q": query,
                 "language": "en",
+                "sortBy": "publishedAt",
                 "pageSize": 20
             },
-            timeout=10
+            timeout=15
         )
 
 
@@ -116,13 +183,23 @@ def get_news(category="WORLD"):
 
             print(
                 "News API response:",
-                response.text[:500]
+                response.text[:1000]
             )
 
             return []
 
 
         data = response.json()
+
+
+        if data.get("status") != "ok":
+
+            print(
+                "News API error:",
+                data
+            )
+
+            return []
 
 
         stories = []
@@ -133,40 +210,15 @@ def get_news(category="WORLD"):
             []
         ):
 
-            title = article.get(
-                "title"
-            )
+            story =
+                convert_article(
+                    article,
+                    category
+                )
 
+            if story:
 
-            if not title:
-                continue
-
-
-            if title == "[Removed]":
-                continue
-
-
-            stories.append({
-
-                "title": title,
-
-                "category": category,
-
-                "summary":
-                    article.get("description")
-                    or "Read the latest story from GLOBAL24.",
-
-                "image":
-                    article.get("urlToImage")
-                    or "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
-
-                "breaking": False,
-
-                "url":
-                    article.get("url")
-                    or ""
-
-            })
+                stories.append(story)
 
 
         return stories
@@ -204,7 +256,11 @@ def home():
 
     if not stories:
 
-        stories = NEWS
+        stories = [
+            story
+            for story in NEWS
+            if story["category"] == "WORLD"
+        ]
 
 
     return render_template(
@@ -246,7 +302,6 @@ def api_news():
     )
 
 
-    # Use local fallback if API returns nothing
     if not stories:
 
         stories = [
@@ -357,7 +412,6 @@ def add_news():
     NEWS.insert(
         0,
         {
-
             "title":
                 request.form.get(
                     "title",
@@ -379,7 +433,7 @@ def add_news():
             "image":
                 request.form.get(
                     "image",
-                    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80"
+                    DEFAULT_IMAGE
                 ),
 
             "breaking":
@@ -388,8 +442,10 @@ def add_news():
                 ) == "on",
 
             "url":
-                ""
-
+                request.form.get(
+                    "url",
+                    ""
+                )
         }
     )
 
