@@ -210,11 +210,10 @@ def get_news(category="WORLD"):
             []
         ):
 
-            story =
-                convert_article(
-                    article,
-                    category
-                )
+        story = convert_article(
+    article,
+    category
+)
 
             if story:
 
