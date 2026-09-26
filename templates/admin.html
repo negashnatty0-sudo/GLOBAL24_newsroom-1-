@@ -1,8 +1,487 @@
+<!doctype html>
+<html lang="en">
 
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Newsroom Control Centre</title><link rel="stylesheet" href="/static/style.css"></head>
-<body><header><div class="logo"><span>G</span>LOBAL24</div><nav>NEWSROOM CONTROL CENTRE</nav><a class="admin" href="/admin/logout">LOG OUT</a></header>
-<main class="dashboard"><div class="panel"><h1>Publish Story</h1><form method="post" action="/admin/add">
-<input name="title" placeholder="Headline" required><input name="category" placeholder="Category e.g. WORLD" required>
-<input name="image" placeholder="Image URL"><textarea name="summary" placeholder="Story summary"></textarea>
-<label class="check"><input type="checkbox" name="breaking"> Mark as BREAKING NEWS</label><button>PUBLISH STORY</button></form></div>
-<div class="panel"><h2>Published Stories</h2>{% for n in news %}<div class="story"><b>{{n.title}}</b><small>{{n.category}} {% if n.breaking %}• BREAKING{% endif %}</small></div>{% endfor %}</div></main></body></html>
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>GLOBAL24 Newsroom</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+</head>
+
+<body class="admin-page">
+
+<header class="admin-header">
+
+    <div class="logo">
+        <span>G</span>LOBAL24
+    </div>
+
+    <div class="admin-title">
+        NEWSROOM
+    </div>
+
+    <a
+        class="admin-logout"
+        href="/admin/logout"
+    >
+        LOG OUT
+    </a>
+
+</header>
+
+
+<main class="admin-dashboard">
+
+    <!-- =========================================
+         CREATE POST
+    ========================================== -->
+
+    <section class="post-panel">
+
+        <div class="post-header">
+
+            <div class="post-avatar">
+                G
+            </div>
+
+            <div>
+                <h1>Create a News Post</h1>
+
+                <p>
+                    Publish directly to GLOBAL24
+                </p>
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            action="/admin/add"
+            enctype="multipart/form-data"
+            id="post-form"
+        >
+
+            <!-- HEADLINE -->
+
+            <label class="admin-label">
+                HEADLINE
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                class="admin-input"
+                placeholder="What's happening?"
+                maxlength="200"
+                required
+            >
+
+
+            <!-- STORY -->
+
+            <label class="admin-label">
+                STORY
+            </label>
+
+            <textarea
+                name="summary"
+                class="admin-textarea"
+                placeholder="Write your news story..."
+                rows="7"
+            ></textarea>
+
+
+            <!-- CATEGORY -->
+
+            <label class="admin-label">
+                NEWS DESK
+            </label>
+
+            <select
+                name="category"
+                class="admin-select"
+            >
+
+                <option value="WORLD">
+                    🌍 WORLD
+                </option>
+
+                <option value="AFRICA">
+                    🌍 AFRICA
+                </option>
+
+                <option value="ETHIOPIA">
+                    🇪🇹 ETHIOPIA
+                </option>
+
+                <option value="HORN OF AFRICA">
+                    🌍 HORN OF AFRICA
+                </option>
+
+                <option value="MIDDLE EAST">
+                    🌍 MIDDLE EAST
+                </option>
+
+                <option value="RUSSIA-UKRAINE">
+                    🇺🇦 RUSSIA–UKRAINE
+                </option>
+
+                <option value="WAR & CONFLICT">
+                    ⚔️ WAR & CONFLICT
+                </option>
+
+                <option value="UNITED NATIONS">
+                    🇺🇳 UNITED NATIONS
+                </option>
+
+                <option value="UK">
+                    🇬🇧 UK
+                </option>
+
+                <option value="USA">
+                    🇺🇸 USA
+                </option>
+
+                <option value="BUSINESS">
+                    💼 BUSINESS
+                </option>
+
+                <option value="TECHNOLOGY">
+                    💻 TECHNOLOGY
+                </option>
+
+                <option value="SPORT">
+                    ⚽ SPORT
+                </option>
+
+            </select>
+
+
+            <!-- PHOTO -->
+
+            <label class="admin-label">
+                PHOTO
+            </label>
+
+            <div class="photo-upload">
+
+                <label
+                    for="image_file"
+                    class="photo-button"
+                >
+                    📷 ADD PHOTO
+                </label>
+
+                <input
+                    type="file"
+                    id="image_file"
+                    name="image_file"
+                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                    hidden
+                >
+
+                <p id="file-name">
+                    No photo selected
+                </p>
+
+            </div>
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div
+                id="image-preview-container"
+                class="image-preview-container"
+                style="display:none;"
+            >
+
+                <img
+                    id="image-preview"
+                    class="image-preview"
+                    alt="Photo preview"
+                >
+
+                <button
+                    type="button"
+                    class="remove-photo"
+                    onclick="removePhoto()"
+                >
+                    REMOVE PHOTO
+                </button>
+
+            </div>
+
+
+            <!-- OPTIONAL IMAGE URL -->
+
+            <details class="advanced-options">
+
+                <summary>
+                    Advanced options
+                </summary>
+
+                <input
+                    type="url"
+                    name="image"
+                    class="admin-input"
+                    placeholder="Or paste an image URL"
+                >
+
+                <input
+                    type="url"
+                    name="url"
+                    class="admin-input"
+                    placeholder="Original/source article URL"
+                >
+
+            </details>
+
+
+            <!-- BREAKING -->
+
+            <label class="breaking-option">
+
+                <input
+                    type="checkbox"
+                    name="breaking"
+                >
+
+                <span>
+                    🚨 Mark as BREAKING NEWS
+                </span>
+
+            </label>
+
+
+            <!-- POST -->
+
+            <button
+                type="submit"
+                class="publish-button"
+            >
+                🚀 PUBLISH TO GLOBAL24
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         PUBLISHED STORIES
+    ========================================== -->
+
+    <section class="stories-panel">
+
+        <div class="stories-header">
+
+            <div>
+
+                <h2>
+                    Published Stories
+                </h2>
+
+                <p>
+                    GLOBAL24 newsroom posts
+                </p>
+
+            </div>
+
+            <div class="story-count">
+                {{ news|length }}
+            </div>
+
+        </div>
+
+
+        <div class="published-list">
+
+            {% if news %}
+
+                {% for n in news %}
+
+                <article class="published-story">
+
+                    <div class="published-image">
+
+                        <img
+                            src="{{ n.image }}"
+                            alt=""
+                            loading="lazy"
+                        >
+
+                    </div>
+
+
+                    <div class="published-content">
+
+                        <div class="published-meta">
+
+                            <span>
+                                {{ n.category }}
+                            </span>
+
+                            {% if n.breaking %}
+
+                            <strong>
+                                🚨 BREAKING
+                            </strong>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <h3>
+                            {{ n.title }}
+                        </h3>
+
+
+                        {% if n.summary %}
+
+                        <p>
+                            {{ n.summary }}
+                        </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-stories">
+
+                    <div>
+                        📰
+                    </div>
+
+                    <h3>
+                        No stories yet
+                    </h3>
+
+                    <p>
+                        Your published stories will appear here.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+const imageInput =
+    document.getElementById("image_file");
+
+const imagePreview =
+    document.getElementById("image-preview");
+
+const previewContainer =
+    document.getElementById(
+        "image-preview-container"
+    );
+
+const fileName =
+    document.getElementById("file-name");
+
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        const file =
+            this.files[0];
+
+        if (!file) {
+
+            removePhoto();
+
+            return;
+        }
+
+
+        fileName.textContent =
+            file.name;
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function (event) {
+
+                imagePreview.src =
+                    event.target.result;
+
+                previewContainer.style.display =
+                    "block";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+function removePhoto() {
+
+    imageInput.value = "";
+
+    imagePreview.src = "";
+
+    previewContainer.style.display =
+        "none";
+
+    fileName.textContent =
+        "No photo selected";
+
+}
+
+
+document
+    .getElementById("post-form")
+    .addEventListener(
+        "submit",
+        function () {
+
+            const button =
+                document.querySelector(
+                    ".publish-button"
+                );
+
+            button.disabled = true;
+
+            button.textContent =
+                "PUBLISHING...";
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
