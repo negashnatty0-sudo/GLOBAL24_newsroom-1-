@@ -6,152 +6,128 @@
 
     <title>GLOBAL24 — Admin Login</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body class="login-page">
 
-    <div class="login-box">
+    <div class="login-container">
 
-        <div class="login-logo">
-            GLOBAL<span>24</span>
+        <div class="login-card">
+
+            <div class="login-logo">
+                <span>GLOBAL</span><strong>24</strong>
+            </div>
+
+            <p class="login-subtitle">
+                Newsroom Administration
+            </p>
+
+            <h1>Admin Login</h1>
+
+            <p class="login-description">
+                Sign in to manage GLOBAL24 news, breaking stories,
+                drafts and published articles.
+            </p>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <div id="loginError" class="login-error"></div>
+
+                <button
+                    type="submit"
+                    class="login-button"
+                    id="loginButton"
+                >
+                    Sign In
+                </button>
+
+            </form>
+
+            <div class="login-footer">
+                <a href="/">← Back to GLOBAL24</a>
+            </div>
+
         </div>
-
-        <p class="login-subtitle">
-            News Management System
-        </p>
-
-        <h1>Administrator Login</h1>
-
-        <form id="loginForm">
-
-            <div class="form-group">
-                <label for="username">Username</label>
-
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Enter username"
-                    autocomplete="username"
-                    required
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter password"
-                    autocomplete="current-password"
-                    required
-                >
-            </div>
-
-            <button
-                type="submit"
-                class="login-button"
-            >
-                Sign In
-            </button>
-
-        </form>
-
-        <p
-            id="errorMessage"
-            style="
-                display:none;
-                margin-top:15px;
-                color:#991b1b;
-                text-align:center;
-            "
-        ></p>
-
-        <a
-            href="/"
-            style="
-                display:block;
-                text-align:center;
-                margin-top:22px;
-                color:#64748b;
-                text-decoration:none;
-            "
-        >
-            ← Back to GLOBAL24
-        </a>
 
     </div>
 
+    <script>
+        const form = document.getElementById("loginForm");
+        const errorBox = document.getElementById("loginError");
+        const loginButton = document.getElementById("loginButton");
 
-<script>
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-document
-    .getElementById("loginForm")
-    .addEventListener("submit", async function(event) {
+            errorBox.textContent = "";
+            loginButton.disabled = true;
+            loginButton.textContent = "Signing in...";
 
-        event.preventDefault();
+            const username =
+                document.getElementById("username").value.trim();
 
-        const username =
-            document.getElementById("username").value.trim();
+            const password =
+                document.getElementById("password").value;
 
-        const password =
-            document.getElementById("password").value;
-
-        const errorMessage =
-            document.getElementById("errorMessage");
-
-        errorMessage.style.display = "none";
-
-        try {
-
-            const response = await fetch(
-                "/api/login",
-                {
+            try {
+                const response = await fetch("/api/login", {
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json"
                     },
-
                     body: JSON.stringify({
                         username: username,
                         password: password
                     })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = "/admin";
+                    return;
                 }
-            );
 
-            const data =
-                await response.json();
+                errorBox.textContent =
+                    data.error || "Invalid username or password.";
 
-            if (data.success) {
-
-                window.location.href = "/admin";
-
-            } else {
-
-                errorMessage.textContent =
-                    data.error ||
-                    "Invalid username or password.";
-
-                errorMessage.style.display =
-                    "block";
+            } catch (error) {
+                errorBox.textContent =
+                    "Unable to connect to the server.";
             }
 
-        } catch (error) {
-
-            errorMessage.textContent =
-                "Unable to connect to the server.";
-
-            errorMessage.style.display =
-                "block";
-        }
-
-    });
-
-</script>
+            loginButton.disabled = false;
+            loginButton.textContent = "Sign In";
+        });
+    </script>
 
 </body>
 </html>
