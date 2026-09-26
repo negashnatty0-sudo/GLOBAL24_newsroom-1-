@@ -16,9 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent
 DATABASE = BASE_DIR / "global24.db"
 
 
-# =========================
+# =========================================================
 # DATABASE
-# =========================
+# =========================================================
 
 def get_db():
     db = sqlite3.connect(DATABASE)
@@ -52,6 +52,7 @@ def init_db():
         )
     """)
 
+    # Create first admin account
     admin = db.execute(
         "SELECT id FROM admins WHERE username = ?",
         ("admin",)
@@ -74,9 +75,9 @@ def init_db():
     db.close()
 
 
-# =========================
-# AUTH
-# =========================
+# =========================================================
+# ADMIN AUTHENTICATION
+# =========================================================
 
 def admin_required(function):
 
@@ -94,9 +95,9 @@ def admin_required(function):
     return decorated
 
 
-# =========================
-# HTML PAGES
-# =========================
+# =========================================================
+# WEBSITE PAGES
+# =========================================================
 
 @app.route("/")
 def home():
@@ -105,6 +106,10 @@ def home():
 
 @app.route("/login")
 def login_page():
+
+    if session.get("admin_logged_in"):
+        return redirect("/admin")
+
     return render_template("login.html")
 
 
@@ -117,9 +122,9 @@ def admin_page():
     return render_template("admin.html")
 
 
-# =========================
+# =========================================================
 # LOGIN
-# =========================
+# =========================================================
 
 @app.route("/api/login", methods=["POST"])
 def login():
@@ -172,9 +177,9 @@ def login():
     })
 
 
-# =========================
+# =========================================================
 # LOGOUT
-# =========================
+# =========================================================
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
@@ -186,9 +191,9 @@ def logout():
     })
 
 
-# =========================
-# CURRENT USER
-# =========================
+# =========================================================
+# CURRENT ADMIN
+# =========================================================
 
 @app.route("/api/me")
 def current_admin():
@@ -204,9 +209,9 @@ def current_admin():
     })
 
 
-# =========================
+# =========================================================
 # PUBLIC ARTICLES
-# =========================
+# =========================================================
 
 @app.route("/api/articles")
 def get_articles():
@@ -216,6 +221,7 @@ def get_articles():
     db = get_db()
 
     if category:
+
         rows = db.execute(
             """
             SELECT *
@@ -226,7 +232,9 @@ def get_articles():
             """,
             (category,)
         ).fetchall()
+
     else:
+
         rows = db.execute(
             """
             SELECT *
@@ -249,9 +257,9 @@ def get_articles():
     })
 
 
-# =========================
-# ADMIN ARTICLES
-# =========================
+# =========================================================
+# ADMIN — GET ALL ARTICLES
+# =========================================================
 
 @app.route("/api/admin/articles")
 @admin_required
@@ -280,9 +288,9 @@ def admin_articles():
     })
 
 
-# =========================
-# CREATE ARTICLE
-# =========================
+# =========================================================
+# ADMIN — CREATE ARTICLE
+# =========================================================
 
 @app.route("/api/admin/articles", methods=["POST"])
 @admin_required
@@ -302,12 +310,14 @@ def create_article():
     status = data.get("status", "Draft")
 
     if not headline:
+
         return jsonify({
             "success": False,
             "error": "Headline is required."
         }), 400
 
     if not content:
+
         return jsonify({
             "success": False,
             "error": "Article content is required."
@@ -356,9 +366,9 @@ def create_article():
     }), 201
 
 
-# =========================
-# UPDATE ARTICLE
-# =========================
+# =========================================================
+# ADMIN — UPDATE ARTICLE
+# =========================================================
 
 @app.route(
     "/api/admin/articles/<int:article_id>",
@@ -380,6 +390,20 @@ def update_article(article_id):
 
     status = data.get("status", "Draft")
 
+    if not headline:
+
+        return jsonify({
+            "success": False,
+            "error": "Headline is required."
+        }), 400
+
+    if not content:
+
+        return jsonify({
+            "success": False,
+            "error": "Article content is required."
+        }), 400
+
     if status not in ["Draft", "Published"]:
         status = "Draft"
 
@@ -395,6 +419,7 @@ def update_article(article_id):
     ).fetchone()
 
     if existing is None:
+
         db.close()
 
         return jsonify({
@@ -437,9 +462,9 @@ def update_article(article_id):
     })
 
 
-# =========================
-# DELETE ARTICLE
-# =========================
+# =========================================================
+# ADMIN — DELETE ARTICLE
+# =========================================================
 
 @app.route(
     "/api/admin/articles/<int:article_id>",
@@ -462,6 +487,7 @@ def delete_article(article_id):
     db.close()
 
     if cursor.rowcount == 0:
+
         return jsonify({
             "success": False,
             "error": "Article not found."
@@ -472,9 +498,9 @@ def delete_article(article_id):
     })
 
 
-# =========================
-# ADMIN STATS
-# =========================
+# =========================================================
+# ADMIN DASHBOARD STATS
+# =========================================================
 
 @app.route("/api/admin/stats")
 @admin_required
@@ -521,9 +547,9 @@ def admin_stats():
     })
 
 
-# =========================
+# =========================================================
 # HEALTH CHECK
-# =========================
+# =========================================================
 
 @app.route("/api/health")
 def health():
@@ -534,12 +560,16 @@ def health():
     })
 
 
-# =========================
-# START
-# =========================
+# =========================================================
+# START DATABASE
+# =========================================================
 
 init_db()
 
+
+# =========================================================
+# RUN
+# =========================================================
 
 if __name__ == "__main__":
 
