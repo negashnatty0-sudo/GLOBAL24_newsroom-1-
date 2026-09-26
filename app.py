@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, jsonify, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from pathlib import Path
+from openai import OpenAI
+import cloudinary
+import cloudinary.uploader
 import sqlite3
 import os
 
@@ -15,6 +18,21 @@ app.secret_key = os.environ.get(
 BASE_DIR = Path(__file__).resolve().parent
 DATABASE = BASE_DIR / "global24.db"
 
+# Maximum upload size: 500 MB
+app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024
+
+
+# =========================================================
+# CLOUDINARY
+# =========================================================
+
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True
+)
+
 
 # =========================================================
 # DATABASE
@@ -27,6 +45,7 @@ def get_db():
 
 
 def init_db():
+
     db = get_db()
 
     db.execute("""
@@ -44,6 +63,7 @@ def init_db():
             category TEXT,
             author TEXT,
             image TEXT,
+            video TEXT,
             summary TEXT,
             content TEXT NOT NULL,
             breaking INTEGER DEFAULT 0,
@@ -52,7 +72,19 @@ def init_db():
         )
     """)
 
-    # Create first admin account
+    # Add video column to older databases
+    columns = [
+        row["name"]
+        for row in db.execute(
+            "PRAGMA table_info(articles)"
+        ).fetchall()
+    ]
+
+    if "video" not in columns:
+        db.execute(
+            "ALTER TABLE articles ADD COLUMN video TEXT"
+        )
+
     admin = db.execute(
         "SELECT id FROM admins WHERE username = ?",
         ("admin",)
@@ -76,7 +108,7 @@ def init_db():
 
 
 # =========================================================
-# ADMIN AUTHENTICATION
+# AUTHENTICATION
 # =========================================================
 
 def admin_required(function):
@@ -96,7 +128,7 @@ def admin_required(function):
 
 
 # =========================================================
-# WEBSITE PAGES
+# PAGES
 # =========================================================
 
 @app.route("/")
@@ -258,7 +290,7 @@ def get_articles():
 
 
 # =========================================================
-# ADMIN — GET ALL ARTICLES
+# ADMIN — ALL ARTICLES
 # =========================================================
 
 @app.route("/api/admin/articles")
@@ -289,7 +321,99 @@ def admin_articles():
 
 
 # =========================================================
-# ADMIN — CREATE ARTICLE
+# MEDIA UPLOAD
+# =========================================================
+
+@app.route("/api/admin/upload", methods=["POST"])
+@admin_required
+def upload_media():
+
+    if "file" not in request.files:
+
+        return jsonify({
+            "success": False,
+            "error": "No file selected."
+        }), 400
+
+    file = request.files["file"]
+
+    if not file or not file.filename:
+
+        return jsonify({
+            "success": False,
+            "error": "No file selected."
+        }), 400
+
+    filename = file.filename.lower()
+
+    image_extensions = (
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp",
+        ".gif"
+    )
+
+    video_extensions = (
+        ".mp4",
+        ".webm",
+        ".mov",
+        ".m4v"
+    )
+
+    if filename.endswith(image_extensions):
+
+        resource_type = "image"
+
+    elif filename.endswith(video_extensions):
+
+        resource_type = "video"
+
+    else:
+
+        return jsonify({
+            "success": False,
+            "error": "Unsupported file type."
+        }), 400
+
+    try:
+
+        if resource_type == "video":
+
+            result = cloudinary.uploader.upload_large(
+                file,
+                resource_type="video",
+                folder="global24/videos",
+                chunk_size=20 * 1024 * 1024
+            )
+
+        else:
+
+            result = cloudinary.uploader.upload(
+                file,
+                resource_type="image",
+                folder="global24/images"
+            )
+
+        return jsonify({
+            "success": True,
+            "type": resource_type,
+            "url": result.get("secure_url"),
+            "public_id": result.get("public_id")
+        })
+
+    except Exception:
+
+        app.logger.exception("Media upload failed")
+
+        return jsonify({
+            "success": False,
+            "error": "Media upload failed."
+        }), 500
+
+
+# =========================================================
+# CREATE ARTICLE
 # =========================================================
 
 @app.route("/api/admin/articles", methods=["POST"])
@@ -302,11 +426,10 @@ def create_article():
     category = data.get("category", "").strip()
     author = data.get("author", "GLOBAL24").strip()
     image = data.get("image", "").strip()
+    video = data.get("video", "").strip()
     summary = data.get("summary", "").strip()
     content = data.get("content", "").strip()
-
     breaking = bool(data.get("breaking", False))
-
     status = data.get("status", "Draft")
 
     if not headline:
@@ -336,18 +459,20 @@ def create_article():
             category,
             author,
             image,
+            video,
             summary,
             content,
             breaking,
             status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             headline,
             category,
             author,
             image,
+            video,
             summary,
             content,
             int(breaking),
@@ -367,7 +492,7 @@ def create_article():
 
 
 # =========================================================
-# ADMIN — UPDATE ARTICLE
+# UPDATE ARTICLE
 # =========================================================
 
 @app.route(
@@ -383,11 +508,10 @@ def update_article(article_id):
     category = data.get("category", "").strip()
     author = data.get("author", "GLOBAL24").strip()
     image = data.get("image", "").strip()
+    video = data.get("video", "").strip()
     summary = data.get("summary", "").strip()
     content = data.get("content", "").strip()
-
     breaking = bool(data.get("breaking", False))
-
     status = data.get("status", "Draft")
 
     if not headline:
@@ -435,6 +559,7 @@ def update_article(article_id):
             category = ?,
             author = ?,
             image = ?,
+            video = ?,
             summary = ?,
             content = ?,
             breaking = ?,
@@ -446,6 +571,7 @@ def update_article(article_id):
             category,
             author,
             image,
+            video,
             summary,
             content,
             int(breaking),
@@ -463,7 +589,7 @@ def update_article(article_id):
 
 
 # =========================================================
-# ADMIN — DELETE ARTICLE
+# DELETE ARTICLE
 # =========================================================
 
 @app.route(
@@ -499,7 +625,7 @@ def delete_article(article_id):
 
 
 # =========================================================
-# ADMIN DASHBOARD STATS
+# ADMIN STATS
 # =========================================================
 
 @app.route("/api/admin/stats")
@@ -548,6 +674,127 @@ def admin_stats():
 
 
 # =========================================================
+# AI NEWS ASSISTANT
+# =========================================================
+
+@app.route("/api/admin/ai", methods=["POST"])
+@admin_required
+def ai_assistant():
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+
+    if not api_key:
+
+        return jsonify({
+            "success": False,
+            "error": "OPENAI_API_KEY is not configured."
+        }), 500
+
+    data = request.get_json(silent=True) or {}
+
+    action = data.get("action", "draft")
+    text = data.get("text", "").strip()
+
+    if not text:
+
+        return jsonify({
+            "success": False,
+            "error": "Enter some information for the AI assistant."
+        }), 400
+
+    instructions = """
+You are the GLOBAL24 newsroom writing assistant.
+
+Help a human editor prepare news content.
+
+Rules:
+- Do not invent facts.
+- Do not invent quotes.
+- Do not present guesses as facts.
+- Use only information supplied by the editor.
+- Write clear professional newsroom English.
+- The human editor must review the result before publication.
+"""
+
+    if action == "headline":
+
+        prompt = f"""
+Suggest 5 clear and factual news headlines
+based only on this material:
+
+{text}
+"""
+
+    elif action == "summary":
+
+        prompt = f"""
+Write a concise news summary based only
+on this material:
+
+{text}
+"""
+
+    elif action == "rewrite":
+
+        prompt = f"""
+Rewrite this material in professional
+news style without adding facts:
+
+{text}
+"""
+
+    elif action == "translate":
+
+        prompt = f"""
+Translate the following material into
+clear English without adding facts:
+
+{text}
+"""
+
+    else:
+
+        prompt = f"""
+Create a news article draft from these notes.
+
+Include:
+1. Headline
+2. Summary
+3. Article body
+
+Do not add facts that aren't supplied.
+
+Notes:
+
+{text}
+"""
+
+    try:
+
+        client = OpenAI(api_key=api_key)
+
+        response = client.responses.create(
+            model="gpt-5.5",
+            instructions=instructions,
+            input=prompt
+        )
+
+        return jsonify({
+            "success": True,
+            "result": response.output_text
+        })
+
+    except Exception:
+
+        app.logger.exception("AI request failed")
+
+        return jsonify({
+            "success": False,
+            "error": "AI request failed."
+        }), 500
+
+
+# =========================================================
 # HEALTH CHECK
 # =========================================================
 
@@ -561,7 +808,7 @@ def health():
 
 
 # =========================================================
-# START DATABASE
+# DATABASE INITIALIZATION
 # =========================================================
 
 init_db()
@@ -585,3 +832,4 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+    
