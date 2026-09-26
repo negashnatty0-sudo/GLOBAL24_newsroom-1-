@@ -1,0 +1,8 @@
+
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Newsroom Control Centre</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><header><div class="logo"><span>G</span>LOBAL24</div><nav>NEWSROOM CONTROL CENTRE</nav><a class="admin" href="/admin/logout">LOG OUT</a></header>
+<main class="dashboard"><div class="panel"><h1>Publish Story</h1><form method="post" action="/admin/add">
+<input name="title" placeholder="Headline" required><input name="category" placeholder="Category e.g. WORLD" required>
+<input name="image" placeholder="Image URL"><textarea name="summary" placeholder="Story summary"></textarea>
+<label class="check"><input type="checkbox" name="breaking"> Mark as BREAKING NEWS</label><button>PUBLISH STORY</button></form></div>
+<div class="panel"><h2>Published Stories</h2>{% for n in news %}<div class="story"><b>{{n.title}}</b><small>{{n.category}} {% if n.breaking %}• BREAKING{% endif %}</small></div>{% endfor %}</div></main></body></html>
