@@ -11,390 +11,124 @@
         content="GLOBAL24 — Global news, breaking stories, business, Africa, Ethiopia, technology and more."
     >
 
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .more-menu {
+            position: relative;
         }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f6f8;
-            color: #172033;
+        .more-button {
+            cursor: pointer;
         }
 
-        /* HEADER */
-
-        header {
-            background: #071426;
-            color: white;
-        }
-
-        .top {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 34px;
-            font-weight: 900;
-            color: #d8ad45;
-        }
-
-        .logo span {
-            color: white;
-        }
-
-        .date {
+        .about-ceo {
+            margin-top: 12px;
             color: #cbd5e1;
-            font-size: 14px;
         }
 
-        /* NAVIGATION */
-
-        nav {
-            background: #0d2038;
-            border-top: 1px solid #243750;
-        }
-
-        .nav-inner {
+        .search-box {
             max-width: 1200px;
-            margin: auto;
-            display: flex;
-            overflow-x: auto;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            padding: 15px 18px;
-            white-space: nowrap;
-            font-weight: 600;
-        }
-
-        nav a:hover {
-            background: #172e4c;
-            color: #d8ad45;
-        }
-
-        /* BREAKING NEWS */
-
-        .breaking {
-            background: #c62828;
-            color: white;
-        }
-
-        .breaking-inner {
-            max-width: 1200px;
-            margin: auto;
-            padding: 11px 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .breaking-label {
-            font-weight: 900;
-            background: white;
-            color: #c62828;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        #breakingText {
-            font-weight: 600;
-        }
-
-        /* MAIN */
-
-        main {
-            max-width: 1200px;
-            margin: 30px auto;
+            margin: 20px auto 0;
             padding: 0 20px;
         }
 
-        .section-title {
-            font-size: 25px;
-            margin-bottom: 20px;
-            border-left: 5px solid #d8ad45;
-            padding-left: 12px;
-        }
-
-        /* HERO */
-
-        .hero {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 35px;
-        }
-
-        .hero-main,
-        .hero-side {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            background: #071426;
-            color: white;
-        }
-
-        .hero-main {
-            min-height: 420px;
-        }
-
-        .hero-main img {
+        .search-box input {
             width: 100%;
-            height: 420px;
-            object-fit: cover;
-            opacity: .75;
+            padding: 13px 16px;
+            border: 1px solid #d5dbe3;
+            border-radius: 8px;
+            font-size: 15px;
         }
 
-        .hero-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 30px;
-            background: linear-gradient(
-                transparent,
-                rgba(0,0,0,.9)
-            );
-        }
-
-        .hero-content h1 {
-            font-size: 34px;
-            line-height: 1.15;
-            margin-top: 8px;
-        }
-
-        .hero-side {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-story {
-            display: flex;
-            gap: 12px;
-            padding: 15px;
-            border-bottom: 1px solid #30425a;
-        }
-
-        .side-story img {
-            width: 100px;
-            height: 75px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .side-story h3 {
-            font-size: 16px;
-            line-height: 1.25;
-        }
-
-        /* CATEGORY */
-
-        .category {
-            display: inline-block;
-            color: #d8ad45;
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        /* NEWS GRID */
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,.06);
-            transition: transform .2s;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-        }
-
-        .card img {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            background: #dfe4ea;
-        }
-
-        .card-content {
-            padding: 18px;
-        }
-
-        .card h2 {
-            font-size: 20px;
-            line-height: 1.25;
-            margin: 8px 0;
-        }
-
-        .card h2 a {
-            color: #172033;
+        .article-link {
             text-decoration: none;
+            color: inherit;
         }
 
-        .card h2 a:hover {
-            color: #a07820;
-        }
-
-        .summary {
-            color: #64748b;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        .meta {
-            margin-top: 15px;
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        /* EMPTY */
-
-        .empty {
+        .loading {
             text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 10px;
+            padding: 50px;
             color: #64748b;
         }
 
-        /* FOOTER */
-
-        footer {
-            margin-top: 60px;
-            background: #071426;
-            color: #cbd5e1;
-        }
-
-        .footer-inner {
-            max-width: 1200px;
-            margin: auto;
-            padding: 40px 20px;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 40px;
-        }
-
-        footer h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
-
-        footer a {
-            display: block;
-            color: #cbd5e1;
-            text-decoration: none;
-            margin-bottom: 8px;
-        }
-
-        footer a:hover {
-            color: #d8ad45;
-        }
-
-        .copyright {
-            border-top: 1px solid #243750;
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
-            padding: 18px;
-            font-size: 13px;
-        }
-
-        /* MOBILE */
-
-        @media (max-width: 800px) {
-
-            .top {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-
-            .hero {
-                grid-template-columns: 1fr;
-            }
-
-            .news-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .footer-inner {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 550px) {
-
-            .logo {
-                font-size: 28px;
-            }
-
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-main,
-            .hero-main img {
-                min-height: 300px;
-                height: 300px;
-            }
-
-            .hero-content h1 {
-                font-size: 25px;
-            }
-
-            .breaking-inner {
-                font-size: 13px;
-            }
         }
     </style>
 </head>
 
 <body>
 
+<header class="site-header">
 
-<!-- HEADER -->
+    <div class="header-inner">
 
-<header>
+        <a
+            href="/"
+            style="text-decoration:none;"
+        >
+            <div class="logo">
+                GLOBAL<span>24</span>
+            </div>
+        </a>
 
-    <div class="top">
-
-        <div class="logo">
-            GLOBAL<span>24</span>
-        </div>
-
-        <div class="date" id="currentDate"></div>
+        <div
+            class="header-date"
+            id="currentDate"
+        ></div>
 
     </div>
 
 
-    <nav>
+    <nav class="main-nav">
 
         <div class="nav-inner">
 
-            <a href="index.html">Home</a>
-            <a href="?category=World">World</a>
-            <a href="?category=Africa">Africa</a>
-            <a href="?category=Ethiopia">Ethiopia</a>
-            <a href="?category=Politics">Politics</a>
-            <a href="?category=Business">Business</a>
-            <a href="?category=Technology">Technology</a>
-            <a href="?category=Sports">Sports</a>
-            <a href="?category=Health">Health</a>
+            <a href="/">Home</a>
+
+            <a href="/?category=World">
+                World
+            </a>
+
+            <a href="/?category=Africa">
+                Africa
+            </a>
+
+            <a href="/?category=Ethiopia">
+                Ethiopia
+            </a>
+
+            <a href="/?category=Politics">
+                Politics
+            </a>
+
+            <a href="/?category=Business">
+                Business
+            </a>
+
+            <a href="/?category=Technology">
+                Technology
+            </a>
+
+            <a href="/?category=Sports">
+                Sports
+            </a>
+
+            <a href="/?category=Health">
+                Health
+            </a>
+
+            <a href="/login">
+                Admin
+            </a>
 
         </div>
 
@@ -406,9 +140,9 @@
 <!-- BREAKING NEWS -->
 
 <div
-    class="breaking"
+    class="breaking-news"
     id="breakingBar"
-    style="display:none"
+    style="display:none;"
 >
 
     <div class="breaking-inner">
@@ -417,19 +151,34 @@
             BREAKING
         </span>
 
-        <span id="breakingText"></span>
+        <span
+            class="breaking-text"
+            id="breakingText"
+        ></span>
 
     </div>
 
 </div>
 
 
-<!-- MAIN -->
+<!-- SEARCH -->
+
+<div class="search-box">
+
+    <input
+        type="search"
+        id="searchInput"
+        placeholder="Search GLOBAL24 news..."
+        aria-label="Search news"
+    >
+
+</div>
+
 
 <main>
 
 
-    <!-- HERO -->
+    <!-- TOP STORIES -->
 
     <section>
 
@@ -441,12 +190,15 @@
             class="hero"
             id="heroSection"
         >
+            <div class="loading">
+                Loading latest news...
+            </div>
         </div>
 
     </section>
 
 
-    <!-- LATEST -->
+    <!-- LATEST NEWS -->
 
     <section>
 
@@ -458,17 +210,19 @@
             class="news-grid"
             id="newsGrid"
         >
+            <div class="loading">
+                Loading articles...
+            </div>
         </div>
 
     </section>
-
 
 </main>
 
 
 <!-- FOOTER -->
 
-<footer>
+<footer class="site-footer">
 
     <div class="footer-inner">
 
@@ -482,6 +236,11 @@
                 the world.
             </p>
 
+            <p class="about-ceo">
+                <strong>CEO:</strong>
+                Natnael Negash
+            </p>
+
         </div>
 
 
@@ -489,10 +248,27 @@
 
             <h3>Sections</h3>
 
-            <a href="?category=World">World</a>
-            <a href="?category=Africa">Africa</a>
-            <a href="?category=Ethiopia">Ethiopia</a>
-            <a href="?category=Business">Business</a>
+            <a href="/">Home</a>
+
+            <a href="/?category=World">
+                World
+            </a>
+
+            <a href="/?category=Africa">
+                Africa
+            </a>
+
+            <a href="/?category=Ethiopia">
+                Ethiopia
+            </a>
+
+            <a href="/?category=Business">
+                Business
+            </a>
+
+            <a href="/?category=Technology">
+                Technology
+            </a>
 
         </div>
 
@@ -501,11 +277,29 @@
 
             <h3>Information</h3>
 
-            <a href="#">About GLOBAL24</a>
-            <a href="#">Contact</a>
-            <a href="#">Privacy</a>
-            <a href="#">Corrections</a>
-            <a href="#">AI Use Policy</a>
+            <a href="#">
+                About GLOBAL24
+            </a>
+
+            <a href="#">
+                Contact
+            </a>
+
+            <a href="#">
+                Privacy
+            </a>
+
+            <a href="#">
+                Corrections
+            </a>
+
+            <a href="#">
+                Editorial Principles
+            </a>
+
+            <a href="#">
+                AI Use Policy
+            </a>
 
         </div>
 
@@ -523,19 +317,16 @@
 
 <script>
 
-    /*
-        Read articles created by admin.html
-    */
-
-    let articles =
-        JSON.parse(
-            localStorage.getItem("global24_articles")
-        ) || [];
+    let articles = [];
 
 
-    /*
-        Date
-    */
+    const defaultImage =
+        "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
+
+
+    // ==========================================
+    // DATE
+    // ==========================================
 
     document.getElementById(
         "currentDate"
@@ -551,23 +342,17 @@
         );
 
 
-    /*
-        Default image
-    */
-
-    const defaultImage =
-        "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
-
-
-    /*
-        Escape HTML
-    */
+    // ==========================================
+    // SECURITY
+    // ==========================================
 
     function escapeHTML(text) {
 
-        if (!text) return "";
+        if (text === null || text === undefined) {
+            return "";
+        }
 
-        return text
+        return String(text)
             .replaceAll("&", "&amp;")
             .replaceAll("<", "&lt;")
             .replaceAll(">", "&gt;")
@@ -577,15 +362,24 @@
     }
 
 
-    /*
-        Format date
-    */
+    // ==========================================
+    // DATE FORMAT
+    // ==========================================
 
     function formatDate(date) {
 
-        if (!date) return "";
+        if (!date) {
+            return "";
+        }
 
-        return new Date(date).toLocaleDateString(
+        const parsed =
+            new Date(date);
+
+        if (isNaN(parsed.getTime())) {
+            return "";
+        }
+
+        return parsed.toLocaleDateString(
             "en-GB",
             {
                 day: "numeric",
@@ -597,64 +391,132 @@
     }
 
 
-    /*
-        Category filter
-    */
+    // ==========================================
+    // LOAD NEWS FROM FLASK
+    // ==========================================
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+    async function loadNews() {
 
-    const selectedCategory =
-        params.get("category");
-
-
-    let published =
-        articles.filter(
-            article =>
-                article.status === "Published"
-        );
-
-
-    if (selectedCategory) {
-
-        published =
-            published.filter(
-                article =>
-                    article.category ===
-                    selectedCategory
+        const params =
+            new URLSearchParams(
+                window.location.search
             );
+
+        const category =
+            params.get("category");
+
+
+        let url =
+            "/api/articles";
+
+
+        if (category) {
+
+            url +=
+                "?category=" +
+                encodeURIComponent(category);
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(url);
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load news."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.error ||
+                    "Unable to load news."
+                );
+
+            }
+
+
+            articles =
+                data.articles || [];
+
+
+            renderBreakingNews();
+
+            renderHero();
+
+            renderNewsGrid();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "heroSection"
+            ).innerHTML = `
+
+                <div class="error-message">
+
+                    Unable to load the latest news.
+
+                    <br><br>
+
+                    Please try again later.
+
+                </div>
+
+            `;
+
+            document.getElementById(
+                "newsGrid"
+            ).innerHTML = "";
+
+        }
 
     }
 
 
-    /*
-        Sort newest first
-    */
+    // ==========================================
+    // BREAKING NEWS
+    // ==========================================
 
-    published.sort(
-        (a, b) =>
-            new Date(b.date) -
-            new Date(a.date)
-    );
+    function renderBreakingNews() {
 
-
-    /*
-        BREAKING NEWS
-    */
-
-    const breaking =
-        published.filter(
-            article => article.breaking
-        );
+        const breaking =
+            articles.filter(
+                article =>
+                    article.breaking === true
+            );
 
 
-    if (breaking.length > 0) {
+        if (!breaking.length) {
+
+            document.getElementById(
+                "breakingBar"
+            ).style.display = "none";
+
+            return;
+
+        }
+
 
         document.getElementById(
             "breakingBar"
         ).style.display = "block";
+
 
         document.getElementById(
             "breakingText"
@@ -664,35 +526,49 @@
     }
 
 
-    /*
-        HERO
-    */
+    // ==========================================
+    // HERO
+    // ==========================================
 
-    const hero =
-        document.getElementById(
-            "heroSection"
-        );
+    function renderHero() {
+
+        const hero =
+            document.getElementById(
+                "heroSection"
+            );
 
 
-    if (published.length === 0) {
+        if (!articles.length) {
 
-        hero.innerHTML = `
-            <div class="empty">
-                <h2>No published news yet</h2>
-                <p>
-                    Publish an article from the
-                    GLOBAL24 admin dashboard.
-                </p>
-            </div>
-        `;
+            hero.innerHTML = `
 
-    } else {
+                <div class="empty">
+
+                    <h2>
+                        No published news yet
+                    </h2>
+
+                    <p>
+                        Articles published from
+                        the GLOBAL24 admin dashboard
+                        will appear here.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
 
         const main =
-            published[0];
+            articles[0];
+
 
         const side =
-            published.slice(1, 4);
+            articles.slice(1, 4);
 
 
         hero.innerHTML = `
@@ -701,7 +577,8 @@
 
                 <img
                     src="${escapeHTML(
-                        main.image || defaultImage
+                        main.image ||
+                        defaultImage
                     )}"
                     alt="${escapeHTML(
                         main.headline
@@ -712,7 +589,8 @@
 
                     <span class="category">
                         ${escapeHTML(
-                            main.category
+                            main.category ||
+                            "GLOBAL24"
                         )}
                     </span>
 
@@ -723,11 +601,18 @@
                     </h1>
 
                     <div class="meta">
+
                         ${escapeHTML(
-                            main.author || "GLOBAL24"
+                            main.author ||
+                            "GLOBAL24"
                         )}
+
                         ·
-                        ${formatDate(main.date)}
+
+                        ${formatDate(
+                            main.created_at
+                        )}
+
                     </div>
 
                 </div>
@@ -739,81 +624,136 @@
 
                 ${
                     side.length
-                        ? side.map(article => `
 
-                            <article class="side-story">
+                    ?
 
-                                <img
-                                    src="${escapeHTML(
-                                        article.image ||
-                                        defaultImage
-                                    )}"
-                                    alt=""
-                                >
+                    side.map(article => `
 
-                                <div>
+                        <article class="side-story">
 
-                                    <span class="category">
-                                        ${escapeHTML(
-                                            article.category
-                                        )}
-                                    </span>
-
-                                    <h3>
-                                        ${escapeHTML(
-                                            article.headline
-                                        )}
-                                    </h3>
-
-                                </div>
-
-                            </article>
-
-                        `).join("")
-                        : `
-                            <div
-                                style="
-                                    padding:25px;
-                                    color:#cbd5e1;
-                                "
+                            <img
+                                src="${escapeHTML(
+                                    article.image ||
+                                    defaultImage
+                                )}"
+                                alt="${escapeHTML(
+                                    article.headline
+                                )}"
                             >
-                                More stories coming soon.
+
+                            <div>
+
+                                <span class="category">
+
+                                    ${escapeHTML(
+                                        article.category ||
+                                        "GLOBAL24"
+                                    )}
+
+                                </span>
+
+                                <h3>
+
+                                    ${escapeHTML(
+                                        article.headline
+                                    )}
+
+                                </h3>
+
                             </div>
-                        `
+
+                        </article>
+
+                    `).join("")
+
+                    :
+
+                    `
+
+                    <div
+                        style="
+                            padding:25px;
+                            color:#cbd5e1;
+                        "
+                    >
+
+                        More stories coming soon.
+
+                    </div>
+
+                    `
+
                 }
 
             </div>
+
         `;
 
     }
 
 
-    /*
-        NEWS GRID
-    */
+    // ==========================================
+    // NEWS GRID
+    // ==========================================
 
-    const grid =
-        document.getElementById(
-            "newsGrid"
-        );
+    function renderNewsGrid(
+        filteredArticles = null
+    ) {
+
+        const grid =
+            document.getElementById(
+                "newsGrid"
+            );
 
 
-    const gridArticles =
-        published.slice(1);
+        const source =
+            filteredArticles ||
+            articles;
 
 
-    if (gridArticles.length === 0) {
+        const gridArticles =
+            source.slice(1);
 
-        grid.innerHTML = `
-            <div class="empty">
-                No additional articles available.
-            </div>
-        `;
 
-    } else {
+        if (!source.length) {
+
+            grid.innerHTML = `
+
+                <div class="empty">
+
+                    No news articles found.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        if (!gridArticles.length) {
+
+            grid.innerHTML = `
+
+                <div class="empty">
+
+                    <h3>
+                        You're viewing the latest story.
+                    </h3>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
 
         grid.innerHTML =
-            gridArticles.map(article => `
+            gridArticles.map(
+                article => `
 
                 <article class="card">
 
@@ -830,46 +770,126 @@
                     <div class="card-content">
 
                         <span class="category">
+
                             ${escapeHTML(
-                                article.category
+                                article.category ||
+                                "GLOBAL24"
                             )}
+
                         </span>
 
                         <h2>
-                            <a href="#">
+
+                            <a
+                                class="article-link"
+                                href="#"
+                            >
+
                                 ${escapeHTML(
                                     article.headline
                                 )}
+
                             </a>
+
                         </h2>
 
                         <p class="summary">
+
                             ${escapeHTML(
                                 article.summary ||
-                                article.content?.substring(
-                                    0,
-                                    150
-                                ) ||
                                 ""
                             )}
+
                         </p>
 
                         <div class="meta">
+
                             ${escapeHTML(
                                 article.author ||
                                 "GLOBAL24"
                             )}
+
                             ·
-                            ${formatDate(article.date)}
+
+                            ${formatDate(
+                                article.created_at
+                            )}
+
                         </div>
 
                     </div>
 
                 </article>
 
-            `).join("");
+            `
+            ).join("");
 
     }
+
+
+    // ==========================================
+    // SEARCH
+    // ==========================================
+
+    document
+        .getElementById("searchInput")
+        .addEventListener(
+            "input",
+            function() {
+
+                const query =
+                    this.value
+                        .trim()
+                        .toLowerCase();
+
+
+                if (!query) {
+
+                    renderHero();
+
+                    renderNewsGrid();
+
+                    return;
+
+                }
+
+
+                const results =
+                    articles.filter(
+                        article => {
+
+                            const text =
+                                (
+                                    article.headline +
+                                    " " +
+                                    article.summary +
+                                    " " +
+                                    article.content +
+                                    " " +
+                                    article.category
+                                ).toLowerCase();
+
+                            return text.includes(
+                                query
+                            );
+
+                        }
+                    );
+
+
+                renderNewsGrid(
+                    results
+                );
+
+            }
+        );
+
+
+    // ==========================================
+    // START
+    // ==========================================
+
+    loadNews();
 
 </script>
 
