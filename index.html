@@ -1,0 +1,9 @@
+
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GLOBAL24 News</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<header><div class="logo"><span>G</span>LOBAL24</div><nav>WORLD · AFRICA · ETHIOPIA · BUSINESS · TECHNOLOGY · SPORT</nav><a class="admin" href="/admin">ADMIN</a></header>
+<div class="ticker"><b>BREAKING</b><span>Live newsroom • Updated continuously</span></div>
+<main><section class="hero"><img src="{{news[0].image}}"><div><label>{{news[0].category}}</label><h1>{{news[0].title}}</h1><p>{{news[0].summary}}</p><button>READ FULL STORY →</button></div></section>
+<h2>Latest News</h2><div class="grid">{% for n in news %}<article><img src="{{n.image}}"><small>{{n.category}}</small><h3>{{n.title}}</h3><p>{{n.summary}}</p></article>{% endfor %}</div></main>
+<footer>GLOBAL24 NEWS · INTERNATIONAL NEWSROOM · <a href="/admin">Newsroom Login</a></footer>
+</body></html>
