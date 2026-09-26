@@ -1,8 +1,342 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GLOBAL24 News</title><link rel="stylesheet" href="/static/style.css"></head><body>
-<header><div class="logo"><span>G</span>LOBAL24</div><nav>WORLD · AFRICA · ETHIOPIA · BUSINESS · TECHNOLOGY · SPORT</nav><a class="admin" href="/admin">ADMIN</a></header>
-<div class="ticker"><b>BREAKING</b><span>Live newsroom • Updated continuously</span></div>
-<main><section class="hero"><img src="{{news[0].image}}"><div><label>{{news[0].category}}</label><h1>{{news[0].title}}</h1><p>{{news[0].summary}}</p><button>READ FULL STORY →</button></div></section>
-<h2>Latest News</h2><div class="grid">{% for n in news %}<article><img src="{{n.image}}"><small>{{n.category}}</small><h3>{{n.title}}</h3><p>{{n.summary}}</p></article>{% endfor %}</div></main>
-<footer>GLOBAL24 NEWS · INTERNATIONAL NEWSROOM · <a href="/admin">Newsroom Login</a></footer>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GLOBAL24 News</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        <span>G</span>LOBAL24
+    </div>
+
+    <nav class="main-nav">
+
+        <button onclick="loadCategory('WORLD')">
+            WORLD
+        </button>
+
+        <button onclick="loadCategory('AFRICA')">
+            AFRICA
+        </button>
+
+        <button onclick="loadCategory('ETHIOPIA')">
+            ETHIOPIA
+        </button>
+
+        <button onclick="loadCategory('BUSINESS')">
+            BUSINESS
+        </button>
+
+        <button onclick="loadCategory('TECHNOLOGY')">
+            TECHNOLOGY
+        </button>
+
+        <button onclick="loadCategory('SPORT')">
+            SPORT
+        </button>
+
+    </nav>
+
+    <a class="admin" href="/admin">ADMIN</a>
+
+</header>
+
+
+<div class="ticker">
+    <b>BREAKING</b>
+    <span id="ticker-text">
+        Live newsroom • Updated continuously
+    </span>
+</div>
+
+
+<main>
+
+    {% if news %}
+
+    <section class="hero">
+
+        <img
+            id="hero-image"
+            src="{{ news[0].image }}"
+            alt="{{ news[0].title }}"
+        >
+
+        <div>
+
+            <label id="hero-category">
+                {{ news[0].category }}
+            </label>
+
+            <h1 id="hero-title">
+                {{ news[0].title }}
+            </h1>
+
+            <p id="hero-summary">
+                {{ news[0].summary }}
+            </p>
+
+            <button onclick="openStory()">
+                READ FULL STORY →
+            </button>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <h2 id="section-title">
+        Latest News
+    </h2>
+
+
+    <div class="grid" id="news-grid">
+
+        {% for n in news %}
+
+        <article>
+
+            <img
+                src="{{ n.image }}"
+                alt="{{ n.title }}"
+            >
+
+            <small>
+                {{ n.category }}
+            </small>
+
+            <h3>
+                {{ n.title }}
+            </h3>
+
+            <p>
+                {{ n.summary }}
+            </p>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    GLOBAL24 NEWS · INTERNATIONAL NEWSROOM ·
+
+    <a href="/admin">
+        Newsroom Login
+    </a>
+
+</footer>
+
+
+<script>
+
+let currentStoryUrl = "";
+
+
+async function loadCategory(category) {
+
+    const grid =
+        document.getElementById("news-grid");
+
+    const title =
+        document.getElementById("section-title");
+
+
+    title.textContent =
+        category + " NEWS";
+
+
+    grid.innerHTML = `
+        <article>
+            <h3>Loading ${category} news...</h3>
+            <p>Please wait...</p>
+        </article>
+    `;
+
+
+    try {
+
+        const response = await fetch(
+            "/api/news?category=" +
+            encodeURIComponent(category)
+        );
+
+
+        if (!response.ok) {
+            throw new Error("News request failed");
+        }
+
+
+        const data = await response.json();
+
+
+        grid.innerHTML = "";
+
+
+        if (
+            !data.stories ||
+            data.stories.length === 0
+        ) {
+
+            grid.innerHTML = `
+                <article>
+                    <h3>No ${category} news found</h3>
+                    <p>
+                        There are currently no
+                        stories available.
+                    </p>
+                </article>
+            `;
+
+            return;
+        }
+
+
+        updateHero(data.stories[0]);
+
+
+        data.stories.forEach(function(story) {
+
+            const article =
+                document.createElement("article");
+
+
+            article.innerHTML = `
+
+                <img
+                    src="${escapeHtml(story.image)}"
+                    alt="${escapeHtml(story.title)}"
+                >
+
+                <small>
+                    ${escapeHtml(story.category)}
+                </small>
+
+                <h3>
+                    ${escapeHtml(story.title)}
+                </h3>
+
+                <p>
+                    ${escapeHtml(story.summary || "")}
+                </p>
+
+            `;
+
+
+            grid.appendChild(article);
+
+        });
+
+
+        document.getElementById(
+            "ticker-text"
+        ).textContent =
+            category +
+            " newsroom • Updated just now";
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        grid.innerHTML = `
+            <article>
+                <h3>News could not be loaded</h3>
+                <p>
+                    Please check the API configuration.
+                </p>
+            </article>
+        `;
+
+    }
+
+}
+
+
+function updateHero(story) {
+
+    document.getElementById(
+        "hero-image"
+    ).src = story.image;
+
+
+    document.getElementById(
+        "hero-image"
+    ).alt = story.title;
+
+
+    document.getElementById(
+        "hero-category"
+    ).textContent = story.category;
+
+
+    document.getElementById(
+        "hero-title"
+    ).textContent = story.title;
+
+
+    document.getElementById(
+        "hero-summary"
+    ).textContent =
+        story.summary || "";
+
+
+    currentStoryUrl =
+        story.url || "";
+
+}
+
+
+function openStory() {
+
+    if (currentStoryUrl) {
+
+        window.open(
+            currentStoryUrl,
+            "_blank"
+        );
+
+    }
+
+}
+
+
+function escapeHtml(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+</script>
+
+</body>
+
+</html>
