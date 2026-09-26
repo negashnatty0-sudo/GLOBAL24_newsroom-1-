@@ -1,2 +1,357 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Newsroom Login</title><link rel="stylesheet" href="/static/style.css"></head>
-<body class="login"><form method="post"><div class="logo"><span>G</span>LOBAL24</div><h1>Newsroom Admin</h1><input type="password" name="password" placeholder="Admin password" required><button>ENTER NEWSROOM</button>{% if error %}<p class="error">{{error}}</p>{% endif %}</form></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GLOBAL24 — Admin Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                linear-gradient(
+                    rgba(4, 14, 28, .92),
+                    rgba(4, 14, 28, .92)
+                ),
+                radial-gradient(
+                    circle at top right,
+                    #243d5c,
+                    #071426 60%
+                );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            border-radius: 14px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 900;
+            color: #d8ad45;
+            margin-bottom: 8px;
+        }
+
+        .logo span {
+            color: #071426;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #172033;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+            color: #172033;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d5dbe3;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #d8ad45;
+            box-shadow: 0 0 0 3px rgba(216,173,69,.15);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 75px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #d8ad45;
+            color: #071426;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background: #c69d38;
+        }
+
+        .error {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 7px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-size: 14px;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #a07820;
+        }
+
+        .security {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #edf0f3;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media (max-width: 500px) {
+            .login-box {
+                padding: 30px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+
+        <div class="logo">
+            GLOBAL<span>24</span>
+        </div>
+
+        <p class="subtitle">
+            News Management System
+        </p>
+
+        <h1>
+            Administrator Login
+        </h1>
+
+        <form id="loginForm">
+
+            <div class="field">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter username"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        onclick="togglePassword()"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+                Sign In
+            </button>
+
+
+            <div
+                class="error"
+                id="errorMessage"
+            >
+                Incorrect username or password.
+            </div>
+
+        </form>
+
+
+        <a
+            href="index.html"
+            class="back"
+        >
+            ← Back to GLOBAL24
+        </a>
+
+
+        <div class="security">
+            🔒 GLOBAL24 Administration
+        </div>
+
+    </div>
+
+
+<script>
+
+    /*
+        DEMO LOGIN ONLY
+
+        Username:
+        admin
+
+        Password:
+        change-me
+
+        IMPORTANT:
+        Do not use client-side credentials
+        for a real production website.
+    */
+
+    const DEMO_USERNAME = "admin";
+    const DEMO_PASSWORD = "change-me";
+
+
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+
+            if (
+                username === DEMO_USERNAME &&
+                password === DEMO_PASSWORD
+            ) {
+
+                sessionStorage.setItem(
+                    "global24_admin_logged_in",
+                    "true"
+                );
+
+                window.location.href =
+                    "admin.html";
+
+            } else {
+
+                const error =
+                    document.getElementById("errorMessage");
+
+                error.style.display = "block";
+
+                setTimeout(() => {
+                    error.style.display = "none";
+                }, 3000);
+
+            }
+
+        });
+
+
+    function togglePassword() {
+
+        const password =
+            document.getElementById("password");
+
+        const button =
+            document.querySelector(".show-password");
+
+
+        if (password.type === "password") {
+
+            password.type = "text";
+            button.textContent = "Hide";
+
+        } else {
+
+            password.type = "password";
+            button.textContent = "Show";
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
