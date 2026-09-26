@@ -4,10 +4,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta
         name="description"
@@ -21,7 +18,6 @@
         href="{{ url_for('static', filename='style.css') }}"
     >
 </head>
-
 
 <body>
 
@@ -225,12 +221,9 @@
 
 <main class="newsroom-container">
 
-
-    <!-- =================================================
-         HERO STORY
-    ================================================== -->
-
     {% if news %}
+
+    <!-- HERO -->
 
     <section class="hero-story">
 
@@ -244,7 +237,6 @@
             >
 
             <div class="hero-image-overlay"></div>
-
 
             <div class="hero-live-badge">
 
@@ -311,9 +303,7 @@
     {% endif %}
 
 
-    <!-- =================================================
-         SECTION HEADER
-    ================================================== -->
+    <!-- SECTION HEADER -->
 
     <section class="section-header">
 
@@ -329,15 +319,12 @@
 
         </div>
 
-
         <div class="section-line"></div>
 
     </section>
 
 
-    <!-- =================================================
-         NEWS GRID
-    ================================================== -->
+    <!-- NEWS GRID -->
 
     <div
         class="news-grid"
@@ -346,10 +333,7 @@
 
         {% for n in news %}
 
-        <article
-            class="news-card"
-            onclick="openCardStory('{{ n.url }}')"
-        >
+        <article class="news-card">
 
             <div class="card-image-wrapper">
 
@@ -359,7 +343,6 @@
                     class="card-image"
                     loading="lazy"
                 >
-
 
                 <div class="card-category">
                     {{ n.category }}
@@ -372,17 +355,11 @@
 
                 <div class="card-meta">
 
-                    <span>
-                        GLOBAL24
-                    </span>
+                    <span>GLOBAL24</span>
 
-                    <span>
-                        •
-                    </span>
+                    <span>•</span>
 
-                    <span>
-                        LIVE
-                    </span>
+                    <span>LIVE</span>
 
                 </div>
 
@@ -410,9 +387,7 @@
     </div>
 
 
-    <!-- =================================================
-         LOADING
-    ================================================== -->
+    <!-- LOADING -->
 
     <div
         id="loading-screen"
@@ -427,7 +402,6 @@
         </div>
 
     </div>
-
 
 </main>
 
@@ -445,7 +419,7 @@
         </div>
 
         <div class="footer-description">
-            Independent international newsroom
+            International newsroom
         </div>
 
     </div>
@@ -465,9 +439,7 @@
 
 
     <div class="footer-copy">
-
         © 2026 GLOBAL24 NEWS
-
     </div>
 
 </footer>
@@ -480,14 +452,12 @@
 <script>
 
 let currentStoryUrl = "";
-
 let currentCategory = "WORLD";
-
 let currentStories = [];
 
 
 // =====================================================
-// LIVE CLOCK
+// CLOCK
 // =====================================================
 
 function updateClock() {
@@ -495,31 +465,19 @@ function updateClock() {
     const clock =
         document.getElementById("live-time");
 
-    if (!clock) {
-        return;
-    }
-
+    if (!clock) return;
 
     const now = new Date();
 
-
     clock.textContent =
-        now.toLocaleTimeString(
-            [],
-            {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            }
-        );
-
+        now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
 }
 
-
-setInterval(
-    updateClock,
-    1000
-);
+setInterval(updateClock, 1000);
 
 updateClock();
 
@@ -533,49 +491,52 @@ function toggleMobileMenu() {
     const nav =
         document.getElementById("main-nav");
 
-
-    if (!nav) {
-        return;
-    }
-
+    if (!nav) return;
 
     nav.classList.toggle("mobile-open");
-
 }
 
 
 // =====================================================
-// ACTIVE NAVIGATION
+// CLOSE MOBILE MENU
+// =====================================================
+
+function closeMobileMenu() {
+
+    const nav =
+        document.getElementById("main-nav");
+
+    if (!nav) return;
+
+    nav.classList.remove("mobile-open");
+}
+
+
+// =====================================================
+// ACTIVE BUTTON
 // =====================================================
 
 function setActiveButton(button) {
 
     document
         .querySelectorAll(".nav-button")
-        .forEach(
-            function(item) {
+        .forEach(function(item) {
 
-                item.classList.remove(
-                    "active"
-                );
+            item.classList.remove("active");
 
-            }
-        );
+        });
 
 
     if (button) {
 
-        button.classList.add(
-            "active"
-        );
+        button.classList.add("active");
 
     }
-
 }
 
 
 // =====================================================
-// LOAD NEWS CATEGORY
+// LOAD CATEGORY
 // =====================================================
 
 async function loadCategory(
@@ -584,48 +545,37 @@ async function loadCategory(
 ) {
 
     currentCategory =
-        category;
+        category.toUpperCase();
 
 
-    setActiveButton(
-        button
-    );
+    // CLOSE MOBILE MENU
+    closeMobileMenu();
+
+
+    // ACTIVE BUTTON
+    setActiveButton(button);
 
 
     const grid =
-        document.getElementById(
-            "news-grid"
-        );
-
+        document.getElementById("news-grid");
 
     const sectionTitle =
-        document.getElementById(
-            "section-title"
-        );
-
+        document.getElementById("section-title");
 
     const currentSection =
-        document.getElementById(
-            "current-section"
-        );
-
+        document.getElementById("current-section");
 
     const ticker =
-        document.getElementById(
-            "ticker-text"
-        );
-
+        document.getElementById("ticker-text");
 
     const loading =
-        document.getElementById(
-            "loading-screen"
-        );
+        document.getElementById("loading-screen");
 
 
     if (sectionTitle) {
 
         sectionTitle.textContent =
-            category + " NEWS";
+            currentCategory + " NEWS";
 
     }
 
@@ -633,7 +583,7 @@ async function loadCategory(
     if (currentSection) {
 
         currentSection.textContent =
-            category + " NEWS";
+            currentCategory + " NEWS";
 
     }
 
@@ -642,7 +592,7 @@ async function loadCategory(
 
         ticker.textContent =
             "GLOBAL24 · Loading " +
-            category +
+            currentCategory +
             " news...";
 
         ticker.classList.remove(
@@ -661,11 +611,13 @@ async function loadCategory(
                 <div class="loading-spinner"></div>
 
                 <h3>
-                    Loading ${category} news...
+                    Loading ${escapeHtml(
+                        currentCategory
+                    )} news...
                 </h3>
 
                 <p>
-                    Connecting to the GLOBAL24 newsroom.
+                    Connecting to GLOBAL24 newsroom.
                 </p>
 
             </article>
@@ -677,8 +629,7 @@ async function loadCategory(
 
     if (loading) {
 
-        loading.style.display =
-            "flex";
+        loading.style.display = "flex";
 
     }
 
@@ -689,8 +640,11 @@ async function loadCategory(
             await fetch(
                 "/api/news?category=" +
                 encodeURIComponent(
-                    category
-                )
+                    currentCategory
+                ),
+                {
+                    cache: "no-store"
+                }
             );
 
 
@@ -709,20 +663,20 @@ async function loadCategory(
 
 
         currentStories =
-            data.stories || [];
+            Array.isArray(data.stories)
+                ? data.stories
+                : [];
 
 
         if (loading) {
 
-            loading.style.display =
-                "none";
+            loading.style.display = "none";
 
         }
 
 
         if (
-            !data.stories ||
-            data.stories.length === 0
+            currentStories.length === 0
         ) {
 
             grid.innerHTML = `
@@ -734,12 +688,14 @@ async function loadCategory(
                     </div>
 
                     <h3>
-                        No ${category} news found
+                        No ${escapeHtml(
+                            currentCategory
+                        )} news found
                     </h3>
 
                     <p>
-                        There are currently no stories
-                        available for this section.
+                        No stories are currently
+                        available.
                     </p>
 
                 </article>
@@ -749,41 +705,30 @@ async function loadCategory(
 
             ticker.textContent =
                 "GLOBAL24 · No " +
-                category +
-                " stories currently available";
+                currentCategory +
+                " stories available";
 
 
             return;
-
         }
 
 
-        // Save stories
-        currentStories =
-            data.stories;
-
-
-        // Update hero
         updateHero(
-            data.stories[0]
+            currentStories[0]
         );
 
 
-        // Update ticker
         updateTicker(
-            data.stories
+            currentStories
         );
 
 
-        // Create cards
         renderNewsCards(
-            data.stories
+            currentStories
         );
 
 
-        // Update time
         updateLastUpdated();
-
 
     }
 
@@ -798,8 +743,7 @@ async function loadCategory(
 
         if (loading) {
 
-            loading.style.display =
-                "none";
+            loading.style.display = "none";
 
         }
 
@@ -837,151 +781,121 @@ async function loadCategory(
             "GLOBAL24 · News connection error";
 
     }
-
 }
 
 
 // =====================================================
-// RENDER NEWS CARDS
+// NEWS CARDS
 // =====================================================
 
-function renderNewsCards(
-    stories
-) {
+function renderNewsCards(stories) {
 
     const grid =
-        document.getElementById(
-            "news-grid"
-        );
+        document.getElementById("news-grid");
 
-
-    if (!grid) {
-        return;
-    }
+    if (!grid) return;
 
 
     grid.innerHTML = "";
 
 
-    stories.forEach(
-        function(story) {
+    stories.forEach(function(story) {
 
-            const article =
-                document.createElement(
-                    "article"
+        const article =
+            document.createElement("article");
+
+
+        article.className =
+            "news-card";
+
+
+        article.addEventListener(
+            "click",
+            function() {
+
+                openCardStory(
+                    story.url
                 );
 
-
-            article.className =
-                "news-card";
-
-
-            article.onclick =
-                function() {
-
-                    openCardStory(
-                        story.url
-                    );
-
-                };
+            }
+        );
 
 
-            article.innerHTML = `
+        article.innerHTML = `
 
-                <div class="card-image-wrapper">
+            <div class="card-image-wrapper">
 
-                    <img
-                        src="${escapeHtml(
-                            story.image ||
-                            ""
-                        )}"
-                        alt="${escapeHtml(
-                            story.title ||
-                            ""
-                        )}"
-                        class="card-image"
-                        loading="lazy"
-                    >
+                <img
+                    src="${escapeHtml(
+                        story.image || ""
+                    )}"
+                    alt="${escapeHtml(
+                        story.title || ""
+                    )}"
+                    class="card-image"
+                    loading="lazy"
+                >
 
-                    <div class="card-category">
+                <div class="card-category">
 
-                        ${escapeHtml(
-                            story.category ||
-                            currentCategory
-                        )}
+                    ${escapeHtml(
+                        story.category ||
+                        currentCategory
+                    )}
 
-                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="card-content">
+
+                <div class="card-meta">
+
+                    <span>GLOBAL24</span>
+
+                    <span>•</span>
+
+                    <span>LIVE</span>
 
                 </div>
 
 
-                <div class="card-content">
-
-                    <div class="card-meta">
-
-                        <span>
-                            GLOBAL24
-                        </span>
-
-                        <span>
-                            •
-                        </span>
-
-                        <span>
-                            LIVE
-                        </span>
-
-                    </div>
+                <h3>
+                    ${escapeHtml(
+                        story.title ||
+                        "Untitled story"
+                    )}
+                </h3>
 
 
-                    <h3>
-
-                        ${escapeHtml(
-                            story.title ||
-                            "Untitled story"
-                        )}
-
-                    </h3>
+                <p>
+                    ${escapeHtml(
+                        story.summary || ""
+                    )}
+                </p>
 
 
-                    <p>
-
-                        ${escapeHtml(
-                            story.summary ||
-                            ""
-                        )}
-
-                    </p>
-
-
-                    <div class="card-read">
-
-                        READ STORY →
-
-                    </div>
-
+                <div class="card-read">
+                    READ STORY →
                 </div>
 
-            `;
+            </div>
+
+        `;
 
 
-            grid.appendChild(
-                article
-            );
+        grid.appendChild(article);
 
-        }
-    );
-
+    });
 }
 
 
 // =====================================================
-// CONTINUOUS BREAKING NEWS TICKER
+// CONTINUOUS TICKER
 // =====================================================
 
-function updateTicker(
-    stories
-) {
+function updateTicker(stories) {
 
     const ticker =
         document.getElementById(
@@ -991,52 +905,38 @@ function updateTicker(
 
     if (
         !ticker ||
-        !stories ||
+        !Array.isArray(stories) ||
         stories.length === 0
     ) {
-
         return;
-
     }
 
 
     const headlines =
         stories
+            .map(function(story) {
 
-            .map(
-                function(story) {
+                return story.title;
 
-                    return story.title;
-
-                }
-            )
-
+            })
             .filter(Boolean);
 
 
-    if (
-        headlines.length === 0
-    ) {
-
+    if (headlines.length === 0) {
         return;
-
     }
 
 
-    const headlineText =
+    const text =
         headlines.join(
             "   ◆   "
         );
 
 
-    // Duplicate content so
-    // the ticker can loop continuously.
-    ticker.innerHTML =
-        escapeHtml(
-            headlineText +
-            "   ◆   " +
-            headlineText
-        );
+    ticker.textContent =
+        text +
+        "   ◆   " +
+        text;
 
 
     ticker.classList.remove(
@@ -1044,28 +944,22 @@ function updateTicker(
     );
 
 
-    // Force browser to restart animation
     void ticker.offsetWidth;
 
 
     ticker.classList.add(
         "ticker-moving"
     );
-
 }
 
 
 // =====================================================
-// UPDATE HERO
+// HERO
 // =====================================================
 
-function updateHero(
-    story
-) {
+function updateHero(story) {
 
-    if (!story) {
-        return;
-    }
+    if (!story) return;
 
 
     const image =
@@ -1073,18 +967,15 @@ function updateHero(
             "hero-image"
         );
 
-
     const category =
         document.getElementById(
             "hero-category"
         );
 
-
     const title =
         document.getElementById(
             "hero-title"
         );
-
 
     const summary =
         document.getElementById(
@@ -1095,12 +986,10 @@ function updateHero(
     if (image) {
 
         image.src =
-            story.image ||
-            "";
+            story.image || "";
 
         image.alt =
-            story.title ||
-            "";
+            story.title || "";
 
     }
 
@@ -1117,8 +1006,7 @@ function updateHero(
     if (title) {
 
         title.textContent =
-            story.title ||
-            "";
+            story.title || "";
 
     }
 
@@ -1126,17 +1014,13 @@ function updateHero(
     if (summary) {
 
         summary.textContent =
-            story.summary ||
-            "";
+            story.summary || "";
 
     }
 
 
     currentStoryUrl =
-        story.url ||
-        "";
-
-
+        story.url || "";
 }
 
 
@@ -1146,22 +1030,21 @@ function updateHero(
 
 function openStory() {
 
-    if (currentStoryUrl) {
-
-        window.open(
-            currentStoryUrl,
-            "_blank",
-            "noopener,noreferrer"
-        );
-
-    } else {
+    if (!currentStoryUrl) {
 
         alert(
             "The original article link is not available."
         );
 
+        return;
     }
 
+
+    window.open(
+        currentStoryUrl,
+        "_blank",
+        "noopener,noreferrer"
+    );
 }
 
 
@@ -1169,11 +1052,14 @@ function openStory() {
 // OPEN CARD STORY
 // =====================================================
 
-function openCardStory(
-    url
-) {
+function openCardStory(url) {
 
     if (!url) {
+
+        alert(
+            "The original article link is not available."
+        );
+
         return;
     }
 
@@ -1183,12 +1069,11 @@ function openCardStory(
         "_blank",
         "noopener,noreferrer"
     );
-
 }
 
 
 // =====================================================
-// REFRESH CURRENT CATEGORY
+// REFRESH
 // =====================================================
 
 function refreshCurrentCategory() {
@@ -1196,12 +1081,11 @@ function refreshCurrentCategory() {
     loadCategory(
         currentCategory
     );
-
 }
 
 
 // =====================================================
-// UPDATE TIME
+// UPDATED TIME
 // =====================================================
 
 function updateLastUpdated() {
@@ -1212,9 +1096,7 @@ function updateLastUpdated() {
         );
 
 
-    if (!element) {
-        return;
-    }
+    if (!element) return;
 
 
     element.textContent =
@@ -1225,95 +1107,126 @@ function updateLastUpdated() {
                 minute: "2-digit"
             }
         );
-
 }
 
 
 // =====================================================
-// ESCAPE API CONTENT
+// SECURITY
 // =====================================================
 
-function escapeHtml(
-    value
-) {
+function escapeHtml(value) {
 
-    if (!value) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
         return "";
+
     }
 
 
     return String(value)
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g, "&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g, "&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g, "&gt;")
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+        .replace(/"/g, "&quot;")
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/'/g, "&#039;");
 }
 
 
 // =====================================================
-// START WORLD NEWS
+// CLOSE MENU WHEN CLICKING OUTSIDE
+// =====================================================
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const nav =
+            document.getElementById(
+                "main-nav"
+            );
+
+        const menu =
+            document.getElementById(
+                "mobile-menu"
+            );
+
+
+        if (!nav || !menu) return;
+
+
+        if (
+            nav.classList.contains(
+                "mobile-open"
+            ) &&
+            !nav.contains(event.target) &&
+            !menu.contains(event.target)
+        ) {
+
+            closeMobileMenu();
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// ESC CLOSES MENU
+// =====================================================
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            closeMobileMenu();
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// INITIAL LOAD
 // =====================================================
 
 document.addEventListener(
     "DOMContentLoaded",
     function() {
 
-        const firstButton =
-            document.querySelector(
-                ".nav-button"
+        const initialStories =
+            {{ news|tojson }};
+
+
+        if (
+            Array.isArray(initialStories) &&
+            initialStories.length > 0
+        ) {
+
+            currentStories =
+                initialStories;
+
+
+            currentStoryUrl =
+                initialStories[0].url || "";
+
+
+            updateTicker(
+                initialStories
             );
 
 
-        // If Flask already supplied
-        // stories, start the ticker.
-        if (
-            typeof {{ news|tojson }} !== "undefined"
-        ) {
-
-            const initialStories =
-                {{ news|tojson }};
-
-            if (
-                initialStories &&
-                initialStories.length
-            ) {
-
-                currentStories =
-                    initialStories;
-
-
-                updateTicker(
-                    initialStories
-                );
-
-
-                currentStoryUrl =
-                    initialStories[0].url ||
-                    "";
-
-            }
+            updateLastUpdated();
 
         }
 
@@ -1321,7 +1234,6 @@ document.addEventListener(
 );
 
 </script>
-
 
 </body>
 
