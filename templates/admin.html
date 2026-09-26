@@ -4,1222 +4,780 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GLOBAL24 — Admin Dashboard</title>
+    <title>GLOBAL24 Admin</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
-    <style>
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group {
-            margin-bottom: 5px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: 700;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d5dbe3;
-            border-radius: 7px;
-            outline: none;
-        }
-
-        .form-group textarea {
-            min-height: 140px;
-            resize: vertical;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: #d8ad45;
-        }
-
-        .checkbox-row {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-top: 5px;
-        }
-
-        .checkbox-row input {
-            width: auto;
-        }
-
-        .button-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .message {
-            display: none;
-            padding: 12px;
-            margin-top: 15px;
-            border-radius: 7px;
-        }
-
-        .success-message {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .article-table-wrapper {
-            overflow-x: auto;
-        }
-
-        .action-button {
-            border: none;
-            border-radius: 6px;
-            padding: 7px 10px;
-            cursor: pointer;
-            font-weight: 700;
-            margin-right: 5px;
-        }
-
-        .edit-button {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        .delete-button {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .breaking-badge {
-            color: #c62828;
-            font-weight: 800;
-        }
-
-        @media (max-width: 700px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .full-width {
-                grid-column: auto;
-            }
-
-            .admin-header {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
-<body>
+<body class="admin-page">
 
-<div class="admin-layout">
+<header class="site-header">
 
-    <!-- SIDEBAR -->
-
-    <aside class="admin-sidebar">
-
+    <div class="header-top">
         <div class="logo">
-            GLOBAL<span>24</span>
+            GLOBAL<strong>24</strong>
         </div>
 
-        <nav class="admin-nav">
+        <div class="site-tagline">
+            GLOBAL24 Newsroom Administration
+        </div>
+    </div>
 
-            <a
-                href="#"
-                class="active"
-                onclick="showSection('dashboard')"
+    <nav class="main-nav">
+        <div class="nav-inner">
+            <a href="/">Website</a>
+            <a href="/admin">Dashboard</a>
+            <a href="#create">Create News</a>
+            <a href="#articles">Manage Articles</a>
+            <a href="#" onclick="logout(); return false;">Logout</a>
+        </div>
+    </nav>
+
+</header>
+
+
+<main class="admin-container">
+
+    <div class="admin-header">
+
+        <div>
+            <h1>GLOBAL24 Admin</h1>
+            <p>Manage your newsroom and published stories.</p>
+        </div>
+
+        <button
+            class="admin-button primary"
+            onclick="showCreateForm()">
+            + Create Article
+        </button>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Total Articles</h3>
+            <div class="stat-number" id="totalArticles">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Published</h3>
+            <div class="stat-number" id="publishedArticles">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Drafts</h3>
+            <div class="stat-number" id="draftArticles">0</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Breaking News</h3>
+            <div class="stat-number" id="breakingArticles">0</div>
+        </div>
+
+    </section>
+
+
+    <!-- CREATE / EDIT -->
+
+    <section
+        class="admin-panel"
+        id="create">
+
+        <h2 id="formTitle">
+            Create News Article
+        </h2>
+
+        <form id="articleForm">
+
+            <input
+                type="hidden"
+                id="articleId"
             >
-                Dashboard
-            </a>
 
-            <a
-                href="#"
-                onclick="showSection('create')"
-            >
-                + Create News
-            </a>
+            <div class="admin-form-grid">
 
-            <a
-                href="#"
-                onclick="showSection('articles')"
-            >
-                Articles
-            </a>
+                <div class="form-group admin-form-full">
 
-            <a href="/" target="_blank">
-                View Website
-            </a>
-
-            <a
-                href="#"
-                onclick="logout()"
-            >
-                Logout
-            </a>
-
-        </nav>
-
-    </aside>
-
-
-    <!-- MAIN -->
-
-    <main class="admin-main">
-
-        <!-- DASHBOARD -->
-
-        <section id="dashboard">
-
-            <div class="admin-header">
-
-                <div>
-                    <h1>GLOBAL24 Admin</h1>
-
-                    <p style="color:#64748b;">
-                        News management dashboard
-                    </p>
-                </div>
-
-                <strong id="adminUsername">
-                    Administrator
-                </strong>
-
-            </div>
-
-
-            <div class="dashboard-stats">
-
-                <div class="dashboard-card">
-                    <small>Total Articles</small>
-                    <strong id="totalArticles">0</strong>
-                </div>
-
-                <div class="dashboard-card">
-                    <small>Published</small>
-                    <strong id="publishedArticles">0</strong>
-                </div>
-
-                <div class="dashboard-card">
-                    <small>Drafts</small>
-                    <strong id="draftArticles">0</strong>
-                </div>
-
-                <div class="dashboard-card">
-                    <small>Breaking News</small>
-                    <strong id="breakingArticles">0</strong>
-                </div>
-
-            </div>
-
-
-            <div class="admin-panel">
-
-                <h2>Quick Actions</h2>
-
-                <button
-                    class="btn btn-primary"
-                    onclick="showSection('create')"
-                >
-                    Create News Article
-                </button>
-
-                <button
-                    class="btn btn-dark"
-                    onclick="showSection('articles')"
-                >
-                    Manage Articles
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- CREATE / EDIT -->
-
-        <section
-            id="create"
-            style="display:none;"
-        >
-
-            <div class="admin-panel">
-
-                <h2 id="formTitle">
-                    Create News Article
-                </h2>
-
-                <form id="articleForm">
+                    <label for="headline">
+                        Headline
+                    </label>
 
                     <input
-                        type="hidden"
-                        id="articleId"
+                        type="text"
+                        id="headline"
+                        placeholder="Enter news headline"
+                        required
                     >
 
-
-                    <div class="form-grid">
-
-                        <div class="form-group full-width">
-
-                            <label for="headline">
-                                Headline
-                            </label>
-
-                            <input
-                                type="text"
-                                id="headline"
-                                placeholder="Enter headline"
-                                required
-                            >
-
-                        </div>
+                </div>
 
 
-                        <div class="form-group">
+                <div class="form-group">
 
-                            <label for="category">
-                                Category
-                            </label>
+                    <label for="category">
+                        Category
+                    </label>
 
-                            <select
-                                id="category"
-                                required
-                            >
+                    <select id="category">
 
-                                <option value="">
-                                    Select category
-                                </option>
+                        <option value="World">
+                            World
+                        </option>
 
-                                <option value="World">
-                                    World
-                                </option>
+                        <option value="Africa">
+                            Africa
+                        </option>
 
-                                <option value="Africa">
-                                    Africa
-                                </option>
+                        <option value="Ethiopia">
+                            Ethiopia
+                        </option>
 
-                                <option value="Ethiopia">
-                                    Ethiopia
-                                </option>
+                        <option value="Politics">
+                            Politics
+                        </option>
 
-                                <option value="Politics">
-                                    Politics
-                                </option>
+                        <option value="Business">
+                            Business
+                        </option>
 
-                                <option value="Business">
-                                    Business
-                                </option>
+                        <option value="Technology">
+                            Technology
+                        </option>
 
-                                <option value="Technology">
-                                    Technology
-                                </option>
+                        <option value="Sports">
+                            Sports
+                        </option>
 
-                                <option value="Sports">
-                                    Sports
-                                </option>
+                        <option value="Health">
+                            Health
+                        </option>
 
-                                <option value="Health">
-                                    Health
-                                </option>
+                        <option value="Science">
+                            Science
+                        </option>
 
-                                <option value="Science">
-                                    Science
-                                </option>
+                        <option value="Culture">
+                            Culture
+                        </option>
 
-                                <option value="Culture">
-                                    Culture
-                                </option>
+                    </select>
 
-                            </select>
-
-                        </div>
+                </div>
 
 
-                        <div class="form-group">
+                <div class="form-group">
 
-                            <label for="author">
-                                Author
-                            </label>
+                    <label for="author">
+                        Author
+                    </label>
 
-                            <input
-                                type="text"
-                                id="author"
-                                value="GLOBAL24"
-                                placeholder="Author"
-                            >
+                    <input
+                        type="text"
+                        id="author"
+                        value="GLOBAL24"
+                    >
 
-                        </div>
-
-
-                        <div class="form-group full-width">
-
-                            <label for="image">
-                                Image URL
-                            </label>
-
-                            <input
-                                type="url"
-                                id="image"
-                                placeholder="https://example.com/image.jpg"
-                            >
-
-                        </div>
+                </div>
 
 
-                        <div class="form-group full-width">
+                <div class="form-group admin-form-full">
 
-                            <label for="summary">
-                                Article Summary
-                            </label>
+                    <label for="image">
+                        Image URL
+                    </label>
 
-                            <textarea
-                                id="summary"
-                                placeholder="Short summary..."
-                            ></textarea>
+                    <input
+                        type="url"
+                        id="image"
+                        placeholder="https://example.com/image.jpg"
+                    >
 
-                        </div>
-
-
-                        <div class="form-group full-width">
-
-                            <label for="content">
-                                Article Content
-                            </label>
-
-                            <textarea
-                                id="content"
-                                placeholder="Write the full article..."
-                                required
-                            ></textarea>
-
-                        </div>
+                </div>
 
 
-                        <div class="form-group">
+                <div class="form-group admin-form-full">
 
-                            <label for="status">
-                                Status
-                            </label>
+                    <label for="summary">
+                        Summary
+                    </label>
 
-                            <select id="status">
+                    <textarea
+                        id="summary"
+                        rows="3"
+                        placeholder="Short description of the story..."
+                    ></textarea>
 
-                                <option value="Published">
-                                    Published
-                                </option>
-
-                                <option value="Draft">
-                                    Draft
-                                </option>
-
-                            </select>
-
-                        </div>
+                </div>
 
 
-                        <div class="form-group">
+                <div class="form-group admin-form-full">
 
-                            <div class="checkbox-row">
+                    <label for="content">
+                        Article Content
+                    </label>
 
-                                <input
-                                    type="checkbox"
-                                    id="breaking"
-                                >
+                    <textarea
+                        id="content"
+                        rows="10"
+                        placeholder="Write the full article here..."
+                        required
+                    ></textarea>
 
-                                <label for="breaking">
-                                    Breaking News
-                                </label>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                </div>
 
 
-                    <div class="button-row">
+                <div class="form-group">
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
+                    <label for="status">
+                        Status
+                    </label>
+
+                    <select id="status">
+
+                        <option value="Published">
+                            Published
+                        </option>
+
+                        <option value="Draft">
+                            Draft
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            id="breaking"
                         >
-                            Publish / Save
-                        </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-dark"
-                            onclick="resetForm()"
-                        >
-                            Clear
-                        </button>
+                        Breaking News
 
-                    </div>
+                    </label>
+
+                </div>
 
 
-                    <div
-                        id="formMessage"
-                        class="message"
-                    ></div>
+                <div class="admin-form-actions admin-form-full">
 
-                </form>
+                    <button
+                        type="submit"
+                        class="admin-button primary"
+                        id="saveButton">
+                        Publish Article
+                    </button>
 
-            </div>
-
-        </section>
-
-
-        <!-- ARTICLES -->
-
-        <section
-            id="articles"
-            style="display:none;"
-        >
-
-            <div class="admin-panel">
-
-                <h2>Manage Articles</h2>
-
-                <div class="article-table-wrapper">
-
-                    <table class="admin-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Headline</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <th>Breaking</th>
-                                <th>Actions</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="articleTable">
-
-                        </tbody>
-
-                    </table>
+                    <button
+                        type="button"
+                        class="admin-button secondary"
+                        onclick="resetForm()">
+                        Clear
+                    </button>
 
                 </div>
 
             </div>
 
-        </section>
+        </form>
 
-    </main>
+    </section>
 
-</div>
+
+    <!-- ARTICLES -->
+
+    <section
+        class="admin-panel"
+        id="articles">
+
+        <h2>Manage Articles</h2>
+
+        <div class="article-table-wrapper">
+
+            <table class="article-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Headline</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Breaking</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="articlesTable">
+
+                    <tr>
+                        <td colspan="5">
+                            Loading articles...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
 
 
 <script>
 
-    let articles = [];
+let articles = [];
 
 
-    // ==========================================
-    // CHECK LOGIN
-    // ==========================================
+async function checkLogin() {
 
-    async function checkLogin() {
+    const response = await fetch("/api/me");
 
-        try {
+    const data = await response.json();
 
-            const response =
-                await fetch("/api/me");
+    if (!data.logged_in) {
+        window.location.href = "/login";
+    }
+}
 
-            const data =
-                await response.json();
 
-            if (!data.logged_in) {
+async function loadStats() {
 
-                window.location.href =
-                    "/login";
+    const response =
+        await fetch("/api/admin/stats");
 
-                return;
+    if (!response.ok) return;
 
-            }
+    const data =
+        await response.json();
 
-            document.getElementById(
-                "adminUsername"
-            ).textContent =
-                data.username;
+    document.getElementById("totalArticles")
+        .textContent = data.total;
 
-            loadStats();
+    document.getElementById("publishedArticles")
+        .textContent = data.published;
 
-            loadArticles();
+    document.getElementById("draftArticles")
+        .textContent = data.drafts;
 
-        }
+    document.getElementById("breakingArticles")
+        .textContent = data.breaking;
+}
 
-        catch (error) {
 
-            window.location.href =
-                "/login";
+async function loadArticles() {
 
-        }
+    const response =
+        await fetch("/api/admin/articles");
+
+    if (response.status === 401) {
+
+        window.location.href = "/login";
+        return;
 
     }
 
+    const data =
+        await response.json();
 
-    // ==========================================
-    // SHOW SECTION
-    // ==========================================
+    if (!data.success) return;
 
-    function showSection(section) {
+    articles = data.articles;
 
-        document.getElementById(
-            "dashboard"
-        ).style.display =
-            section === "dashboard"
-                ? "block"
-                : "none";
+    renderArticles();
+}
 
 
-        document.getElementById(
-            "create"
-        ).style.display =
-            section === "create"
-                ? "block"
-                : "none";
+function renderArticles() {
 
+    const table =
+        document.getElementById("articlesTable");
 
-        document.getElementById(
-            "articles"
-        ).style.display =
-            section === "articles"
-                ? "block"
-                : "none";
+    if (articles.length === 0) {
 
+        table.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    No articles yet.
+                </td>
+            </tr>
+        `;
 
-        if (section === "articles") {
-            loadArticles();
-        }
-
+        return;
     }
 
 
-    // ==========================================
-    // LOAD STATS
-    // ==========================================
+    table.innerHTML = articles.map(article => {
 
-    async function loadStats() {
+        const statusClass =
+            article.status === "Published"
+            ? "published"
+            : "draft";
 
-        const response =
-            await fetch(
-                "/api/admin/stats"
-            );
+        return `
 
+            <tr>
 
-        if (!response.ok) {
-            return;
-        }
+                <td>
+                    <strong>
+                        ${escapeHtml(article.headline)}
+                    </strong>
+                </td>
 
+                <td>
+                    ${escapeHtml(article.category || "")}
+                </td>
 
-        const data =
-            await response.json();
+                <td>
+                    <span class="status ${statusClass}">
+                        ${article.status}
+                    </span>
+                </td>
 
+                <td>
 
-        document.getElementById(
-            "totalArticles"
-        ).textContent =
-            data.total || 0;
+                    ${
+                        article.breaking
+                        ? '<span class="status breaking">BREAKING</span>'
+                        : '—'
+                    }
 
+                </td>
 
-        document.getElementById(
-            "publishedArticles"
-        ).textContent =
-            data.published || 0;
+                <td>
 
-
-        document.getElementById(
-            "draftArticles"
-        ).textContent =
-            data.drafts || 0;
-
-
-        document.getElementById(
-            "breakingArticles"
-        ).textContent =
-            data.breaking || 0;
-
-    }
-
-
-    // ==========================================
-    // LOAD ARTICLES
-    // ==========================================
-
-    async function loadArticles() {
-
-        const response =
-            await fetch(
-                "/api/admin/articles"
-            );
-
-
-        if (!response.ok) {
-            return;
-        }
-
-
-        const data =
-            await response.json();
-
-
-        articles =
-            data.articles || [];
-
-
-        renderArticles();
-
-    }
-
-
-    // ==========================================
-    // RENDER ARTICLES
-    // ==========================================
-
-    function renderArticles() {
-
-        const table =
-            document.getElementById(
-                "articleTable"
-            );
-
-
-        if (!articles.length) {
-
-            table.innerHTML = `
-
-                <tr>
-
-                    <td colspan="5">
-
-                        No articles yet.
-
-                    </td>
-
-                </tr>
-
-            `;
-
-            return;
-
-        }
-
-
-        table.innerHTML =
-            articles.map(
-                article => `
-
-                <tr>
-
-                    <td>
-                        ${escapeHTML(
-                            article.headline
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            article.category || "-"
-                        )}
-                    </td>
-
-                    <td>
-
-                        <span
-                            class="status ${
-                                article.status === "Published"
-                                    ? "status-published"
-                                    : "status-draft"
-                            }"
-                        >
-                            ${escapeHTML(
-                                article.status
-                            )}
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        ${
-                            article.breaking
-                                ? '<span class="breaking-badge">YES</span>'
-                                : "No"
-                        }
-
-                    </td>
-
-                    <td>
+                    <div class="table-actions">
 
                         <button
-                            class="action-button edit-button"
-                            onclick="editArticle(${article.id})"
-                        >
+                            class="admin-button secondary"
+                            onclick="editArticle(${article.id})">
                             Edit
                         </button>
 
                         <button
-                            class="action-button delete-button"
-                            onclick="deleteArticle(${article.id})"
-                        >
+                            class="admin-button danger"
+                            onclick="deleteArticle(${article.id})">
                             Delete
                         </button>
 
-                    </td>
+                    </div>
 
-                </tr>
+                </td>
 
-            `
-            ).join("");
+            </tr>
 
-    }
+        `;
 
+    }).join("");
 
-    // ==========================================
-    // CREATE / UPDATE ARTICLE
-    // ==========================================
+}
 
-    document
-        .getElementById("articleForm")
-        .addEventListener(
-            "submit",
-            async function(event) {
 
-                event.preventDefault();
+document
+    .getElementById("articleForm")
+    .addEventListener("submit", async function(event) {
 
+        event.preventDefault();
 
-                const articleId =
-                    document.getElementById(
-                        "articleId"
-                    ).value;
+        const id =
+            document.getElementById("articleId").value;
 
+        const article = {
 
-                const article = {
+            headline:
+                document.getElementById("headline").value.trim(),
 
-                    headline:
-                        document.getElementById(
-                            "headline"
-                        ).value.trim(),
+            category:
+                document.getElementById("category").value,
 
-                    category:
-                        document.getElementById(
-                            "category"
-                        ).value,
+            author:
+                document.getElementById("author").value.trim(),
 
-                    author:
-                        document.getElementById(
-                            "author"
-                        ).value.trim() ||
-                        "GLOBAL24",
+            image:
+                document.getElementById("image").value.trim(),
 
-                    image:
-                        document.getElementById(
-                            "image"
-                        ).value.trim(),
+            summary:
+                document.getElementById("summary").value.trim(),
 
-                    summary:
-                        document.getElementById(
-                            "summary"
-                        ).value.trim(),
+            content:
+                document.getElementById("content").value.trim(),
 
-                    content:
-                        document.getElementById(
-                            "content"
-                        ).value.trim(),
+            status:
+                document.getElementById("status").value,
 
-                    breaking:
-                        document.getElementById(
-                            "breaking"
-                        ).checked,
+            breaking:
+                document.getElementById("breaking").checked
 
-                    status:
-                        document.getElementById(
-                            "status"
-                        ).value
+        };
 
-                };
 
+        const button =
+            document.getElementById("saveButton");
 
-                const url =
-                    articleId
-                        ? `/api/admin/articles/${articleId}`
-                        : "/api/admin/articles";
-
-
-                const method =
-                    articleId
-                        ? "PUT"
-                        : "POST";
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            url,
-                            {
-                                method: method,
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        article
-                                    )
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (!response.ok) {
-
-                        showMessage(
-                            data.error ||
-                            "Unable to save article.",
-                            false
-                        );
-
-                        return;
-
-                    }
-
-
-                    showMessage(
-                        articleId
-                            ? "Article updated successfully."
-                            : "Article published successfully.",
-                        true
-                    );
-
-
-                    resetForm();
-
-                    await loadStats();
-
-                    await loadArticles();
-
-                    showSection(
-                        "articles"
-                    );
-
-                }
-
-                catch (error) {
-
-                    showMessage(
-                        "Unable to connect to the server.",
-                        false
-                    );
-
-                }
-
-            }
-        );
-
-
-    // ==========================================
-    // EDIT
-    // ==========================================
-
-    function editArticle(id) {
-
-        const article =
-            articles.find(
-                item => item.id === id
-            );
-
-
-        if (!article) {
-            return;
-        }
-
-
-        document.getElementById(
-            "articleId"
-        ).value =
-            article.id;
-
-
-        document.getElementById(
-            "headline"
-        ).value =
-            article.headline || "";
-
-
-        document.getElementById(
-            "category"
-        ).value =
-            article.category || "";
-
-
-        document.getElementById(
-            "author"
-        ).value =
-            article.author || "GLOBAL24";
-
-
-        document.getElementById(
-            "image"
-        ).value =
-            article.image || "";
-
-
-        document.getElementById(
-            "summary"
-        ).value =
-            article.summary || "";
-
-
-        document.getElementById(
-            "content"
-        ).value =
-            article.content || "";
-
-
-        document.getElementById(
-            "status"
-        ).value =
-            article.status || "Draft";
-
-
-        document.getElementById(
-            "breaking"
-        ).checked =
-            Boolean(article.breaking);
-
-
-        document.getElementById(
-            "formTitle"
-        ).textContent =
-            "Edit News Article";
-
-
-        showSection("create");
-
-    }
-
-
-    // ==========================================
-    // DELETE
-    // ==========================================
-
-    async function deleteArticle(id) {
-
-        if (
-            !confirm(
-                "Delete this article?"
-            )
-        ) {
-            return;
-        }
+        button.disabled = true;
+        button.textContent = "Saving...";
 
 
         try {
 
-            const response =
-                await fetch(
+            let response;
+
+            if (id) {
+
+                response = await fetch(
                     `/api/admin/articles/${id}`,
                     {
-                        method: "DELETE"
+                        method: "PUT",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:
+                            JSON.stringify(article)
                     }
                 );
+
+            } else {
+
+                response = await fetch(
+                    "/api/admin/articles",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:
+                            JSON.stringify(article)
+                    }
+                );
+
+            }
 
 
             const data =
                 await response.json();
 
 
-            if (!response.ok) {
+            if (!response.ok || !data.success) {
 
                 alert(
                     data.error ||
-                    "Unable to delete article."
+                    "Unable to save article."
                 );
 
                 return;
-
             }
 
+
+            alert(
+                id
+                ? "Article updated successfully."
+                : "Article published successfully."
+            );
+
+
+            resetForm();
 
             await loadStats();
 
             await loadArticles();
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             alert(
-                "Unable to connect to the server."
+                "Server connection error."
             );
+
+        } finally {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Publish Article";
 
         }
 
+    });
+
+
+function editArticle(id) {
+
+    const article =
+        articles.find(item => item.id === id);
+
+    if (!article) return;
+
+
+    document.getElementById("articleId").value =
+        article.id;
+
+    document.getElementById("headline").value =
+        article.headline || "";
+
+    document.getElementById("category").value =
+        article.category || "World";
+
+    document.getElementById("author").value =
+        article.author || "GLOBAL24";
+
+    document.getElementById("image").value =
+        article.image || "";
+
+    document.getElementById("summary").value =
+        article.summary || "";
+
+    document.getElementById("content").value =
+        article.content || "";
+
+    document.getElementById("status").value =
+        article.status || "Draft";
+
+    document.getElementById("breaking").checked =
+        article.breaking;
+
+
+    document.getElementById("formTitle")
+        .textContent = "Edit News Article";
+
+    document.getElementById("saveButton")
+        .textContent = "Update Article";
+
+
+    window.location.hash = "create";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+async function deleteArticle(id) {
+
+    const article =
+        articles.find(item => item.id === id);
+
+    if (!article) return;
+
+
+    if (!confirm(
+        `Delete "${article.headline}"?`
+    )) {
+        return;
     }
 
 
-    // ==========================================
-    // RESET FORM
-    // ==========================================
-
-    function resetForm() {
-
-        document
-            .getElementById("articleForm")
-            .reset();
-
-
-        document.getElementById(
-            "articleId"
-        ).value = "";
-
-
-        document.getElementById(
-            "author"
-        ).value = "GLOBAL24";
-
-
-        document.getElementById(
-            "status"
-        ).value = "Published";
-
-
-        document.getElementById(
-            "formTitle"
-        ).textContent =
-            "Create News Article";
-
-    }
-
-
-    // ==========================================
-    // MESSAGE
-    // ==========================================
-
-    function showMessage(
-        message,
-        success
-    ) {
-
-        const box =
-            document.getElementById(
-                "formMessage"
-            );
-
-
-        box.textContent =
-            message;
-
-
-        box.className =
-            success
-                ? "message success-message"
-                : "message error-message";
-
-
-        box.style.display =
-            "block";
-
-
-        setTimeout(
-            () => {
-                box.style.display = "none";
-            },
-            4000
-        );
-
-    }
-
-
-    // ==========================================
-    // LOGOUT
-    // ==========================================
-
-    async function logout() {
-
+    const response =
         await fetch(
-            "/api/logout",
+            `/api/admin/articles/${id}`,
             {
-                method: "POST"
+                method: "DELETE"
             }
         );
 
 
-        window.location.href =
-            "/login";
+    const data =
+        await response.json();
 
+
+    if (!response.ok || !data.success) {
+
+        alert(
+            data.error ||
+            "Unable to delete article."
+        );
+
+        return;
     }
 
 
-    // ==========================================
-    // ESCAPE HTML
-    // ==========================================
+    await loadStats();
 
-    function escapeHTML(text) {
+    await loadArticles();
 
-        if (
-            text === null ||
-            text === undefined
-        ) {
-            return "";
+}
+
+
+function resetForm() {
+
+    document.getElementById("articleForm")
+        .reset();
+
+    document.getElementById("articleId")
+        .value = "";
+
+    document.getElementById("author")
+        .value = "GLOBAL24";
+
+    document.getElementById("status")
+        .value = "Published";
+
+    document.getElementById("formTitle")
+        .textContent = "Create News Article";
+
+    document.getElementById("saveButton")
+        .textContent = "Publish Article";
+
+}
+
+
+function showCreateForm() {
+
+    resetForm();
+
+    document.getElementById("create")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+async function logout() {
+
+    await fetch(
+        "/api/logout",
+        {
+            method: "POST"
         }
+    );
 
-        return String(text)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+    window.location.href = "/login";
 
-    }
+}
 
 
-    // ==========================================
-    // START
-    // ==========================================
+function escapeHtml(value) {
 
-    checkLogin();
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+checkLogin();
+loadStats();
+loadArticles();
 
 </script>
 
