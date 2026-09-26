@@ -1,1 +1,4 @@
-
+global24.db
+__pycache__/
+.env
+*.pyc
