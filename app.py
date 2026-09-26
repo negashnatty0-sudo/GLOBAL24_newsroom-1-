@@ -45,7 +45,6 @@ def get_db():
 
 
 def init_db():
-
     db = get_db()
 
     db.execute("""
@@ -72,7 +71,7 @@ def init_db():
         )
     """)
 
-    # Add video column to older databases
+    # Add video column if an older database does not have it
     columns = [
         row["name"]
         for row in db.execute(
@@ -85,6 +84,7 @@ def init_db():
             "ALTER TABLE articles ADD COLUMN video TEXT"
         )
 
+    # Create default admin account if none exists
     admin = db.execute(
         "SELECT id FROM admins WHERE username = ?",
         ("admin",)
@@ -117,6 +117,7 @@ def admin_required(function):
     def decorated(*args, **kwargs):
 
         if not session.get("admin_logged_in"):
+
             return jsonify({
                 "success": False,
                 "error": "Authentication required"
@@ -167,6 +168,7 @@ def login():
     password = data.get("password", "")
 
     if not username or not password:
+
         return jsonify({
             "success": False,
             "error": "Username and password are required."
@@ -186,6 +188,7 @@ def login():
     db.close()
 
     if admin is None:
+
         return jsonify({
             "success": False,
             "error": "Invalid username or password."
@@ -195,6 +198,7 @@ def login():
         admin["password_hash"],
         password
     ):
+
         return jsonify({
             "success": False,
             "error": "Invalid username or password."
@@ -231,6 +235,7 @@ def logout():
 def current_admin():
 
     if not session.get("admin_logged_in"):
+
         return jsonify({
             "logged_in": False
         })
@@ -281,7 +286,9 @@ def get_articles():
     articles = [dict(row) for row in rows]
 
     for article in articles:
-        article["breaking"] = bool(article["breaking"])
+        article["breaking"] = bool(
+            article["breaking"]
+        )
 
     return jsonify({
         "success": True,
@@ -312,7 +319,9 @@ def admin_articles():
     articles = [dict(row) for row in rows]
 
     for article in articles:
-        article["breaking"] = bool(article["breaking"])
+        article["breaking"] = bool(
+            article["breaking"]
+        )
 
     return jsonify({
         "success": True,
@@ -404,7 +413,9 @@ def upload_media():
 
     except Exception:
 
-        app.logger.exception("Media upload failed")
+        app.logger.exception(
+            "Media upload failed"
+        )
 
         return jsonify({
             "success": False,
@@ -416,21 +427,63 @@ def upload_media():
 # CREATE ARTICLE
 # =========================================================
 
-@app.route("/api/admin/articles", methods=["POST"])
+@app.route(
+    "/api/admin/articles",
+    methods=["POST"]
+)
 @admin_required
 def create_article():
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(
+        silent=True
+    ) or {}
 
-    headline = data.get("headline", "").strip()
-    category = data.get("category", "").strip()
-    author = data.get("author", "GLOBAL24").strip()
-    image = data.get("image", "").strip()
-    video = data.get("video", "").strip()
-    summary = data.get("summary", "").strip()
-    content = data.get("content", "").strip()
-    breaking = bool(data.get("breaking", False))
-    status = data.get("status", "Draft")
+    headline = data.get(
+        "headline",
+        ""
+    ).strip()
+
+    category = data.get(
+        "category",
+        ""
+    ).strip()
+
+    author = data.get(
+        "author",
+        "GLOBAL24"
+    ).strip()
+
+    image = data.get(
+        "image",
+        ""
+    ).strip()
+
+    video = data.get(
+        "video",
+        ""
+    ).strip()
+
+    summary = data.get(
+        "summary",
+        ""
+    ).strip()
+
+    content = data.get(
+        "content",
+        ""
+    ).strip()
+
+    breaking = bool(
+        data.get(
+            "breaking",
+            False
+        )
+    )
+
+    status = data.get(
+        "status",
+        "Draft"
+    )
 
     if not headline:
 
@@ -446,7 +499,11 @@ def create_article():
             "error": "Article content is required."
         }), 400
 
-    if status not in ["Draft", "Published"]:
+    if status not in [
+        "Draft",
+        "Published"
+    ]:
+
         status = "Draft"
 
     db = get_db()
@@ -502,17 +559,56 @@ def create_article():
 @admin_required
 def update_article(article_id):
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(
+        silent=True
+    ) or {}
 
-    headline = data.get("headline", "").strip()
-    category = data.get("category", "").strip()
-    author = data.get("author", "GLOBAL24").strip()
-    image = data.get("image", "").strip()
-    video = data.get("video", "").strip()
-    summary = data.get("summary", "").strip()
-    content = data.get("content", "").strip()
-    breaking = bool(data.get("breaking", False))
-    status = data.get("status", "Draft")
+    headline = data.get(
+        "headline",
+        ""
+    ).strip()
+
+    category = data.get(
+        "category",
+        ""
+    ).strip()
+
+    author = data.get(
+        "author",
+        "GLOBAL24"
+    ).strip()
+
+    image = data.get(
+        "image",
+        ""
+    ).strip()
+
+    video = data.get(
+        "video",
+        ""
+    ).strip()
+
+    summary = data.get(
+        "summary",
+        ""
+    ).strip()
+
+    content = data.get(
+        "content",
+        ""
+    ).strip()
+
+    breaking = bool(
+        data.get(
+            "breaking",
+            False
+        )
+    )
+
+    status = data.get(
+        "status",
+        "Draft"
+    )
 
     if not headline:
 
@@ -528,7 +624,11 @@ def update_article(article_id):
             "error": "Article content is required."
         }), 400
 
-    if status not in ["Draft", "Published"]:
+    if status not in [
+        "Draft",
+        "Published"
+    ]:
+
         status = "Draft"
 
     db = get_db()
@@ -635,7 +735,10 @@ def admin_stats():
     db = get_db()
 
     total = db.execute(
-        "SELECT COUNT(*) FROM articles"
+        """
+        SELECT COUNT(*)
+        FROM articles
+        """
     ).fetchone()[0]
 
     published = db.execute(
@@ -677,11 +780,16 @@ def admin_stats():
 # AI NEWS ASSISTANT
 # =========================================================
 
-@app.route("/api/admin/ai", methods=["POST"])
+@app.route(
+    "/api/admin/ai",
+    methods=["POST"]
+)
 @admin_required
 def ai_assistant():
 
-    api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = os.environ.get(
+        "OPENAI_API_KEY"
+    )
 
     if not api_key:
 
@@ -690,10 +798,19 @@ def ai_assistant():
             "error": "OPENAI_API_KEY is not configured."
         }), 500
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(
+        silent=True
+    ) or {}
 
-    action = data.get("action", "draft")
-    text = data.get("text", "").strip()
+    action = data.get(
+        "action",
+        "draft"
+    )
+
+    text = data.get(
+        "text",
+        ""
+    ).strip()
 
     if not text:
 
@@ -758,6 +875,7 @@ clear English without adding facts:
 Create a news article draft from these notes.
 
 Include:
+
 1. Headline
 2. Summary
 3. Article body
@@ -771,10 +889,12 @@ Notes:
 
     try:
 
-        client = OpenAI(api_key=api_key)
+        client = OpenAI(
+            api_key=api_key
+        )
 
         response = client.responses.create(
-            model="gpt-5.5",
+            model="gpt-5.6-luna",
             instructions=instructions,
             input=prompt
         )
@@ -784,13 +904,15 @@ Notes:
             "result": response.output_text
         })
 
-    except Exception:
+    except Exception as e:
 
-        app.logger.exception("AI request failed")
+        app.logger.exception(
+            "AI request failed"
+        )
 
         return jsonify({
             "success": False,
-            "error": "AI request failed."
+            "error": f"AI request failed: {str(e)}"
         }), 500
 
 
@@ -832,4 +954,3 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
-    
