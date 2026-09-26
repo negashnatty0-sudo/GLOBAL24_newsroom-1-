@@ -1,644 +1,546 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from datetime import datetime, timezone
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    session,
+    redirect,
+    send_from_directory
+)
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
+from functools import wraps
+from pathlib import Path
+import sqlite3
 import os
-import requests
-from werkzeug.utils import secure_filename
-
+# ============================================================
+# GLOBAL24 FLASK APPLICATION
+# ============================================================
 app = Flask(__name__)
-
-# =========================================================
-# SETTINGS
-# =========================================================
-
-app.secret_key = os.getenv(
+app.secret_key = os.environ.get(
     "SECRET_KEY",
     "CHANGE_THIS_SECRET_KEY"
 )
-
-ADMIN_PASSWORD = os.getenv(
-    "ADMIN_PASSWORD",
-    "admin123"
-)
-
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-
-TOP_HEADLINES_URL = "https://newsapi.org/v2/top-headlines"
-EVERYTHING_URL = "https://newsapi.org/v2/everything"
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-UPLOAD_FOLDER = os.path.join(
-    BASE_DIR,
-    "static",
-    "uploads"
-)
-
-ALLOWED_EXTENSIONS = {
-    "png",
-    "jpg",
-    "jpeg",
-    "gif",
-    "webp"
-}
-
-os.makedirs(
-    UPLOAD_FOLDER,
-    exist_ok=True
-)
-
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-app.config["MAX_CONTENT_LENGTH"] = (
-    10 * 1024 * 1024
-)
-
-
-# =========================================================
-# FALLBACK NEWS
-# =========================================================
-
-NEWS = [
-    {
-        "title": "GLOBAL24 Newsroom Is Live",
-        "category": "WORLD",
-        "summary": "Your international news dashboard is ready.",
-        "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80",
-        "breaking": True,
-        "url": ""
-    },
-    {
-        "title": "Africa Desk",
-        "category": "AFRICA",
-        "summary": "Follow major developments across Africa.",
-        "image": "https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=1000&q=80",
-        "breaking": False,
-        "url": ""
-    },
-    {
-        "title": "Ethiopia Focus",
-        "category": "ETHIOPIA",
-        "summary": "A dedicated section for Ethiopia and regional coverage.",
-        "image": "https://images.unsplash.com/photo-1524498250077-390f9e378fc0?auto=format&fit=crop&w=1000&q=80",
-        "breaking": False,
-        "url": ""
-    }
-]
-
-
-# =========================================================
-# CATEGORY SEARCHES
-# =========================================================
-
-CATEGORY_SEARCH = {
-    "WORLD": "world OR international",
-    "AFRICA": "Africa",
-    "ETHIOPIA": "Ethiopia",
-    "BUSINESS": "business OR economy OR finance",
-    "TECHNOLOGY": "technology OR tech",
-    "SPORT": "sports OR football OR soccer"
-}
-
-VALID_CATEGORIES = [
-    "WORLD",
-    "AFRICA",
-    "ETHIOPIA",
-    "BUSINESS",
-    "TECHNOLOGY",
-    "SPORT"
-]
-
-
-# =========================================================
-# DEFAULT IMAGE
-# =========================================================
-
-DEFAULT_IMAGE = (
-    "https://images.unsplash.com/"
-    "photo-1504711434969-e33886168f5c"
-    "?auto=format&fit=crop&w=1200&q=80"
-)
-
-
-# =========================================================
-# IMAGE UPLOAD CHECK
-# =========================================================
-
-def allowed_file(filename):
-
-    return (
-        "." in filename
-        and filename.rsplit(
-            ".",
-            1
-        )[1].lower()
-        in ALLOWED_EXTENSIONS
-    )
-
-
-# =========================================================
-# CONVERT NEWS API ARTICLE
-# =========================================================
-
-def convert_article(
-    article,
-    category
-):
-
-    title = article.get("title")
-
-    if not title:
-        return None
-
-    if title == "[Removed]":
-        return None
-
-    return {
-        "title": title,
-
-        "category": category,
-
-        "summary": (
-            article.get("description")
-            or "Read the latest story from GLOBAL24."
-        ),
-
-        "image": (
-            article.get("urlToImage")
-            or DEFAULT_IMAGE
-        ),
-
-        "breaking": False,
-
-        "url": (
-            article.get("url")
-            or ""
-        ),
-
-        "publishedAt": (
-            article.get("publishedAt")
-            or ""
-        ),
-
-        "source": (
-            article.get(
-                "source",
-                {}
-            ).get(
-                "name"
-            )
-            or ""
+BASE_DIR = Path(__file__).resolve().parent
+DATABASE = BASE_DIR / "global24.db"
+# ============================================================
+# DATABASE
+# ============================================================
+def get_db():
+    db = sqlite3.connect(DATABASE)
+    db.row_factory = sqlite3.Row
+    return db
+def init_db():
+    db = get_db()
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL
         )
-    }
-
-
-# =========================================================
-# GET NEWS
-# =========================================================
-
-def get_news(
-    category="WORLD"
-):
-
-    category = category.upper()
-
-    query = CATEGORY_SEARCH.get(
-        category,
-        "world OR international"
-    )
-
-    if not NEWS_API_KEY:
-
-        print(
-            "NEWS_API_KEY is not configured."
+    """)
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS articles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            headline TEXT NOT NULL,
+            category TEXT,
+            author TEXT,
+            image TEXT,
+            summary TEXT,
+            content TEXT NOT NULL,
+            breaking INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'Draft',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-
-        return []
-
-    try:
-
-        response = requests.get(
-
-            EVERYTHING_URL,
-
-            headers={
-                "X-Api-Key":
-                    NEWS_API_KEY,
-
-                "X-No-Cache":
-                    "true"
-            },
-
-            params={
-
-                "q":
-                    query,
-
-                "language":
-                    "en",
-
-                "sortBy":
-                    "publishedAt",
-
-                "pageSize":
-                    20
-            },
-
-            timeout=15
+    """)
+    admin = db.execute(
+        "SELECT id FROM admins WHERE username = ?",
+        ("admin",)
+    ).fetchone()
+    if admin is None:
+        password_hash = generate_password_hash(
+            "change-me"
         )
-
-        print(
-            "News API status:",
-            response.status_code
+        db.execute(
+            """
+            INSERT INTO admins
+            (username, password_hash)
+            VALUES (?, ?)
+            """,
+            ("admin", password_hash)
         )
-
-        if response.status_code != 200:
-
-            print(
-                "News API response:",
-                response.text[:1000]
-            )
-
-            return []
-
-        data = response.json()
-
-        if data.get(
-            "status"
-        ) != "ok":
-
-            print(
-                "News API error:",
-                data
-            )
-
-            return []
-
-        stories = []
-
-        # IMPORTANT:
-        # Everything inside this loop is indented.
-
-        for article in data.get(
-            "articles",
-            []
-        ):
-
-            story = convert_article(
-                article,
-                category
-            )
-
-            if story:
-
-                stories.append(
-                    story
-                )
-
-        return stories
-
-    except requests.RequestException as error:
-
-        print(
-            "NEWS API CONNECTION ERROR:",
-            error
-        )
-
-        return []
-
-    except Exception as error:
-
-        print(
-            "NEWS API ERROR:",
-            error
-        )
-
-        return []
-
-
-# =========================================================
-# HOME PAGE
-# =========================================================
-
+    db.commit()
+    db.close()
+# ============================================================
+# AUTHENTICATION
+# ============================================================
+def admin_required(function):
+    @wraps(function)
+    def decorated(*args, **kwargs):
+        if not session.get("admin_logged_in"):
+            return jsonify({
+                "success": False,
+                "error": "Authentication required"
+            }), 401
+        return function(*args, **kwargs)
+    return decorated
+# ============================================================
+# WEBSITE PAGES
+# ============================================================
 @app.route("/")
 def home():
-
-    stories = get_news(
-        "WORLD"
+    return send_from_directory(
+        BASE_DIR,
+        "index.html"
     )
-
-    if not stories:
-
-        stories = [
-            story
-            for story in NEWS
-            if story["category"]
-            == "WORLD"
-        ]
-
-    return render_template(
-        "index.html",
-        news=stories
+@app.route("/login")
+def login_page():
+    return send_from_directory(
+        BASE_DIR,
+        "login.html"
     )
-
-
-# =========================================================
-# NEWS API ENDPOINT
-# =========================================================
-
-@app.get("/api/news")
-def api_news():
-
+@app.route("/admin")
+def admin_page():
+    if not session.get("admin_logged_in"):
+        return redirect("/login")
+    return send_from_directory(
+        BASE_DIR,
+        "admin.html"
+    )
+@app.route("/static/<path:filename>")
+def static_files(filename):
+    return send_from_directory(
+        BASE_DIR / "static",
+        filename
+    )
+# ============================================================
+# LOGIN
+# ============================================================
+@app.route("/api/login", methods=["POST"])
+def login():
+    data = request.get_json(
+        silent=True
+    ) or {}
+    username = data.get(
+        "username",
+        ""
+    ).strip()
+    password = data.get(
+        "password",
+        ""
+    )
+    if not username or not password:
+        return jsonify({
+            "success": False,
+            "error": "Username and password are required."
+        }), 400
+    db = get_db()
+    admin = db.execute(
+        """
+        SELECT *
+        FROM admins
+        WHERE username = ?
+        """,
+        (username,)
+    ).fetchone()
+    db.close()
+    if admin is None:
+        return jsonify({
+            "success": False,
+            "error": "Invalid username or password."
+        }), 401
+    if not check_password_hash(
+        admin["password_hash"],
+        password
+    ):
+        return jsonify({
+            "success": False,
+            "error": "Invalid username or password."
+        }), 401
+    session["admin_logged_in"] = True
+    session["admin_id"] = admin["id"]
+    session["admin_username"] = admin["username"]
+    return jsonify({
+        "success": True,
+        "message": "Login successful."
+    })
+# ============================================================
+# LOGOUT
+# ============================================================
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({
+        "success": True
+    })
+# ============================================================
+# CURRENT ADMIN
+# ============================================================
+@app.route("/api/me")
+def current_admin():
+    if not session.get("admin_logged_in"):
+        return jsonify({
+            "logged_in": False
+        })
+    return jsonify({
+        "logged_in": True,
+        "username": session.get(
+            "admin_username"
+        )
+    })
+# ============================================================
+# GET PUBLISHED ARTICLES
+# ============================================================
+@app.route("/api/articles")
+def get_articles():
     category = request.args.get(
-        "category",
-        "WORLD"
-    ).upper()
-
-    if category not in VALID_CATEGORIES:
-
-        category = "WORLD"
-
-    stories = get_news(
-        category
+        "category"
     )
-
-    if not stories:
-
-        stories = [
-            story
-            for story in NEWS
-            if story["category"]
-            == category
-        ]
-
+    db = get_db()
+    if category:
+        rows = db.execute(
+            """
+            SELECT *
+            FROM articles
+            WHERE status = 'Published'
+            AND category = ?
+            ORDER BY created_at DESC
+            """,
+            (category,)
+        ).fetchall()
+    else:
+        rows = db.execute(
+            """
+            SELECT *
+            FROM articles
+            WHERE status = 'Published'
+            ORDER BY created_at DESC
+            """
+        ).fetchall()
+    db.close()
+    articles = [
+        dict(row)
+        for row in rows
+    ]
+    for article in articles:
+        article["breaking"] = bool(
+            article["breaking"]
+        )
     return jsonify({
-
-        "updated":
-            datetime.now(
-                timezone.utc
-            ).isoformat(),
-
-        "category":
-            category,
-
-        "stories":
-            stories
-
+        "success": True,
+        "articles": articles
     })
-
-
-# =========================================================
-# HEALTH CHECK
-# =========================================================
-
-@app.get("/health")
-def health():
-
+# ============================================================
+# GET ALL ARTICLES — ADMIN
+# ============================================================
+@app.route("/api/admin/articles")
+@admin_required
+def admin_articles():
+    db = get_db()
+    rows = db.execute(
+        """
+        SELECT *
+        FROM articles
+        ORDER BY created_at DESC
+        """
+    ).fetchall()
+    db.close()
+    articles = [
+        dict(row)
+        for row in rows
+    ]
+    for article in articles:
+        article["breaking"] = bool(
+            article["breaking"]
+        )
     return jsonify({
-
-        "status":
-            "online",
-
-        "news_api_configured":
-            bool(NEWS_API_KEY),
-
-        "time":
-            datetime.now(
-                timezone.utc
-            ).isoformat()
-
+        "success": True,
+        "articles": articles
     })
-
-
-# =========================================================
-# ADMIN LOGIN
-# =========================================================
-
+# ============================================================
+# CREATE ARTICLE
+# ============================================================
 @app.route(
-    "/admin",
-    methods=["GET", "POST"]
+    "/api/admin/articles",
+    methods=["POST"]
 )
-def admin():
-
-    if request.method == "POST":
-
-        password = request.form.get(
-            "password",
-            ""
-        )
-
-        if password == ADMIN_PASSWORD:
-
-            session["admin"] = True
-
-            return redirect(
-                url_for("admin")
-            )
-
-        return render_template(
-            "login.html",
-            error="Incorrect password"
-        )
-
-    if not session.get(
-        "admin"
-    ):
-
-        return render_template(
-            "login.html"
-        )
-
-    return render_template(
-        "admin.html",
-        news=NEWS
-    )
-
-
-# =========================================================
-# CREATE ADMIN POST
-# =========================================================
-
-@app.post("/admin/add")
-def add_news():
-
-    if not session.get(
-        "admin"
-    ):
-
-        return redirect(
-            url_for("admin")
-        )
-
-    title = request.form.get(
-        "title",
+@admin_required
+def create_article():
+    data = request.get_json(
+        silent=True
+    ) or {}
+    headline = data.get(
+        "headline",
         ""
     ).strip()
-
-    summary = request.form.get(
-        "summary",
-        ""
-    ).strip()
-
-    category = request.form.get(
+    category = data.get(
         "category",
-        "WORLD"
-    ).upper()
-
-    if category not in VALID_CATEGORIES:
-
-        category = "WORLD"
-
-    article_url = request.form.get(
-        "url",
         ""
     ).strip()
-
-    breaking = (
-        request.form.get(
-            "breaking"
-        )
-        == "on"
-    )
-
-    # If no headline is entered,
-    # use the beginning of the post.
-
-    if not title:
-
-        title = (
-            summary[:120]
-            or
-            "GLOBAL24 News Update"
-        )
-
-    # =====================================================
-    # IMAGE
-    # =====================================================
-
-    image_url = request.form.get(
+    author = data.get(
+        "author",
+        "GLOBAL24"
+    ).strip()
+    image = data.get(
         "image",
         ""
     ).strip()
-
-    image_file = request.files.get(
-        "image_file"
+    summary = data.get(
+        "summary",
+        ""
+    ).strip()
+    content = data.get(
+        "content",
+        ""
+    ).strip()
+    breaking = bool(
+        data.get(
+            "breaking",
+            False
+        )
     )
-
-    if (
-        image_file
-        and image_file.filename
-    ):
-
-        if not allowed_file(
-            image_file.filename
-        ):
-
-            return (
-                "Invalid image type. "
-                "Use PNG, JPG, JPEG, GIF "
-                "or WEBP.",
-                400
-            )
-
-        safe_name = secure_filename(
-            image_file.filename
-        )
-
-        timestamp = datetime.now(
-            timezone.utc
-        ).strftime(
-            "%Y%m%d%H%M%S%f"
-        )
-
-        filename = (
-            timestamp
-            + "_"
-            + safe_name
-        )
-
-        filepath = os.path.join(
-            app.config[
-                "UPLOAD_FOLDER"
-            ],
-            filename
-        )
-
-        image_file.save(
-            filepath
-        )
-
-        image_url = url_for(
-            "static",
-            filename=(
-                f"uploads/{filename}"
-            )
-        )
-
-    if not image_url:
-
-        image_url = DEFAULT_IMAGE
-
-    # =====================================================
-    # ADD POST
-    # =====================================================
-
-    NEWS.insert(
-        0,
-        {
-            "title":
-                title,
-
-            "category":
-                category,
-
-            "summary":
-                summary,
-
-            "image":
-                image_url,
-
-            "breaking":
-                breaking,
-
-            "url":
-                article_url
-        }
+    status = data.get(
+        "status",
+        "Draft"
     )
-
-    return redirect(
-        url_for("admin")
+    if not headline:
+        return jsonify({
+            "success": False,
+            "error": "Headline is required."
+        }), 400
+    if not content:
+        return jsonify({
+            "success": False,
+            "error": "Article content is required."
+        }), 400
+    if status not in [
+        "Draft",
+        "Published"
+    ]:
+        status = "Draft"
+    db = get_db()
+    cursor = db.execute(
+        """
+        INSERT INTO articles
+        (
+            headline,
+            category,
+            author,
+            image,
+            summary,
+            content,
+            breaking,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            headline,
+            category,
+            author,
+            image,
+            summary,
+            content,
+            int(breaking),
+            status
+        )
     )
-
-
-# =========================================================
-# ADMIN LOGOUT
-# =========================================================
-
-@app.get(
-    "/admin/logout"
+    article_id = cursor.lastrowid
+    db.commit()
+    db.close()
+    return jsonify({
+        "success": True,
+        "id": article_id,
+        "message": "Article created."
+    }), 201
+# ============================================================
+# UPDATE ARTICLE
+# ============================================================
+@app.route(
+    "/api/admin/articles/<int:article_id>",
+    methods=["PUT"]
 )
-def logout():
-
-    session.clear()
-
-    return redirect(
-        url_for("home")
+@admin_required
+def update_article(article_id):
+    data = request.get_json(
+        silent=True
+    ) or {}
+    headline = data.get(
+        "headline",
+        ""
+    ).strip()
+    category = data.get(
+        "category",
+        ""
+    ).strip()
+    author = data.get(
+        "author",
+        "GLOBAL24"
+    ).strip()
+    image = data.get(
+        "image",
+        ""
+    ).strip()
+    summary = data.get(
+        "summary",
+        ""
+    ).strip()
+    content = data.get(
+        "content",
+        ""
+    ).strip()
+    breaking = bool(
+        data.get(
+            "breaking",
+            False
+        )
     )
-
-
-# =========================================================
-# START FLASK
-# =========================================================
-
+    status = data.get(
+        "status",
+        "Draft"
+    )
+    if status not in [
+        "Draft",
+        "Published"
+    ]:
+        status = "Draft"
+    db = get_db()
+    existing = db.execute(
+        """
+        SELECT id
+        FROM articles
+        WHERE id = ?
+        """,
+        (article_id,)
+    ).fetchone()
+    if existing is None:
+        db.close()
+        return jsonify({
+            "success": False,
+            "error": "Article not found."
+        }), 404
+    db.execute(
+        """
+        UPDATE articles
+        SET
+            headline = ?,
+            category = ?,
+            author = ?,
+            image = ?,
+            summary = ?,
+            content = ?,
+            breaking = ?,
+            status = ?
+        WHERE id = ?
+        """,
+        (
+            headline,
+            category,
+            author,
+            image,
+            summary,
+            content,
+            int(breaking),
+            status,
+            article_id
+        )
+    )
+    db.commit()
+    db.close()
+    return jsonify({
+        "success": True,
+        "message": "Article updated."
+    })
+# ============================================================
+# DELETE ARTICLE
+# ============================================================
+@app.route(
+    "/api/admin/articles/<int:article_id>",
+    methods=["DELETE"]
+)
+@admin_required
+def delete_article(article_id):
+    db = get_db()
+    cursor = db.execute(
+        """
+        DELETE FROM articles
+        WHERE id = ?
+        """,
+        (article_id,)
+    )
+    db.commit()
+    db.close()
+    if cursor.rowcount == 0:
+        return jsonify({
+            "success": False,
+            "error": "Article not found."
+        }), 404
+    return jsonify({
+        "success": True,
+        "message": "Article deleted."
+    })
+# ============================================================
+# DASHBOARD STATISTICS
+# ============================================================
+@app.route("/api/admin/stats")
+@admin_required
+def admin_stats():
+    db = get_db()
+    total = db.execute(
+        "SELECT COUNT(*) FROM articles"
+    ).fetchone()[0]
+    published = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM articles
+        WHERE status = 'Published'
+        """
+    ).fetchone()[0]
+    drafts = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM articles
+        WHERE status = 'Draft'
+        """
+    ).fetchone()[0]
+    breaking = db.execute(
+        """
+        SELECT COUNT(*)
+        FROM articles
+        WHERE breaking = 1
+        """
+    ).fetchone()[0]
+    db.close()
+    return jsonify({
+        "success": True,
+        "total": total,
+        "published": published,
+        "drafts": drafts,
+        "breaking": breaking
+    })
+# ============================================================
+# HEALTH CHECK
+# ============================================================
+@app.route("/api/health")
+def health():
+    return jsonify({
+        "status": "online",
+        "service": "GLOBAL24"
+    })
+# ============================================================
+# START
+# ============================================================
+init_db()
 if __name__ == "__main__":
-
     port = int(
         os.environ.get(
             "PORT",
             5000
         )
     )
-
     app.run(
         host="0.0.0.0",
-        port=port
+        port=port,
+        debug=False
     )
