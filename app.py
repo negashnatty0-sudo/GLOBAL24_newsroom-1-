@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from datetime import datetime, timezone
 import os
 import requests
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -23,6 +24,33 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 TOP_HEADLINES_URL = "https://newsapi.org/v2/top-headlines"
 EVERYTHING_URL = "https://newsapi.org/v2/everything"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+UPLOAD_FOLDER = os.path.join(
+    BASE_DIR,
+    "static",
+    "uploads"
+)
+
+ALLOWED_EXTENSIONS = {
+    "png",
+    "jpg",
+    "jpeg",
+    "gif",
+    "webp"
+}
+
+os.makedirs(
+    UPLOAD_FOLDER,
+    exist_ok=True
+)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+app.config["MAX_CONTENT_LENGTH"] = (
+    10 * 1024 * 1024
+)
 
 
 # =========================================================
@@ -70,9 +98,18 @@ CATEGORY_SEARCH = {
     "SPORT": "sports OR football OR soccer"
 }
 
+VALID_CATEGORIES = [
+    "WORLD",
+    "AFRICA",
+    "ETHIOPIA",
+    "BUSINESS",
+    "TECHNOLOGY",
+    "SPORT"
+]
+
 
 # =========================================================
-# FALLBACK IMAGE
+# DEFAULT IMAGE
 # =========================================================
 
 DEFAULT_IMAGE = (
@@ -83,10 +120,29 @@ DEFAULT_IMAGE = (
 
 
 # =========================================================
-# CONVERT ARTICLE
+# IMAGE UPLOAD CHECK
 # =========================================================
 
-def convert_article(article, category):
+def allowed_file(filename):
+
+    return (
+        "." in filename
+        and filename.rsplit(
+            ".",
+            1
+        )[1].lower()
+        in ALLOWED_EXTENSIONS
+    )
+
+
+# =========================================================
+# CONVERT NEWS API ARTICLE
+# =========================================================
+
+def convert_article(
+    article,
+    category
+):
 
     title = article.get("title")
 
@@ -113,7 +169,10 @@ def convert_article(article, category):
 
         "breaking": False,
 
-        "url": article.get("url") or "",
+        "url": (
+            article.get("url")
+            or ""
+        ),
 
         "publishedAt": (
             article.get("publishedAt")
@@ -121,8 +180,12 @@ def convert_article(article, category):
         ),
 
         "source": (
-            article.get("source", {})
-            .get("name")
+            article.get(
+                "source",
+                {}
+            ).get(
+                "name"
+            )
             or ""
         )
     }
@@ -132,7 +195,9 @@ def convert_article(article, category):
 # GET NEWS
 # =========================================================
 
-def get_news(category="WORLD"):
+def get_news(
+    category="WORLD"
+):
 
     category = category.upper()
 
@@ -143,41 +208,48 @@ def get_news(category="WORLD"):
 
     if not NEWS_API_KEY:
 
-        print("NEWS_API_KEY is not configured.")
+        print(
+            "NEWS_API_KEY is not configured."
+        )
 
         return []
 
-
     try:
 
-        # -------------------------------------------------
-        # AFRICA / ETHIOPIA / WORLD / BUSINESS /
-        # TECHNOLOGY / SPORT
-        #
-        # Use EVERYTHING for topic searches.
-        # -------------------------------------------------
-
         response = requests.get(
+
             EVERYTHING_URL,
+
             headers={
-                "X-Api-Key": NEWS_API_KEY,
-                "X-No-Cache": "true"
+                "X-Api-Key":
+                    NEWS_API_KEY,
+
+                "X-No-Cache":
+                    "true"
             },
+
             params={
-                "q": query,
-                "language": "en",
-                "sortBy": "publishedAt",
-                "pageSize": 20
+
+                "q":
+                    query,
+
+                "language":
+                    "en",
+
+                "sortBy":
+                    "publishedAt",
+
+                "pageSize":
+                    20
             },
+
             timeout=15
         )
-
 
         print(
             "News API status:",
             response.status_code
         )
-
 
         if response.status_code != 200:
 
@@ -188,11 +260,11 @@ def get_news(category="WORLD"):
 
             return []
 
-
         data = response.json()
 
-
-        if data.get("status") != "ok":
+        if data.get(
+            "status"
+        ) != "ok":
 
             print(
                 "News API error:",
@@ -201,27 +273,28 @@ def get_news(category="WORLD"):
 
             return []
 
-
         stories = []
 
+        # IMPORTANT:
+        # Everything inside this loop is indented.
 
         for article in data.get(
             "articles",
             []
         ):
 
-        story = convert_article(
-    article,
-    category
-)
+            story = convert_article(
+                article,
+                category
+            )
 
             if story:
 
-                stories.append(story)
-
+                stories.append(
+                    story
+                )
 
         return stories
-
 
     except requests.RequestException as error:
 
@@ -231,7 +304,6 @@ def get_news(category="WORLD"):
         )
 
         return []
-
 
     except Exception as error:
 
@@ -250,17 +322,18 @@ def get_news(category="WORLD"):
 @app.route("/")
 def home():
 
-    stories = get_news("WORLD")
-
+    stories = get_news(
+        "WORLD"
+    )
 
     if not stories:
 
         stories = [
             story
             for story in NEWS
-            if story["category"] == "WORLD"
+            if story["category"]
+            == "WORLD"
         ]
-
 
     return render_template(
         "index.html",
@@ -280,35 +353,22 @@ def api_news():
         "WORLD"
     ).upper()
 
-
-    valid_categories = [
-        "WORLD",
-        "AFRICA",
-        "ETHIOPIA",
-        "BUSINESS",
-        "TECHNOLOGY",
-        "SPORT"
-    ]
-
-
-    if category not in valid_categories:
+    if category not in VALID_CATEGORIES:
 
         category = "WORLD"
-
 
     stories = get_news(
         category
     )
-
 
     if not stories:
 
         stories = [
             story
             for story in NEWS
-            if story["category"] == category
+            if story["category"]
+            == category
         ]
-
 
     return jsonify({
 
@@ -335,7 +395,8 @@ def health():
 
     return jsonify({
 
-        "status": "online",
+        "status":
+            "online",
 
         "news_api_configured":
             bool(NEWS_API_KEY),
@@ -365,7 +426,6 @@ def admin():
             ""
         )
 
-
         if password == ADMIN_PASSWORD:
 
             session["admin"] = True
@@ -374,19 +434,18 @@ def admin():
                 url_for("admin")
             )
 
-
         return render_template(
-            "admin.html",
+            "login.html",
             error="Incorrect password"
         )
 
-
-    if not session.get("admin"):
+    if not session.get(
+        "admin"
+    ):
 
         return render_template(
             "login.html"
         )
-
 
     return render_template(
         "admin.html",
@@ -395,59 +454,155 @@ def admin():
 
 
 # =========================================================
-# ADD NEWS FROM ADMIN
+# CREATE ADMIN POST
 # =========================================================
 
 @app.post("/admin/add")
 def add_news():
 
-    if not session.get("admin"):
+    if not session.get(
+        "admin"
+    ):
 
         return redirect(
             url_for("admin")
         )
 
+    title = request.form.get(
+        "title",
+        ""
+    ).strip()
+
+    summary = request.form.get(
+        "summary",
+        ""
+    ).strip()
+
+    category = request.form.get(
+        "category",
+        "WORLD"
+    ).upper()
+
+    if category not in VALID_CATEGORIES:
+
+        category = "WORLD"
+
+    article_url = request.form.get(
+        "url",
+        ""
+    ).strip()
+
+    breaking = (
+        request.form.get(
+            "breaking"
+        )
+        == "on"
+    )
+
+    # If no headline is entered,
+    # use the beginning of the post.
+
+    if not title:
+
+        title = (
+            summary[:120]
+            or
+            "GLOBAL24 News Update"
+        )
+
+    # =====================================================
+    # IMAGE
+    # =====================================================
+
+    image_url = request.form.get(
+        "image",
+        ""
+    ).strip()
+
+    image_file = request.files.get(
+        "image_file"
+    )
+
+    if (
+        image_file
+        and image_file.filename
+    ):
+
+        if not allowed_file(
+            image_file.filename
+        ):
+
+            return (
+                "Invalid image type. "
+                "Use PNG, JPG, JPEG, GIF "
+                "or WEBP.",
+                400
+            )
+
+        safe_name = secure_filename(
+            image_file.filename
+        )
+
+        timestamp = datetime.now(
+            timezone.utc
+        ).strftime(
+            "%Y%m%d%H%M%S%f"
+        )
+
+        filename = (
+            timestamp
+            + "_"
+            + safe_name
+        )
+
+        filepath = os.path.join(
+            app.config[
+                "UPLOAD_FOLDER"
+            ],
+            filename
+        )
+
+        image_file.save(
+            filepath
+        )
+
+        image_url = url_for(
+            "static",
+            filename=(
+                f"uploads/{filename}"
+            )
+        )
+
+    if not image_url:
+
+        image_url = DEFAULT_IMAGE
+
+    # =====================================================
+    # ADD POST
+    # =====================================================
 
     NEWS.insert(
         0,
         {
             "title":
-                request.form.get(
-                    "title",
-                    "Untitled"
-                ),
+                title,
 
             "category":
-                request.form.get(
-                    "category",
-                    "WORLD"
-                ).upper(),
+                category,
 
             "summary":
-                request.form.get(
-                    "summary",
-                    ""
-                ),
+                summary,
 
             "image":
-                request.form.get(
-                    "image",
-                    DEFAULT_IMAGE
-                ),
+                image_url,
 
             "breaking":
-                request.form.get(
-                    "breaking"
-                ) == "on",
+                breaking,
 
             "url":
-                request.form.get(
-                    "url",
-                    ""
-                )
+                article_url
         }
     )
-
 
     return redirect(
         url_for("admin")
@@ -458,7 +613,9 @@ def add_news():
 # ADMIN LOGOUT
 # =========================================================
 
-@app.get("/admin/logout")
+@app.get(
+    "/admin/logout"
+)
 def logout():
 
     session.clear()
@@ -480,7 +637,6 @@ if __name__ == "__main__":
             5000
         )
     )
-
 
     app.run(
         host="0.0.0.0",
