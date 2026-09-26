@@ -1,20 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>GLOBAL24 Admin</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
 </head>
 
+
 <body class="admin-page">
+
 
 <header class="site-header">
 
     <div class="header-top">
+
         <div class="logo">
             GLOBAL<strong>24</strong>
         </div>
@@ -22,84 +34,287 @@
         <div class="site-tagline">
             GLOBAL24 Newsroom Administration
         </div>
+
     </div>
 
+
     <nav class="main-nav">
+
         <div class="nav-inner">
+
             <a href="/">Website</a>
+
             <a href="/admin">Dashboard</a>
+
             <a href="#create">Create News</a>
-            <a href="#articles">Manage Articles</a>
-            <a href="#" onclick="logout(); return false;">Logout</a>
+
+            <a href="#ai">AI Assistant</a>
+
+            <a
+                href="#"
+                onclick="logout(); return false;"
+            >
+                Logout
+            </a>
+
         </div>
+
     </nav>
 
 </header>
 
 
+
 <main class="admin-container">
+
+
+    <!-- ADMIN HEADER -->
 
     <div class="admin-header">
 
         <div>
+
             <h1>GLOBAL24 Admin</h1>
-            <p>Manage your newsroom and published stories.</p>
+
+            <p>
+                Manage news, images, videos and
+                AI-assisted newsroom content.
+            </p>
+
         </div>
+
 
         <button
             class="admin-button primary"
-            onclick="showCreateForm()">
+            onclick="showCreateForm()"
+        >
             + Create Article
         </button>
 
     </div>
 
 
-    <!-- STATS -->
+
+    <!-- =================================================
+         STATS
+         ================================================= -->
 
     <section class="stats-grid">
 
+
         <div class="stat-card">
+
             <h3>Total Articles</h3>
-            <div class="stat-number" id="totalArticles">0</div>
+
+            <div
+                class="stat-number"
+                id="totalArticles"
+            >
+                0
+            </div>
+
         </div>
 
+
         <div class="stat-card">
+
             <h3>Published</h3>
-            <div class="stat-number" id="publishedArticles">0</div>
+
+            <div
+                class="stat-number"
+                id="publishedArticles"
+            >
+                0
+            </div>
+
         </div>
 
+
         <div class="stat-card">
+
             <h3>Drafts</h3>
-            <div class="stat-number" id="draftArticles">0</div>
+
+            <div
+                class="stat-number"
+                id="draftArticles"
+            >
+                0
+            </div>
+
         </div>
 
+
         <div class="stat-card">
+
             <h3>Breaking News</h3>
-            <div class="stat-number" id="breakingArticles">0</div>
+
+            <div
+                class="stat-number"
+                id="breakingArticles"
+            >
+                0
+            </div>
+
         </div>
+
 
     </section>
 
 
-    <!-- CREATE / EDIT -->
+
+    <!-- =================================================
+         AI ASSISTANT
+         ================================================= -->
 
     <section
         class="admin-panel"
-        id="create">
+        id="ai"
+    >
+
+        <h2>🤖 GLOBAL24 AI Assistant</h2>
+
+        <p style="
+            color:#6b7280;
+            margin-bottom:18px;
+        ">
+            Use AI to help prepare newsroom content.
+            Always review AI output before publishing.
+        </p>
+
+
+        <div class="form-group">
+
+            <label for="aiText">
+                Notes or Article Text
+            </label>
+
+            <textarea
+                id="aiText"
+                rows="8"
+                placeholder="Paste your notes, facts or article text here..."
+            ></textarea>
+
+        </div>
+
+
+        <div
+            class="admin-form-actions"
+            style="flex-wrap:wrap;"
+        >
+
+
+            <button
+                type="button"
+                class="admin-button primary"
+                onclick="runAI('draft')"
+            >
+                📰 Draft Article
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-button secondary"
+                onclick="runAI('headline')"
+            >
+                ✍️ Headlines
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-button secondary"
+                onclick="runAI('summary')"
+            >
+                📝 Summary
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-button secondary"
+                onclick="runAI('rewrite')"
+            >
+                🔄 Rewrite
+            </button>
+
+
+            <button
+                type="button"
+                class="admin-button secondary"
+                onclick="runAI('translate')"
+            >
+                🌍 Translate
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="aiStatus"
+            style="margin-top:15px;"
+        ></div>
+
+
+        <textarea
+            id="aiResult"
+            rows="12"
+            readonly
+            placeholder="AI result will appear here..."
+            style="
+                width:100%;
+                margin-top:15px;
+                padding:14px;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                resize:vertical;
+            "
+        ></textarea>
+
+
+        <button
+            type="button"
+            class="admin-button primary"
+            onclick="useAIResult()"
+            style="margin-top:10px;"
+        >
+            Use AI Result in Article
+        </button>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         CREATE ARTICLE
+         ================================================= -->
+
+    <section
+        class="admin-panel"
+        id="create"
+    >
+
 
         <h2 id="formTitle">
             Create News Article
         </h2>
 
+
         <form id="articleForm">
+
 
             <input
                 type="hidden"
                 id="articleId"
             >
 
+
             <div class="admin-form-grid">
+
+
+                <!-- HEADLINE -->
 
                 <div class="form-group admin-form-full">
 
@@ -116,6 +331,9 @@
 
                 </div>
 
+
+
+                <!-- CATEGORY -->
 
                 <div class="form-group">
 
@@ -170,6 +388,9 @@
                 </div>
 
 
+
+                <!-- AUTHOR -->
+
                 <div class="form-group">
 
                     <label for="author">
@@ -185,20 +406,105 @@
                 </div>
 
 
+
+                <!-- =================================================
+                     IMAGE UPLOAD
+                     ================================================= -->
+
                 <div class="form-group admin-form-full">
 
-                    <label for="image">
-                        Image URL
+                    <label for="imageFile">
+
+                        📷 Article Image
+
                     </label>
 
+
                     <input
-                        type="url"
-                        id="image"
-                        placeholder="https://example.com/image.jpg"
+                        type="file"
+                        id="imageFile"
+                        accept="
+                            image/jpeg,
+                            image/png,
+                            image/webp,
+                            image/gif
+                        "
+                    >
+
+
+                    <div
+                        id="imageStatus"
+                        style="margin-top:8px;"
+                    ></div>
+
+
+                    <img
+                        id="imagePreview"
+                        alt="Image preview"
+                        style="
+                            display:none;
+                            width:100%;
+                            max-height:350px;
+                            margin-top:12px;
+                            object-fit:cover;
+                            border-radius:10px;
+                            background:#eee;
+                        "
                     >
 
                 </div>
 
+
+
+                <!-- =================================================
+                     VIDEO UPLOAD
+                     ================================================= -->
+
+                <div class="form-group admin-form-full">
+
+                    <label for="videoFile">
+
+                        🎥 Article Video
+
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="videoFile"
+                        accept="
+                            video/mp4,
+                            video/webm,
+                            video/quicktime,
+                            video/x-m4v
+                        "
+                    >
+
+
+                    <div
+                        id="videoStatus"
+                        style="margin-top:8px;"
+                    ></div>
+
+
+                    <video
+                        id="videoPreview"
+                        controls
+                        style="
+                            display:none;
+                            width:100%;
+                            max-height:450px;
+                            margin-top:12px;
+                            border-radius:10px;
+                            background:#000;
+                        "
+                    ></video>
+
+                </div>
+
+
+
+                <!-- SUMMARY -->
 
                 <div class="form-group admin-form-full">
 
@@ -206,14 +512,18 @@
                         Summary
                     </label>
 
+
                     <textarea
                         id="summary"
-                        rows="3"
-                        placeholder="Short description of the story..."
+                        rows="4"
+                        placeholder="Write a short description..."
                     ></textarea>
 
                 </div>
 
+
+
+                <!-- CONTENT -->
 
                 <div class="form-group admin-form-full">
 
@@ -221,21 +531,26 @@
                         Article Content
                     </label>
 
+
                     <textarea
                         id="content"
-                        rows="10"
-                        placeholder="Write the full article here..."
+                        rows="12"
+                        placeholder="Write the full article..."
                         required
                     ></textarea>
 
                 </div>
 
 
+
+                <!-- STATUS -->
+
                 <div class="form-group">
 
                     <label for="status">
                         Status
                     </label>
+
 
                     <select id="status">
 
@@ -252,9 +567,13 @@
                 </div>
 
 
+
+                <!-- BREAKING -->
+
                 <div class="form-group">
 
                     <label>
+
                         <input
                             type="checkbox"
                             id="breaking"
@@ -267,23 +586,34 @@
                 </div>
 
 
-                <div class="admin-form-actions admin-form-full">
+
+                <!-- BUTTONS -->
+
+                <div
+                    class="admin-form-actions admin-form-full"
+                >
+
 
                     <button
                         type="submit"
                         class="admin-button primary"
-                        id="saveButton">
+                        id="saveButton"
+                    >
                         Publish Article
                     </button>
+
 
                     <button
                         type="button"
                         class="admin-button secondary"
-                        onclick="resetForm()">
+                        onclick="resetForm()"
+                    >
                         Clear
                     </button>
 
+
                 </div>
+
 
             </div>
 
@@ -292,464 +622,1302 @@
     </section>
 
 
-    <!-- ARTICLES -->
+
+    <!-- =================================================
+         ARTICLES
+         ================================================= -->
 
     <section
         class="admin-panel"
-        id="articles">
+        id="articles"
+    >
 
-        <h2>Manage Articles</h2>
+
+        <h2>
+            Manage Articles
+        </h2>
+
 
         <div class="article-table-wrapper">
 
+
             <table class="article-table">
+
 
                 <thead>
 
                     <tr>
 
-                        <th>Headline</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Breaking</th>
-                        <th>Actions</th>
+                        <th>
+                            Headline
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Media
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
 
                     </tr>
 
                 </thead>
 
+
                 <tbody id="articlesTable">
 
                     <tr>
+
                         <td colspan="5">
                             Loading articles...
                         </td>
+
                     </tr>
 
                 </tbody>
 
+
             </table>
+
 
         </div>
 
+
     </section>
+
 
 </main>
 
 
+
 <script>
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+   ========================================================= */
 
 let articles = [];
 
+let uploadedImageUrl = "";
+
+let uploadedVideoUrl = "";
+
+
+
+/* =========================================================
+   LOGIN CHECK
+   ========================================================= */
 
 async function checkLogin() {
 
-    const response = await fetch("/api/me");
+    try {
 
-    const data = await response.json();
+        const response =
+            await fetch("/api/me");
 
-    if (!data.logged_in) {
-        window.location.href = "/login";
+        const data =
+            await response.json();
+
+
+        if (!data.logged_in) {
+
+            window.location.href =
+                "/login";
+
+        }
+
+    } catch (error) {
+
+        window.location.href =
+            "/login";
+
     }
+
 }
 
+
+
+/* =========================================================
+   LOAD STATISTICS
+   ========================================================= */
 
 async function loadStats() {
 
-    const response =
-        await fetch("/api/admin/stats");
+    try {
 
-    if (!response.ok) return;
-
-    const data =
-        await response.json();
-
-    document.getElementById("totalArticles")
-        .textContent = data.total;
-
-    document.getElementById("publishedArticles")
-        .textContent = data.published;
-
-    document.getElementById("draftArticles")
-        .textContent = data.drafts;
-
-    document.getElementById("breakingArticles")
-        .textContent = data.breaking;
-}
+        const response =
+            await fetch(
+                "/api/admin/stats"
+            );
 
 
-async function loadArticles() {
+        if (!response.ok) {
+            return;
+        }
 
-    const response =
-        await fetch("/api/admin/articles");
 
-    if (response.status === 401) {
+        const data =
+            await response.json();
 
-        window.location.href = "/login";
-        return;
+
+        document.getElementById(
+            "totalArticles"
+        ).textContent = data.total;
+
+
+        document.getElementById(
+            "publishedArticles"
+        ).textContent = data.published;
+
+
+        document.getElementById(
+            "draftArticles"
+        ).textContent = data.drafts;
+
+
+        document.getElementById(
+            "breakingArticles"
+        ).textContent = data.breaking;
+
+
+    } catch (error) {
+
+        console.error(
+            "Stats error:",
+            error
+        );
 
     }
 
-    const data =
-        await response.json();
-
-    if (!data.success) return;
-
-    articles = data.articles;
-
-    renderArticles();
 }
 
+
+
+/* =========================================================
+   LOAD ARTICLES
+   ========================================================= */
+
+async function loadArticles() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/articles"
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "/login";
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+            return;
+        }
+
+
+        articles =
+            data.articles;
+
+
+        renderArticles();
+
+
+    } catch (error) {
+
+        console.error(
+            "Articles error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   RENDER ARTICLES
+   ========================================================= */
 
 function renderArticles() {
 
     const table =
-        document.getElementById("articlesTable");
+        document.getElementById(
+            "articlesTable"
+        );
+
 
     if (articles.length === 0) {
 
         table.innerHTML = `
+
             <tr>
+
                 <td colspan="5">
+
                     No articles yet.
+
                 </td>
+
             </tr>
+
         `;
 
         return;
+
     }
 
 
-    table.innerHTML = articles.map(article => {
+    table.innerHTML =
+        articles.map(
+            article => {
 
-        const statusClass =
-            article.status === "Published"
-            ? "published"
-            : "draft";
 
-        return `
+                const statusClass =
+                    article.status === "Published"
+                    ? "published"
+                    : "draft";
 
-            <tr>
 
-                <td>
-                    <strong>
-                        ${escapeHtml(article.headline)}
-                    </strong>
-                </td>
+                let media = "";
 
-                <td>
-                    ${escapeHtml(article.category || "")}
-                </td>
 
-                <td>
-                    <span class="status ${statusClass}">
-                        ${article.status}
-                    </span>
-                </td>
+                if (article.image) {
 
-                <td>
+                    media += "📷 ";
 
-                    ${
-                        article.breaking
-                        ? '<span class="status breaking">BREAKING</span>'
-                        : '—'
-                    }
+                }
 
-                </td>
 
-                <td>
+                if (article.video) {
 
-                    <div class="table-actions">
+                    media += "🎥";
 
-                        <button
-                            class="admin-button secondary"
-                            onclick="editArticle(${article.id})">
-                            Edit
-                        </button>
+                }
 
-                        <button
-                            class="admin-button danger"
-                            onclick="deleteArticle(${article.id})">
-                            Delete
-                        </button>
 
-                    </div>
+                if (!media) {
 
-                </td>
+                    media = "—";
 
-            </tr>
+                }
 
-        `;
 
-    }).join("");
+                return `
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                ${escapeHtml(
+                                    article.headline
+                                )}
+
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            ${escapeHtml(
+                                article.category || ""
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="status ${statusClass}"
+                            >
+
+                                ${escapeHtml(
+                                    article.status
+                                )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${media}
+
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="table-actions"
+                            >
+
+
+                                <button
+                                    class="admin-button secondary"
+                                    onclick="
+                                        editArticle(
+                                            ${article.id}
+                                        )
+                                    "
+                                >
+                                    Edit
+                                </button>
+
+
+                                <button
+                                    class="admin-button danger"
+                                    onclick="
+                                        deleteArticle(
+                                            ${article.id}
+                                        )
+                                    "
+                                >
+                                    Delete
+                                </button>
+
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
 
+
+/* =========================================================
+   IMAGE FILE SELECTED
+   ========================================================= */
+
 document
-    .getElementById("articleForm")
-    .addEventListener("submit", async function(event) {
-
-        event.preventDefault();
-
-        const id =
-            document.getElementById("articleId").value;
-
-        const article = {
-
-            headline:
-                document.getElementById("headline").value.trim(),
-
-            category:
-                document.getElementById("category").value,
-
-            author:
-                document.getElementById("author").value.trim(),
-
-            image:
-                document.getElementById("image").value.trim(),
-
-            summary:
-                document.getElementById("summary").value.trim(),
-
-            content:
-                document.getElementById("content").value.trim(),
-
-            status:
-                document.getElementById("status").value,
-
-            breaking:
-                document.getElementById("breaking").checked
-
-        };
+    .getElementById(
+        "imageFile"
+    )
+    .addEventListener(
+        "change",
+        async function() {
 
 
-        const button =
-            document.getElementById("saveButton");
-
-        button.disabled = true;
-        button.textContent = "Saving...";
+            const file =
+                this.files[0];
 
 
-        try {
-
-            let response;
-
-            if (id) {
-
-                response = await fetch(
-                    `/api/admin/articles/${id}`,
-                    {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:
-                            JSON.stringify(article)
-                    }
-                );
-
-            } else {
-
-                response = await fetch(
-                    "/api/admin/articles",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:
-                            JSON.stringify(article)
-                    }
-                );
-
-            }
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok || !data.success) {
-
-                alert(
-                    data.error ||
-                    "Unable to save article."
-                );
-
+            if (!file) {
                 return;
             }
 
 
-            alert(
-                id
-                ? "Article updated successfully."
-                : "Article published successfully."
+            const preview =
+                document.getElementById(
+                    "imagePreview"
+                );
+
+
+            preview.src =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            preview.style.display =
+                "block";
+
+
+            await uploadMedia(
+                file,
+                "imageStatus"
             );
 
 
-            resetForm();
-
-            await loadStats();
-
-            await loadArticles();
+        }
+    );
 
 
-        } catch (error) {
 
-            alert(
-                "Server connection error."
+/* =========================================================
+   VIDEO FILE SELECTED
+   ========================================================= */
+
+document
+    .getElementById(
+        "videoFile"
+    )
+    .addEventListener(
+        "change",
+        async function() {
+
+
+            const file =
+                this.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            const preview =
+                document.getElementById(
+                    "videoPreview"
+                );
+
+
+            preview.src =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            preview.style.display =
+                "block";
+
+
+            await uploadMedia(
+                file,
+                "videoStatus"
             );
 
-        } finally {
 
-            button.disabled = false;
+        }
+    );
 
-            button.textContent =
-                "Publish Article";
+
+
+/* =========================================================
+   UPLOAD MEDIA
+   ========================================================= */
+
+async function uploadMedia(
+    file,
+    statusId
+) {
+
+
+    const status =
+        document.getElementById(
+            statusId
+        );
+
+
+    status.textContent =
+        "Uploading...";
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/admin/upload",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+
+            status.textContent =
+                data.error ||
+                "Upload failed.";
+
+
+            return;
 
         }
 
-    });
 
+        status.textContent =
+            "✓ Upload complete";
+
+
+        if (
+            data.type ===
+            "image"
+        ) {
+
+            uploadedImageUrl =
+                data.url;
+
+        }
+
+
+        if (
+            data.type ===
+            "video"
+        ) {
+
+            uploadedVideoUrl =
+                data.url;
+
+        }
+
+
+    } catch (error) {
+
+
+        status.textContent =
+            "Upload failed.";
+
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CREATE / UPDATE ARTICLE
+   ========================================================= */
+
+document
+    .getElementById(
+        "articleForm"
+    )
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+
+            event.preventDefault();
+
+
+            const id =
+                document.getElementById(
+                    "articleId"
+                ).value;
+
+
+            const article = {
+
+                headline:
+                    document.getElementById(
+                        "headline"
+                    ).value.trim(),
+
+
+                category:
+                    document.getElementById(
+                        "category"
+                    ).value,
+
+
+                author:
+                    document.getElementById(
+                        "author"
+                    ).value.trim(),
+
+
+                image:
+                    uploadedImageUrl,
+
+
+                video:
+                    uploadedVideoUrl,
+
+
+                summary:
+                    document.getElementById(
+                        "summary"
+                    ).value.trim(),
+
+
+                content:
+                    document.getElementById(
+                        "content"
+                    ).value.trim(),
+
+
+                status:
+                    document.getElementById(
+                        "status"
+                    ).value,
+
+
+                breaking:
+                    document.getElementById(
+                        "breaking"
+                    ).checked
+
+            };
+
+
+            const button =
+                document.getElementById(
+                    "saveButton"
+                );
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Saving...";
+
+
+            try {
+
+
+                let response;
+
+
+                if (id) {
+
+
+                    response =
+                        await fetch(
+                            `/api/admin/articles/${id}`,
+                            {
+
+                                method:
+                                    "PUT",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        article
+                                    )
+
+                            }
+                        );
+
+
+                } else {
+
+
+                    response =
+                        await fetch(
+                            "/api/admin/articles",
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        article
+                                    )
+
+                            }
+                        );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+
+                    alert(
+                        data.error ||
+                        "Unable to save article."
+                    );
+
+
+                    return;
+
+                }
+
+
+                alert(
+                    id
+                    ? "Article updated successfully."
+                    : "Article published successfully."
+                );
+
+
+                resetForm();
+
+
+                await loadStats();
+
+
+                await loadArticles();
+
+
+            } catch (error) {
+
+
+                alert(
+                    "Server connection error."
+                );
+
+
+            } finally {
+
+
+                button.disabled =
+                    false;
+
+
+                button.textContent =
+                    "Publish Article";
+
+
+            }
+
+
+        }
+    );
+
+
+
+/* =========================================================
+   EDIT ARTICLE
+   ========================================================= */
 
 function editArticle(id) {
 
+
     const article =
-        articles.find(item => item.id === id);
+        articles.find(
+            item =>
+                item.id === id
+        );
 
-    if (!article) return;
+
+    if (!article) {
+        return;
+    }
 
 
-    document.getElementById("articleId").value =
+    document.getElementById(
+        "articleId"
+    ).value =
         article.id;
 
-    document.getElementById("headline").value =
+
+    document.getElementById(
+        "headline"
+    ).value =
         article.headline || "";
 
-    document.getElementById("category").value =
-        article.category || "World";
 
-    document.getElementById("author").value =
-        article.author || "GLOBAL24";
+    document.getElementById(
+        "category"
+    ).value =
+        article.category ||
+        "World";
 
-    document.getElementById("image").value =
-        article.image || "";
 
-    document.getElementById("summary").value =
+    document.getElementById(
+        "author"
+    ).value =
+        article.author ||
+        "GLOBAL24";
+
+
+    document.getElementById(
+        "summary"
+    ).value =
         article.summary || "";
 
-    document.getElementById("content").value =
+
+    document.getElementById(
+        "content"
+    ).value =
         article.content || "";
 
-    document.getElementById("status").value =
-        article.status || "Draft";
 
-    document.getElementById("breaking").checked =
+    document.getElementById(
+        "status"
+    ).value =
+        article.status ||
+        "Draft";
+
+
+    document.getElementById(
+        "breaking"
+    ).checked =
         article.breaking;
 
 
-    document.getElementById("formTitle")
-        .textContent = "Edit News Article";
-
-    document.getElementById("saveButton")
-        .textContent = "Update Article";
+    uploadedImageUrl =
+        article.image || "";
 
 
-    window.location.hash = "create";
+    uploadedVideoUrl =
+        article.video || "";
 
-    window.scrollTo({
-        top: 0,
+
+    if (article.image) {
+
+
+        const imagePreview =
+            document.getElementById(
+                "imagePreview"
+            );
+
+
+        imagePreview.src =
+            article.image;
+
+
+        imagePreview.style.display =
+            "block";
+
+
+    }
+
+
+    if (article.video) {
+
+
+        const videoPreview =
+            document.getElementById(
+                "videoPreview"
+            );
+
+
+        videoPreview.src =
+            article.video;
+
+
+        videoPreview.style.display =
+            "block";
+
+
+    }
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "Edit News Article";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "Update Article";
+
+
+    document.getElementById(
+        "create"
+    ).scrollIntoView({
         behavior: "smooth"
     });
 
+
 }
 
+
+
+/* =========================================================
+   DELETE ARTICLE
+   ========================================================= */
 
 async function deleteArticle(id) {
 
+
     const article =
-        articles.find(item => item.id === id);
+        articles.find(
+            item =>
+                item.id === id
+        );
 
-    if (!article) return;
 
-
-    if (!confirm(
-        `Delete "${article.headline}"?`
-    )) {
+    if (!article) {
         return;
     }
 
 
-    const response =
-        await fetch(
-            `/api/admin/articles/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
+    if (
+        !confirm(
+            `Delete "${article.headline}"?`
+        )
+    ) {
+
+        return;
+
+    }
 
 
-    const data =
-        await response.json();
+    try {
 
 
-    if (!response.ok || !data.success) {
+        const response =
+            await fetch(
+                `/api/admin/articles/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+
+            alert(
+                data.error ||
+                "Unable to delete article."
+            );
+
+
+            return;
+
+        }
+
+
+        await loadStats();
+
+
+        await loadArticles();
+
+
+    } catch (error) {
+
 
         alert(
-            data.error ||
-            "Unable to delete article."
+            "Delete failed."
         );
 
-        return;
+
     }
-
-
-    await loadStats();
-
-    await loadArticles();
 
 }
 
+
+
+/* =========================================================
+   AI ASSISTANT
+   ========================================================= */
+
+async function runAI(action) {
+
+
+    const text =
+        document.getElementById(
+            "aiText"
+        ).value.trim();
+
+
+    if (!text) {
+
+
+        alert(
+            "Enter notes or article text first."
+        );
+
+
+        return;
+
+    }
+
+
+    const status =
+        document.getElementById(
+            "aiStatus"
+        );
+
+
+    const result =
+        document.getElementById(
+            "aiResult"
+        );
+
+
+    status.textContent =
+        "🤖 AI is working...";
+
+
+    result.value =
+        "";
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/admin/ai",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            action:
+                                action,
+
+                            text:
+                                text
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+
+            status.textContent =
+                data.error ||
+                "AI request failed.";
+
+
+            return;
+
+        }
+
+
+        result.value =
+            data.result;
+
+
+        status.textContent =
+            "✓ AI result ready.";
+
+
+    } catch (error) {
+
+
+        status.textContent =
+            "AI connection failed.";
+
+
+    }
+
+}
+
+
+
+/* =========================================================
+   USE AI RESULT
+   ========================================================= */
+
+function useAIResult() {
+
+
+    const result =
+        document.getElementById(
+            "aiResult"
+        ).value.trim();
+
+
+    if (!result) {
+
+
+        alert(
+            "There is no AI result to use."
+        );
+
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "content"
+    ).value =
+        result;
+
+
+    document.getElementById(
+        "create"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+
+}
+
+
+
+/* =========================================================
+   RESET FORM
+   ========================================================= */
 
 function resetForm() {
 
-    document.getElementById("articleForm")
-        .reset();
 
-    document.getElementById("articleId")
-        .value = "";
+    document.getElementById(
+        "articleForm"
+    ).reset();
 
-    document.getElementById("author")
-        .value = "GLOBAL24";
 
-    document.getElementById("status")
-        .value = "Published";
+    document.getElementById(
+        "articleId"
+    ).value =
+        "";
 
-    document.getElementById("formTitle")
-        .textContent = "Create News Article";
 
-    document.getElementById("saveButton")
-        .textContent = "Publish Article";
+    document.getElementById(
+        "author"
+    ).value =
+        "GLOBAL24";
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        "Published";
+
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "Create News Article";
+
+
+    document.getElementById(
+        "saveButton"
+    ).textContent =
+        "Publish Article";
+
+
+    uploadedImageUrl =
+        "";
+
+
+    uploadedVideoUrl =
+        "";
+
+
+    document.getElementById(
+        "imagePreview"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "videoPreview"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "imageStatus"
+    ).textContent =
+        "";
+
+
+    document.getElementById(
+        "videoStatus"
+    ).textContent =
+        "";
+
 
 }
 
+
+
+/* =========================================================
+   CREATE BUTTON
+   ========================================================= */
 
 function showCreateForm() {
 
+
     resetForm();
 
-    document.getElementById("create")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+
+    document.getElementById(
+        "create"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
 
 }
 
 
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
 async function logout() {
+
 
     await fetch(
         "/api/logout",
@@ -758,28 +1926,67 @@ async function logout() {
         }
     );
 
-    window.location.href = "/login";
+
+    window.location.href =
+        "/login";
+
 
 }
 
+
+
+/* =========================================================
+   HTML ESCAPE
+   ========================================================= */
 
 function escapeHtml(value) {
 
+
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
+
+/* =========================================================
+   START
+   ========================================================= */
+
 checkLogin();
+
 loadStats();
+
 loadArticles();
+
 
 </script>
 
+
 </body>
+
 </html>
