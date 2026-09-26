@@ -3,100 +3,306 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>GLOBAL24 News</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <meta
+        name="description"
+        content="GLOBAL24 News — Live international news, Africa, Ethiopia, business, technology and sport."
+    >
+
+    <title>GLOBAL24 Newsroom</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 </head>
+
 
 <body>
 
-<header>
+<!-- =====================================================
+     TOP LIVE BAR
+===================================================== -->
 
-    <div class="logo">
-        <span>G</span>LOBAL24
+<div class="live-bar">
+
+    <div class="live-indicator">
+        <span class="live-dot"></span>
+        LIVE
     </div>
 
-    <nav class="main-nav">
+    <div class="live-message">
+        GLOBAL24 NEWSROOM · LIVE INTERNATIONAL COVERAGE
+    </div>
 
-        <button onclick="loadCategory('WORLD')">
+    <div
+        class="live-time"
+        id="live-time"
+    >
+        --:--
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN HEADER
+===================================================== -->
+
+<header class="site-header">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            G
+        </div>
+
+        <div class="brand-text">
+
+            <div class="brand-name">
+                GLOBAL<span>24</span>
+            </div>
+
+            <div class="brand-subtitle">
+                INTERNATIONAL NEWSROOM
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="mobile-menu"
+        id="mobile-menu"
+        onclick="toggleMobileMenu()"
+        aria-label="Open menu"
+    >
+        ☰
+    </button>
+
+
+    <nav
+        class="main-nav"
+        id="main-nav"
+    >
+
+        <button
+            class="nav-button active"
+            onclick="loadCategory('WORLD', this)"
+        >
             WORLD
         </button>
 
-        <button onclick="loadCategory('AFRICA')">
+        <button
+            class="nav-button"
+            onclick="loadCategory('AFRICA', this)"
+        >
             AFRICA
         </button>
 
-        <button onclick="loadCategory('ETHIOPIA')">
+        <button
+            class="nav-button"
+            onclick="loadCategory('ETHIOPIA', this)"
+        >
             ETHIOPIA
         </button>
 
-        <button onclick="loadCategory('BUSINESS')">
+        <button
+            class="nav-button"
+            onclick="loadCategory('BUSINESS', this)"
+        >
             BUSINESS
         </button>
 
-        <button onclick="loadCategory('TECHNOLOGY')">
+        <button
+            class="nav-button"
+            onclick="loadCategory('TECHNOLOGY', this)"
+        >
             TECHNOLOGY
         </button>
 
-        <button onclick="loadCategory('SPORT')">
+        <button
+            class="nav-button"
+            onclick="loadCategory('SPORT', this)"
+        >
             SPORT
         </button>
 
     </nav>
 
-    <a class="admin" href="/admin">
+
+    <a
+        class="admin-button"
+        href="/admin"
+    >
         ADMIN
     </a>
 
 </header>
 
 
-<div class="ticker">
+<!-- =====================================================
+     BREAKING NEWS TICKER
+===================================================== -->
 
-    <b>BREAKING</b>
+<section class="breaking-ticker">
 
-    <span id="ticker-text">
-        GLOBAL24 • Live international newsroom
-    </span>
+    <div class="breaking-label">
+        <span class="breaking-pulse"></span>
+        BREAKING
+    </div>
+
+    <div class="ticker-window">
+
+        <div
+            id="ticker-text"
+            class="ticker-track"
+        >
+            GLOBAL24 · Live international newsroom ·
+            Latest headlines from around the world
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NEWSROOM STATUS
+===================================================== -->
+
+<div class="newsroom-status">
+
+    <div class="status-left">
+
+        <span class="status-online"></span>
+
+        <span>
+            GLOBAL24 LIVE
+        </span>
+
+    </div>
+
+
+    <div class="status-center">
+
+        <span id="current-section">
+            WORLD NEWS
+        </span>
+
+    </div>
+
+
+    <div class="status-right">
+
+        Updated:
+        <span id="last-updated">
+            Just now
+        </span>
+
+        <button
+            class="refresh-button"
+            onclick="refreshCurrentCategory()"
+            title="Refresh news"
+        >
+            ↻
+        </button>
+
+    </div>
 
 </div>
 
 
-<main>
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="newsroom-container">
+
+
+    <!-- =================================================
+         HERO STORY
+    ================================================== -->
 
     {% if news %}
 
-    <section class="hero">
+    <section class="hero-story">
 
-        <img
-            id="hero-image"
-            src="{{ news[0].image }}"
-            alt="{{ news[0].title }}"
-        >
+        <div class="hero-image-wrapper">
 
-        <div>
+            <img
+                id="hero-image"
+                src="{{ news[0].image }}"
+                alt="{{ news[0].title }}"
+                class="hero-image"
+            >
 
-            <label id="hero-category">
+            <div class="hero-image-overlay"></div>
+
+
+            <div class="hero-live-badge">
+
+                <span class="live-dot"></span>
+
+                LIVE
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-content">
+
+            <div
+                class="hero-category"
+                id="hero-category"
+            >
                 {{ news[0].category }}
-            </label>
+            </div>
 
-            <h1 id="hero-title">
+
+            <h1
+                class="hero-title"
+                id="hero-title"
+            >
                 {{ news[0].title }}
             </h1>
 
-            <p id="hero-summary">
+
+            <p
+                class="hero-summary"
+                id="hero-summary"
+            >
                 {{ news[0].summary }}
             </p>
 
-            <button
-                id="hero-button"
-                onclick="openStory()"
-            >
-                READ FULL STORY →
-            </button>
+
+            <div class="hero-actions">
+
+                <button
+                    id="hero-button"
+                    class="read-button"
+                    onclick="openStory()"
+                >
+                    READ FULL STORY
+                    <span>→</span>
+                </button>
+
+
+                <span
+                    class="hero-source"
+                    id="hero-source"
+                >
+                    GLOBAL24 NEWSROOM
+                </span>
+
+            </div>
 
         </div>
 
@@ -105,36 +311,97 @@
     {% endif %}
 
 
-    <h2 id="section-title">
-        Latest News
-    </h2>
+    <!-- =================================================
+         SECTION HEADER
+    ================================================== -->
 
+    <section class="section-header">
+
+        <div>
+
+            <div class="section-kicker">
+                GLOBAL24 NEWSROOM
+            </div>
+
+            <h2 id="section-title">
+                Latest News
+            </h2>
+
+        </div>
+
+
+        <div class="section-line"></div>
+
+    </section>
+
+
+    <!-- =================================================
+         NEWS GRID
+    ================================================== -->
 
     <div
-        class="grid"
+        class="news-grid"
         id="news-grid"
     >
 
         {% for n in news %}
 
-        <article>
+        <article
+            class="news-card"
+            onclick="openCardStory('{{ n.url }}')"
+        >
 
-            <img
-                src="{{ n.image }}"
-                alt="{{ n.title }}"
-            >
+            <div class="card-image-wrapper">
 
-            <small>
-                {{ n.category }}
-            </small>
+                <img
+                    src="{{ n.image }}"
+                    alt="{{ n.title }}"
+                    class="card-image"
+                    loading="lazy"
+                >
 
-            <h3>
-                {{ n.title }}
-            </h3>
 
-            <p>
-                {{ n.summary }}
-            </p>
+                <div class="card-category">
+                    {{ n.category }}
+                </div>
+
+            </div>
+
+
+            <div class="card-content">
+
+                <div class="card-meta">
+
+                    <span>
+                        GLOBAL24
+                    </span>
+
+                    <span>
+                        •
+                    </span>
+
+                    <span>
+                        LIVE
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    {{ n.title }}
+                </h3>
+
+
+                <p>
+                    {{ n.summary }}
+                </p>
+
+
+                <div class="card-read">
+                    READ STORY →
+                </div>
+
+            </div>
 
         </article>
 
@@ -142,63 +409,289 @@
 
     </div>
 
+
+    <!-- =================================================
+         LOADING
+    ================================================== -->
+
+    <div
+        id="loading-screen"
+        class="loading-screen"
+        style="display:none;"
+    >
+
+        <div class="loading-spinner"></div>
+
+        <div>
+            CONNECTING TO GLOBAL24 NEWSROOM...
+        </div>
+
+    </div>
+
+
 </main>
 
 
-<footer>
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
-    GLOBAL24 NEWS · INTERNATIONAL NEWSROOM ·
+<footer class="site-footer">
 
-    <a href="/admin">
-        Newsroom Login
-    </a>
+    <div class="footer-brand">
+
+        <div class="footer-logo">
+            GLOBAL<span>24</span>
+        </div>
+
+        <div class="footer-description">
+            Independent international newsroom
+        </div>
+
+    </div>
+
+
+    <div class="footer-links">
+
+        <a href="/">
+            HOME
+        </a>
+
+        <a href="/admin">
+            NEWSROOM
+        </a>
+
+    </div>
+
+
+    <div class="footer-copy">
+
+        © 2026 GLOBAL24 NEWS
+
+    </div>
 
 </footer>
 
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
 
 <script>
 
 let currentStoryUrl = "";
 
+let currentCategory = "WORLD";
+
+let currentStories = [];
+
 
 // =====================================================
-// LOAD A NEWS CATEGORY
+// LIVE CLOCK
 // =====================================================
 
-async function loadCategory(category) {
+function updateClock() {
+
+    const clock =
+        document.getElementById("live-time");
+
+    if (!clock) {
+        return;
+    }
+
+
+    const now = new Date();
+
+
+    clock.textContent =
+        now.toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+}
+
+
+setInterval(
+    updateClock,
+    1000
+);
+
+updateClock();
+
+
+// =====================================================
+// MOBILE MENU
+// =====================================================
+
+function toggleMobileMenu() {
+
+    const nav =
+        document.getElementById("main-nav");
+
+
+    if (!nav) {
+        return;
+    }
+
+
+    nav.classList.toggle("mobile-open");
+
+}
+
+
+// =====================================================
+// ACTIVE NAVIGATION
+// =====================================================
+
+function setActiveButton(button) {
+
+    document
+        .querySelectorAll(".nav-button")
+        .forEach(
+            function(item) {
+
+                item.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// LOAD NEWS CATEGORY
+// =====================================================
+
+async function loadCategory(
+    category,
+    button = null
+) {
+
+    currentCategory =
+        category;
+
+
+    setActiveButton(
+        button
+    );
+
 
     const grid =
-        document.getElementById("news-grid");
+        document.getElementById(
+            "news-grid"
+        );
+
 
     const sectionTitle =
-        document.getElementById("section-title");
+        document.getElementById(
+            "section-title"
+        );
+
+
+    const currentSection =
+        document.getElementById(
+            "current-section"
+        );
+
 
     const ticker =
-        document.getElementById("ticker-text");
+        document.getElementById(
+            "ticker-text"
+        );
 
 
-    sectionTitle.textContent =
-        category + " NEWS";
+    const loading =
+        document.getElementById(
+            "loading-screen"
+        );
 
 
-    ticker.textContent =
-        "Loading " + category + " news...";
+    if (sectionTitle) {
+
+        sectionTitle.textContent =
+            category + " NEWS";
+
+    }
 
 
-    grid.innerHTML = `
-        <article>
-            <h3>Loading ${category} news...</h3>
-            <p>Please wait...</p>
-        </article>
-    `;
+    if (currentSection) {
+
+        currentSection.textContent =
+            category + " NEWS";
+
+    }
+
+
+    if (ticker) {
+
+        ticker.textContent =
+            "GLOBAL24 · Loading " +
+            category +
+            " news...";
+
+        ticker.classList.remove(
+            "ticker-moving"
+        );
+
+    }
+
+
+    if (grid) {
+
+        grid.innerHTML = `
+
+            <article class="loading-card">
+
+                <div class="loading-spinner"></div>
+
+                <h3>
+                    Loading ${category} news...
+                </h3>
+
+                <p>
+                    Connecting to the GLOBAL24 newsroom.
+                </p>
+
+            </article>
+
+        `;
+
+    }
+
+
+    if (loading) {
+
+        loading.style.display =
+            "flex";
+
+    }
 
 
     try {
 
-        const response = await fetch(
-            "/api/news?category=" +
-            encodeURIComponent(category)
-        );
+        const response =
+            await fetch(
+                "/api/news?category=" +
+                encodeURIComponent(
+                    category
+                )
+            );
 
 
         if (!response.ok) {
@@ -215,7 +708,16 @@ async function loadCategory(category) {
             await response.json();
 
 
-        grid.innerHTML = "";
+        currentStories =
+            data.stories || [];
+
+
+        if (loading) {
+
+            loading.style.display =
+                "none";
+
+        }
 
 
         if (
@@ -224,74 +726,64 @@ async function loadCategory(category) {
         ) {
 
             grid.innerHTML = `
-                <article>
-                    <h3>No ${category} news found</h3>
-                    <p>
-                        No stories are currently
-                        available for this section.
-                    </p>
-                </article>
-            `;
 
-            ticker.textContent =
-                "GLOBAL24 • No stories available";
+                <article class="empty-card">
 
-            return;
-        }
-
-
-        // Update the large cover story
-        updateHero(data.stories[0]);
-
-
-        // Create the news cards
-        data.stories.forEach(
-            function(story) {
-
-                const article =
-                    document.createElement("article");
-
-
-                article.innerHTML = `
-
-                    <img
-                        src="${escapeHtml(story.image)}"
-                        alt="${escapeHtml(story.title)}"
-                    >
-
-                    <small>
-                        ${escapeHtml(story.category)}
-                    </small>
+                    <div class="empty-icon">
+                        📰
+                    </div>
 
                     <h3>
-                        ${escapeHtml(story.title)}
+                        No ${category} news found
                     </h3>
 
                     <p>
-                        ${escapeHtml(
-                            story.summary || ""
-                        )}
+                        There are currently no stories
+                        available for this section.
                     </p>
 
-                `;
+                </article>
+
+            `;
 
 
-                grid.appendChild(article);
+            ticker.textContent =
+                "GLOBAL24 · No " +
+                category +
+                " stories currently available";
 
-            }
+
+            return;
+
+        }
+
+
+        // Save stories
+        currentStories =
+            data.stories;
+
+
+        // Update hero
+        updateHero(
+            data.stories[0]
         );
 
 
-        ticker.textContent =
-            "GLOBAL24 • " +
-            category +
-            " • Live newsroom";
+        // Update ticker
+        updateTicker(
+            data.stories
+        );
 
 
-        // Move to the news section
-        sectionTitle.scrollIntoView({
-            behavior: "smooth"
-        });
+        // Create cards
+        renderNewsCards(
+            data.stories
+        );
+
+
+        // Update time
+        updateLastUpdated();
+
 
     }
 
@@ -304,19 +796,45 @@ async function loadCategory(category) {
         );
 
 
+        if (loading) {
+
+            loading.style.display =
+                "none";
+
+        }
+
+
         grid.innerHTML = `
-            <article>
-                <h3>Unable to load news</h3>
+
+            <article class="empty-card">
+
+                <div class="empty-icon">
+                    ⚠
+                </div>
+
+                <h3>
+                    News connection error
+                </h3>
+
                 <p>
-                    Please check the connection
+                    GLOBAL24 could not connect
                     to the news server.
                 </p>
+
+                <button
+                    class="read-button"
+                    onclick="refreshCurrentCategory()"
+                >
+                    TRY AGAIN →
+                </button>
+
             </article>
+
         `;
 
 
         ticker.textContent =
-            "GLOBAL24 • News connection error";
+            "GLOBAL24 · News connection error";
 
     }
 
@@ -324,31 +842,265 @@ async function loadCategory(category) {
 
 
 // =====================================================
-// UPDATE THE LARGE COVER STORY
+// RENDER NEWS CARDS
 // =====================================================
 
-function updateHero(story) {
+function renderNewsCards(
+    stories
+) {
+
+    const grid =
+        document.getElementById(
+            "news-grid"
+        );
+
+
+    if (!grid) {
+        return;
+    }
+
+
+    grid.innerHTML = "";
+
+
+    stories.forEach(
+        function(story) {
+
+            const article =
+                document.createElement(
+                    "article"
+                );
+
+
+            article.className =
+                "news-card";
+
+
+            article.onclick =
+                function() {
+
+                    openCardStory(
+                        story.url
+                    );
+
+                };
+
+
+            article.innerHTML = `
+
+                <div class="card-image-wrapper">
+
+                    <img
+                        src="${escapeHtml(
+                            story.image ||
+                            ""
+                        )}"
+                        alt="${escapeHtml(
+                            story.title ||
+                            ""
+                        )}"
+                        class="card-image"
+                        loading="lazy"
+                    >
+
+                    <div class="card-category">
+
+                        ${escapeHtml(
+                            story.category ||
+                            currentCategory
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-content">
+
+                    <div class="card-meta">
+
+                        <span>
+                            GLOBAL24
+                        </span>
+
+                        <span>
+                            •
+                        </span>
+
+                        <span>
+                            LIVE
+                        </span>
+
+                    </div>
+
+
+                    <h3>
+
+                        ${escapeHtml(
+                            story.title ||
+                            "Untitled story"
+                        )}
+
+                    </h3>
+
+
+                    <p>
+
+                        ${escapeHtml(
+                            story.summary ||
+                            ""
+                        )}
+
+                    </p>
+
+
+                    <div class="card-read">
+
+                        READ STORY →
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            grid.appendChild(
+                article
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// CONTINUOUS BREAKING NEWS TICKER
+// =====================================================
+
+function updateTicker(
+    stories
+) {
+
+    const ticker =
+        document.getElementById(
+            "ticker-text"
+        );
+
+
+    if (
+        !ticker ||
+        !stories ||
+        stories.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const headlines =
+        stories
+
+            .map(
+                function(story) {
+
+                    return story.title;
+
+                }
+            )
+
+            .filter(Boolean);
+
+
+    if (
+        headlines.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const headlineText =
+        headlines.join(
+            "   ◆   "
+        );
+
+
+    // Duplicate content so
+    // the ticker can loop continuously.
+    ticker.innerHTML =
+        escapeHtml(
+            headlineText +
+            "   ◆   " +
+            headlineText
+        );
+
+
+    ticker.classList.remove(
+        "ticker-moving"
+    );
+
+
+    // Force browser to restart animation
+    void ticker.offsetWidth;
+
+
+    ticker.classList.add(
+        "ticker-moving"
+    );
+
+}
+
+
+// =====================================================
+// UPDATE HERO
+// =====================================================
+
+function updateHero(
+    story
+) {
+
+    if (!story) {
+        return;
+    }
+
 
     const image =
-        document.getElementById("hero-image");
+        document.getElementById(
+            "hero-image"
+        );
+
 
     const category =
-        document.getElementById("hero-category");
+        document.getElementById(
+            "hero-category"
+        );
+
 
     const title =
-        document.getElementById("hero-title");
+        document.getElementById(
+            "hero-title"
+        );
+
 
     const summary =
-        document.getElementById("hero-summary");
+        document.getElementById(
+            "hero-summary"
+        );
 
 
     if (image) {
 
         image.src =
-            story.image;
+            story.image ||
+            "";
 
         image.alt =
-            story.title;
+            story.title ||
+            "";
 
     }
 
@@ -356,7 +1108,8 @@ function updateHero(story) {
     if (category) {
 
         category.textContent =
-            story.category;
+            story.category ||
+            currentCategory;
 
     }
 
@@ -364,7 +1117,8 @@ function updateHero(story) {
     if (title) {
 
         title.textContent =
-            story.title;
+            story.title ||
+            "";
 
     }
 
@@ -372,19 +1126,22 @@ function updateHero(story) {
     if (summary) {
 
         summary.textContent =
-            story.summary || "";
+            story.summary ||
+            "";
 
     }
 
 
     currentStoryUrl =
-        story.url || "";
+        story.url ||
+        "";
+
 
 }
 
 
 // =====================================================
-// OPEN ORIGINAL STORY
+// OPEN HERO STORY
 // =====================================================
 
 function openStory() {
@@ -393,13 +1150,14 @@ function openStory() {
 
         window.open(
             currentStoryUrl,
-            "_blank"
+            "_blank",
+            "noopener,noreferrer"
         );
 
     } else {
 
         alert(
-            "The full story link is not available."
+            "The original article link is not available."
         );
 
     }
@@ -408,10 +1166,76 @@ function openStory() {
 
 
 // =====================================================
-// SECURITY: ESCAPE API CONTENT
+// OPEN CARD STORY
 // =====================================================
 
-function escapeHtml(value) {
+function openCardStory(
+    url
+) {
+
+    if (!url) {
+        return;
+    }
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+
+}
+
+
+// =====================================================
+// REFRESH CURRENT CATEGORY
+// =====================================================
+
+function refreshCurrentCategory() {
+
+    loadCategory(
+        currentCategory
+    );
+
+}
+
+
+// =====================================================
+// UPDATE TIME
+// =====================================================
+
+function updateLastUpdated() {
+
+    const element =
+        document.getElementById(
+            "last-updated"
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        new Date().toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+}
+
+
+// =====================================================
+// ESCAPE API CONTENT
+// =====================================================
+
+function escapeHtml(
+    value
+) {
 
     if (!value) {
         return "";
@@ -446,6 +1270,55 @@ function escapeHtml(value) {
         );
 
 }
+
+
+// =====================================================
+// START WORLD NEWS
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const firstButton =
+            document.querySelector(
+                ".nav-button"
+            );
+
+
+        // If Flask already supplied
+        // stories, start the ticker.
+        if (
+            typeof {{ news|tojson }} !== "undefined"
+        ) {
+
+            const initialStories =
+                {{ news|tojson }};
+
+            if (
+                initialStories &&
+                initialStories.length
+            ) {
+
+                currentStories =
+                    initialStories;
+
+
+                updateTicker(
+                    initialStories
+                );
+
+
+                currentStoryUrl =
+                    initialStories[0].url ||
+                    "";
+
+            }
+
+        }
+
+    }
+);
 
 </script>
 
