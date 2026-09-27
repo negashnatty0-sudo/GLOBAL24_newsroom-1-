@@ -72,7 +72,6 @@ def init_db():
         )
     """)
 
-    # Add video column to older databases
     columns = [
         row["name"]
         for row in db.execute(
@@ -86,7 +85,6 @@ def init_db():
             "ALTER TABLE articles ADD COLUMN video TEXT"
         )
 
-    # Create default admin account
     admin = db.execute(
         "SELECT id FROM admins WHERE username = ?",
         ("admin",)
@@ -944,7 +942,7 @@ Notes:
         )
 
         response = client.models.generate_content(
-            model="gemini-3.8-flash",
+            model="gemini-3.5-flash-lite",
             contents=prompt
         )
 
