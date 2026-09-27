@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -23,16 +24,22 @@
 
     <style>
 
-        /* =====================================================
-           PAGE-SPECIFIC STYLES
-        ===================================================== */
-
-        .more-menu {
-            position: relative;
+        * {
+            box-sizing: border-box;
         }
 
-        .more-button {
-            cursor: pointer;
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        img,
+        video {
+            max-width: 100%;
         }
 
         .about-ceo {
@@ -41,22 +48,23 @@
         }
 
         .search-box {
+            width: 100%;
             max-width: 1200px;
-            margin: 20px auto 0;
+            margin: 20px auto;
             padding: 0 20px;
         }
 
         .search-box input {
             width: 100%;
-            padding: 13px 16px;
+            padding: 14px 16px;
             border: 1px solid #d5dbe3;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 9px;
+            font-size: 16px;
             outline: none;
         }
 
         .search-box input:focus {
-            border-color: #c9a227;
+            border-color: #d4af37;
         }
 
         .article-link {
@@ -66,24 +74,17 @@
 
         .loading {
             text-align: center;
-            padding: 50px;
+            padding: 50px 20px;
             color: #64748b;
         }
 
         .error-message {
+            margin: 20px;
+            padding: 20px;
             background: #fee2e2;
             color: #991b1b;
-            padding: 20px;
             border-radius: 10px;
             text-align: center;
-        }
-
-        .hero-summary {
-            margin-top: 14px;
-            font-size: 17px;
-            line-height: 1.6;
-            color: #475569;
-            max-width: 850px;
         }
 
         .empty {
@@ -94,32 +95,430 @@
 
         .empty h2,
         .empty h3 {
-            color: #1e293b;
+            color: #172033;
         }
 
-        .story-video {
+        /* =====================================================
+           IMAGE PLACEHOLDER
+        ===================================================== */
+
+        .news-image-placeholder {
             width: 100%;
-            max-width: 100%;
-            display: block;
-            border-radius: 10px;
-            margin-top: 15px;
+            height: 430px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #1c2b42
+                );
+
+            color: #d4af37;
+
+            font-size: 32px;
+            font-weight: 900;
+
+            letter-spacing: 2px;
         }
 
-        .content-preview {
-            margin-top: 12px;
-            line-height: 1.6;
+        .card-image-placeholder {
+            width: 100%;
+            height: 220px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #1c2b42
+                );
+
+            color: #d4af37;
+
+            font-size: 24px;
+            font-weight: 900;
+
+            letter-spacing: 1px;
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .hero {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 2fr)
+                minmax(280px, 1fr);
+
+            gap: 20px;
+        }
+
+        .hero-main {
+            width: 100%;
+            min-width: 0;
+
+            overflow: hidden;
+
+            background: #ffffff;
+
+            border-radius: 12px;
+        }
+
+        .hero-main > img {
+            width: 100%;
+            height: 430px;
+
+            display: block;
+
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .hero-content {
+            padding: 22px;
+        }
+
+        .hero-content h1 {
+            margin: 8px 0 12px;
+
+            color: #172033;
+
+            font-size: 34px;
+            line-height: 1.2;
+        }
+
+        .hero-summary {
+            margin-top: 14px;
+
             color: #475569;
+
+            font-size: 17px;
+            line-height: 1.65;
+        }
+
+        .category {
+            color: #b38d1d;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
+
+        .meta {
+            margin-top: 8px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+        /* =====================================================
+           SIDE STORIES
+        ===================================================== */
+
+        .hero-side {
+            width: 100%;
+            min-width: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 15px;
+        }
+
+        .side-story {
+            width: 100%;
+
+            display: grid;
+
+            grid-template-columns:
+                130px
+                minmax(0, 1fr);
+
+            gap: 12px;
+
+            overflow: hidden;
+
+            background: #ffffff;
+
+            border-radius: 10px;
+        }
+
+        .side-story img {
+            width: 130px;
+            height: 100px;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+        .side-story-content {
+            min-width: 0;
+            padding: 8px 10px 8px 0;
+        }
+
+        .side-story h3 {
+            margin: 5px 0 0;
+
+            color: #172033;
+
+            font-size: 17px;
+            line-height: 1.3;
+        }
+
+        .side-summary {
+            margin: 7px 0 0;
+
+            color: #64748b;
+
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        /* =====================================================
+           SINGLE STORY
+        ===================================================== */
+
+        .hero.single-story {
+            display: block;
+        }
+
+        .hero.single-story .hero-main {
+            width: 100%;
+        }
+
+        .hero.single-story .hero-main > img,
+        .hero.single-story .news-image-placeholder {
+            width: 100%;
+        }
+
+        /* =====================================================
+           LATEST NEWS
+        ===================================================== */
+
+        .news-grid {
+            width: 100%;
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 0 20px 40px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 20px;
+        }
+
+        .card {
+            width: 100%;
+            min-width: 0;
+
+            overflow: hidden;
+
+            background: #ffffff;
+
+            border-radius: 12px;
+        }
+
+        .card > img {
+            width: 100%;
+            height: 220px;
+
+            display: block;
+
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 18px;
+        }
+
+        .card-content h2 {
+            margin: 8px 0 10px;
+
+            color: #172033;
+
+            font-size: 21px;
+            line-height: 1.3;
+        }
+
+        .summary {
+            margin: 0;
+
+            color: #475569;
+
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
         }
 
         @media (max-width: 768px) {
 
+            body {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
             .search-box {
-                padding-left: 14px;
-                padding-right: 14px;
+                width: 100%;
+                padding: 0 14px;
+                margin: 16px auto;
+            }
+
+            .hero {
+                width: 100%;
+                max-width: 100%;
+
+                display: block;
+
+                padding: 0;
+                margin: 0;
+            }
+
+            .hero-main {
+                width: 100%;
+                border-radius: 0;
+            }
+
+            .hero-main > img,
+            .news-image-placeholder {
+                width: 100%;
+
+                height: 270px !important;
+                max-height: 270px !important;
+
+                object-fit: cover;
+            }
+
+            .hero-content {
+                width: 100%;
+
+                padding: 18px 16px 22px;
+            }
+
+            .hero-content h1 {
+                font-size: 27px;
+                line-height: 1.25;
             }
 
             .hero-summary {
                 font-size: 16px;
+                line-height: 1.6;
+            }
+
+            .hero-side {
+                width: 100%;
+
+                padding: 0 14px 20px;
+
+                margin-top: 15px;
+            }
+
+            .side-story {
+                grid-template-columns:
+                    105px
+                    minmax(0, 1fr);
+            }
+
+            .side-story img {
+                width: 105px;
+                height: 85px;
+            }
+
+            .side-story h3 {
+                font-size: 16px;
+            }
+
+            .news-grid {
+                width: 100%;
+                max-width: 100%;
+
+                padding:
+                    0 14px 30px;
+
+                grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+            .card {
+                width: 100%;
+            }
+
+            .card > img,
+            .card-image-placeholder {
+                height: 210px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .hero-main > img,
+            .news-image-placeholder {
+                height: 230px !important;
+                max-height: 230px !important;
+            }
+
+            .hero-content h1 {
+                font-size: 24px;
+            }
+
+            .hero-summary {
+                font-size: 15px;
+            }
+
+            .side-story {
+                grid-template-columns:
+                    90px
+                    minmax(0, 1fr);
+            }
+
+            .side-story img {
+                width: 90px;
+                height: 75px;
+            }
+
+            .card > img,
+            .card-image-placeholder {
+                height: 190px;
             }
 
         }
@@ -151,7 +550,6 @@
 
         </a>
 
-
         <div
             class="header-date"
             id="currentDate"
@@ -159,10 +557,6 @@
 
     </div>
 
-
-    <!-- =====================================================
-         NAVIGATION
-    ===================================================== -->
 
     <nav class="main-nav">
 
@@ -260,62 +654,56 @@
 
 
 
-<!-- =========================================================
-     MAIN CONTENT
-========================================================= -->
-
 <main>
 
 
-    <!-- =====================================================
-         TOP STORIES
-    ===================================================== -->
+<!-- =========================================================
+     TOP STORIES
+========================================================= -->
 
-    <section>
+<section>
 
-        <h2 class="section-title">
-            Top Stories
-        </h2>
+    <h2 class="section-title">
+        Top Stories
+    </h2>
 
+    <div
+        class="hero"
+        id="heroSection"
+    >
 
-        <div
-            class="hero"
-            id="heroSection"
-        >
-
-            <div class="loading">
-                Loading latest news...
-            </div>
-
+        <div class="loading">
+            Loading latest news...
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
 
-    <!-- =====================================================
-         LATEST NEWS
-    ===================================================== -->
+<!-- =========================================================
+     LATEST NEWS
+========================================================= -->
 
-    <section>
+<section>
 
-        <h2 class="section-title">
-            Latest News
-        </h2>
+    <h2 class="section-title">
+        Latest News
+    </h2>
 
+    <div
+        class="news-grid"
+        id="newsGrid"
+    >
 
-        <div
-            class="news-grid"
-            id="newsGrid"
-        >
-
-            <div class="loading">
-                Loading articles...
-            </div>
-
+        <div class="loading">
+            Loading articles...
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
 </main>
@@ -329,9 +717,6 @@
 <footer class="site-footer">
 
     <div class="footer-inner">
-
-
-        <!-- BRAND -->
 
         <div>
 
@@ -357,9 +742,6 @@
 
         </div>
 
-
-
-        <!-- SECTIONS -->
 
         <div>
 
@@ -394,9 +776,6 @@
         </div>
 
 
-
-        <!-- INFORMATION -->
-
         <div>
 
             <h3>
@@ -429,7 +808,6 @@
 
         </div>
 
-
     </div>
 
 
@@ -443,27 +821,13 @@
 
 
 
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-
 <script>
-
 
 /* =========================================================
    GLOBAL DATA
 ========================================================= */
 
 let articles = [];
-
-
-
-/* =========================================================
-   DEFAULT IMAGE
-========================================================= */
-
-const defaultImage =
-    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80";
 
 
 
@@ -501,7 +865,6 @@ function escapeHTML(text) {
         return "";
 
     }
-
 
     return String(text)
 
@@ -541,15 +904,11 @@ function escapeHTML(text) {
 function formatDate(date) {
 
     if (!date) {
-
         return "";
-
     }
-
 
     const parsed =
         new Date(date);
-
 
     if (
         isNaN(
@@ -560,7 +919,6 @@ function formatDate(date) {
         return "";
 
     }
-
 
     return parsed.toLocaleDateString(
         "en-GB",
@@ -582,29 +940,24 @@ function formatDate(date) {
 function getContentPreview(content) {
 
     if (!content) {
-
         return "";
-
     }
 
-
-    const cleanText =
+    const clean =
         String(content)
             .replace(/\s+/g, " ")
             .trim();
 
-
     if (
-        cleanText.length <= 220
+        clean.length <= 220
     ) {
 
-        return cleanText;
+        return clean;
 
     }
 
-
     return (
-        cleanText.substring(
+        clean.substring(
             0,
             220
         ) + "..."
@@ -615,21 +968,86 @@ function getContentPreview(content) {
 
 
 /* =========================================================
-   LOAD NEWS FROM FLASK
+   IMAGE HANDLING
+========================================================= */
+
+/*
+   IMPORTANT:
+
+   There is NO default newspaper image.
+
+   If the editor uploads an image,
+   the uploaded image is displayed.
+
+   If no image is uploaded,
+   GLOBAL24 placeholder is displayed.
+*/
+
+function createImage(
+    article,
+    className = ""
+) {
+
+    if (
+        article &&
+        article.image &&
+        article.image.trim() !== ""
+    ) {
+
+        return `
+
+            <img
+
+                class="${className}"
+
+                src="${escapeHTML(
+                    article.image
+                )}"
+
+                alt="${escapeHTML(
+                    article.headline ||
+                    "GLOBAL24 news"
+                )}"
+
+                loading="lazy"
+
+            >
+
+        `;
+
+    }
+
+
+    return `
+
+        <div
+            class="${className} news-image-placeholder"
+            aria-label="GLOBAL24 image placeholder"
+        >
+
+            GLOBAL24
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   LOAD NEWS
 ========================================================= */
 
 async function loadNews() {
-
 
     const params =
         new URLSearchParams(
             window.location.search
         );
 
-
     const category =
         params.get("category");
-
 
     let url =
         "/api/articles";
@@ -647,7 +1065,6 @@ async function loadNews() {
 
 
     try {
-
 
         const response =
             await fetch(
@@ -706,9 +1123,8 @@ async function loadNews() {
 
     catch (error) {
 
-
         console.error(
-            "GLOBAL24 news error:",
+            "GLOBAL24 error:",
             error
         );
 
@@ -746,7 +1162,6 @@ async function loadNews() {
 
 function renderBreakingNews() {
 
-
     const breaking =
         articles.filter(
             article =>
@@ -778,18 +1193,17 @@ function renderBreakingNews() {
     document.getElementById(
         "breakingText"
     ).textContent =
-        breaking[0].headline;
+        breaking[0].headline || "";
 
 }
 
 
 
 /* =========================================================
-   HERO SECTION
+   HERO
 ========================================================= */
 
 function renderHero() {
-
 
     const hero =
         document.getElementById(
@@ -801,6 +1215,10 @@ function renderHero() {
         !articles.length
     ) {
 
+        hero.classList.remove(
+            "single-story"
+        );
+
 
         hero.innerHTML = `
 
@@ -811,8 +1229,7 @@ function renderHero() {
                 </h2>
 
                 <p>
-                    Articles published from
-                    the GLOBAL24 admin dashboard
+                    Published GLOBAL24 stories
                     will appear here.
                 </p>
 
@@ -820,23 +1237,14 @@ function renderHero() {
 
         `;
 
-
         return;
 
     }
 
 
-    /* -----------------------------------------------------
-       MAIN STORY
-    ----------------------------------------------------- */
-
     const main =
         articles[0];
 
-
-    /* -----------------------------------------------------
-       SIDE STORIES
-    ----------------------------------------------------- */
 
     const side =
         articles.slice(
@@ -845,37 +1253,37 @@ function renderHero() {
         );
 
 
-    /* -----------------------------------------------------
-       MAIN STORY IMAGE
-    ----------------------------------------------------- */
+    /* ---------------------------------------------
+       SINGLE STORY LAYOUT
+    --------------------------------------------- */
 
-    const mainImage =
-        main.image ||
-        defaultImage;
+    hero.classList.toggle(
+        "single-story",
+        side.length === 0
+    );
 
 
-    /* -----------------------------------------------------
-       HERO HTML
-    ----------------------------------------------------- */
+    const mainSummary =
+        main.summary ||
+        getContentPreview(
+            main.content
+        );
+
+
+    /* ---------------------------------------------
+       HERO
+    --------------------------------------------- */
 
     hero.innerHTML = `
 
         <article class="hero-main">
 
 
-            <img
-
-                src="${escapeHTML(
-                    mainImage
-                )}"
-
-                alt="${escapeHTML(
-                    main.headline
-                )}"
-
-                loading="eager"
-
-            >
+            ${
+                createImage(
+                    main
+                )
+            }
 
 
             <div class="hero-content">
@@ -894,7 +1302,8 @@ function renderHero() {
                 <h1>
 
                     ${escapeHTML(
-                        main.headline
+                        main.headline ||
+                        "GLOBAL24"
                     )}
 
                 </h1>
@@ -917,7 +1326,7 @@ function renderHero() {
 
 
                 ${
-                    main.summary
+                    mainSummary
 
                     ?
 
@@ -926,27 +1335,7 @@ function renderHero() {
                     <p class="hero-summary">
 
                         ${escapeHTML(
-                            main.summary
-                        )}
-
-                    </p>
-
-                    `
-
-                    :
-
-                    main.content
-
-                    ?
-
-                    `
-
-                    <p class="hero-summary">
-
-                        ${escapeHTML(
-                            getContentPreview(
-                                main.content
-                            )
+                            mainSummary
                         )}
 
                     </p>
@@ -966,124 +1355,109 @@ function renderHero() {
         </article>
 
 
+        ${
+            side.length
 
-        <div class="hero-side">
+            ?
 
+            `
 
-            ${
-                side.length
+            <div class="hero-side">
 
-                ?
+                ${
+                    side.map(
+                        article => {
 
-                side.map(
-                    article => `
+                            const summary =
+                                article.summary ||
+                                getContentPreview(
+                                    article.content
+                                );
 
-                        <article
-                            class="side-story"
-                        >
+                            return `
 
-
-                            <img
-
-                                src="${escapeHTML(
-                                    article.image ||
-                                    defaultImage
-                                )}"
-
-                                alt="${escapeHTML(
-                                    article.headline
-                                )}"
-
-                                loading="lazy"
-
-                            >
-
-
-                            <div>
-
-
-                                <span
-                                    class="category"
+                                <article
+                                    class="side-story"
                                 >
 
-                                    ${escapeHTML(
-                                        article.category ||
-                                        "GLOBAL24"
-                                    )}
-
-                                </span>
-
-
-                                <h3>
-
-                                    ${escapeHTML(
-                                        article.headline
-                                    )}
-
-                                </h3>
+                                    ${
+                                        createImage(
+                                            article
+                                        )
+                                    }
 
 
-                                ${
-                                    article.summary
+                                    <div
+                                        class="side-story-content"
+                                    >
 
-                                    ?
+                                        <span
+                                            class="category"
+                                        >
 
-                                    `
+                                            ${escapeHTML(
+                                                article.category ||
+                                                "GLOBAL24"
+                                            )}
 
-                                    <p class="content-preview">
-
-                                        ${escapeHTML(
-                                            article.summary
-                                        )}
-
-                                    </p>
-
-                                    `
-
-                                    :
-
-                                    ""
-
-                                }
+                                        </span>
 
 
-                            </div>
+                                        <h3>
+
+                                            ${escapeHTML(
+                                                article.headline ||
+                                                ""
+                                            )}
+
+                                        </h3>
 
 
-                        </article>
+                                        ${
+                                            summary
 
-                    `
-                ).join("")
+                                            ?
 
+                                            `
 
-                :
+                                            <p
+                                                class="side-summary"
+                                            >
 
-                `
+                                                ${escapeHTML(
+                                                    summary
+                                                )}
 
-                    <div
-                        style="
-                            padding:25px;
-                            color:#64748b;
-                        "
-                    >
+                                            </p>
 
-                        <strong>
-                            Latest GLOBAL24 story
-                        </strong>
+                                            `
 
-                        <p>
-                            More stories will appear
-                            here as they are published.
-                        </p>
+                                            :
 
-                    </div>
+                                            ""
 
-                `
+                                        }
 
-            }
+                                    </div>
 
+                                </article>
 
-        </div>
+                            `;
+
+                        }
+                    ).join("")
+
+                }
+
+            </div>
+
+            `
+
+            :
+
+            ""
+
+        }
 
     `;
 
@@ -1092,13 +1466,12 @@ function renderHero() {
 
 
 /* =========================================================
-   LATEST NEWS GRID
+   LATEST NEWS
 ========================================================= */
 
 function renderNewsGrid(
     filteredArticles = null
 ) {
-
 
     const grid =
         document.getElementById(
@@ -1112,23 +1485,9 @@ function renderNewsGrid(
             : articles;
 
 
-    /*
-       IMPORTANT:
-
-       We do NOT use source.slice(1).
-
-       This means the newest article also
-       appears in Latest News.
-    */
-
-    const gridArticles =
-        source;
-
-
     if (
         !source.length
     ) {
-
 
         grid.innerHTML = `
 
@@ -1138,15 +1497,9 @@ function renderNewsGrid(
                     No news articles found.
                 </h3>
 
-                <p>
-                    Published GLOBAL24 stories
-                    will appear here.
-                </p>
-
             </div>
 
         `;
-
 
         return;
 
@@ -1155,34 +1508,64 @@ function renderNewsGrid(
 
     grid.innerHTML =
 
-        gridArticles
+        source
             .map(
                 article => {
 
-
-                    const image =
-                        article.image ||
-                        defaultImage;
+                    const summary =
+                        article.summary ||
+                        getContentPreview(
+                            article.content
+                        );
 
 
                     return `
 
-                        <article class="card">
+                        <article
+                            class="card"
+                        >
 
 
-                            <img
+                            ${
+                                article.image &&
+                                article.image.trim() !== ""
 
-                                src="${escapeHTML(
-                                    image
-                                )}"
+                                ?
 
-                                alt="${escapeHTML(
-                                    article.headline
-                                )}"
+                                `
 
-                                loading="lazy"
+                                <img
 
-                            >
+                                    src="${escapeHTML(
+                                        article.image
+                                    )}"
+
+                                    alt="${escapeHTML(
+                                        article.headline ||
+                                        "GLOBAL24 news"
+                                    )}"
+
+                                    loading="lazy"
+
+                                >
+
+                                `
+
+                                :
+
+                                `
+
+                                <div
+                                    class="card-image-placeholder"
+                                >
+
+                                    GLOBAL24
+
+                                </div>
+
+                                `
+
+                            }
 
 
                             <div
@@ -1211,7 +1594,8 @@ function renderNewsGrid(
                                     >
 
                                         ${escapeHTML(
-                                            article.headline
+                                            article.headline ||
+                                            ""
                                         )}
 
                                     </a>
@@ -1220,7 +1604,7 @@ function renderNewsGrid(
 
 
                                 ${
-                                    article.summary
+                                    summary
 
                                     ?
 
@@ -1231,29 +1615,7 @@ function renderNewsGrid(
                                     >
 
                                         ${escapeHTML(
-                                            article.summary
-                                        )}
-
-                                    </p>
-
-                                    `
-
-                                    :
-
-                                    article.content
-
-                                    ?
-
-                                    `
-
-                                    <p
-                                        class="summary"
-                                    >
-
-                                        ${escapeHTML(
-                                            getContentPreview(
-                                                article.content
-                                            )
+                                            summary
                                         )}
 
                                     </p>
@@ -1312,16 +1674,11 @@ document
         "input",
         function() {
 
-
             const query =
                 this.value
                     .trim()
                     .toLowerCase();
 
-
-            /* ---------------------------------------------
-               EMPTY SEARCH
-            --------------------------------------------- */
 
             if (!query) {
 
@@ -1334,21 +1691,15 @@ document
             }
 
 
-            /* ---------------------------------------------
-               SEARCH ARTICLES
-            --------------------------------------------- */
-
             const results =
                 articles.filter(
                     article => {
-
 
                         const text =
 
                             (
                                 article.headline ||
                                 ""
-
                             ) +
 
                             " " +
@@ -1356,7 +1707,6 @@ document
                             (
                                 article.summary ||
                                 ""
-
                             ) +
 
                             " " +
@@ -1364,7 +1714,6 @@ document
                             (
                                 article.content ||
                                 ""
-
                             ) +
 
                             " " +
@@ -1372,7 +1721,6 @@ document
                             (
                                 article.category ||
                                 ""
-
                             ) +
 
                             " " +
@@ -1380,7 +1728,6 @@ document
                             (
                                 article.author ||
                                 ""
-
                             );
 
 
@@ -1394,14 +1741,9 @@ document
                 );
 
 
-            /* ---------------------------------------------
-               DISPLAY SEARCH RESULTS
-            --------------------------------------------- */
-
             renderNewsGrid(
                 results
             );
-
 
         }
     );
@@ -1412,14 +1754,6 @@ document
    AUTOMATIC REFRESH
 ========================================================= */
 
-/*
-   Refresh the news every 60 seconds.
-
-   This means when you publish a new story
-   from the admin dashboard, the homepage
-   can automatically pick it up.
-*/
-
 setInterval(
     loadNews,
     60000
@@ -1428,11 +1762,10 @@ setInterval(
 
 
 /* =========================================================
-   START GLOBAL24
+   START
 ========================================================= */
 
 loadNews();
-
 
 </script>
 
