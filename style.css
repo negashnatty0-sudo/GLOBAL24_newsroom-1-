@@ -1,345 +1,354 @@
-/* =========================================
-   GLOBAL24 NEWS — GLOBAL NEWSROOM DESIGN
-   ========================================= */
+/* =========================================================
+   GLOBAL24 MOBILE RESPONSIVE FIX
+   ========================================================= */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
+/* Prevent horizontal scrolling */
+html,
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #07111f;
-    color: #ffffff;
-    line-height: 1.5;
-}
-
-/* =========================================
-   HEADER
-   ========================================= */
-
-header {
-    min-height: 78px;
-    padding: 0 5%;
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    background: #050b14;
-    border-bottom: 1px solid #243247;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    white-space: nowrap;
-}
-
-.logo span {
-    color: #e8b84a;
-}
-
-.main-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    flex: 1;
-    overflow-x: auto;
-}
-
-.main-nav button {
-    border: 0;
-    background: transparent;
-    color: #d8e0ea;
-    padding: 12px 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    border-radius: 6px;
-    transition: 0.2s ease;
-}
-
-.main-nav button:hover {
-    background: #172437;
-    color: #e8b84a;
-}
-
-.admin {
-    color: #ffffff;
-    text-decoration: none;
-    border: 1px solid #e8b84a;
-    padding: 9px 15px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
-.admin:hover {
-    background: #e8b84a;
-    color: #07111f;
-}
-
-/* =========================================
-   BREAKING NEWS
-   ========================================= */
-
-.ticker {
-    min-height: 42px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 0 5%;
-    background: #101b2b;
-    border-bottom: 1px solid #26364c;
-}
-
-.ticker b {
-    background: #d7263d;
-    padding: 5px 9px;
-    border-radius: 3px;
-    font-size: 11px;
-    letter-spacing: 0.8px;
-}
-
-.ticker span {
-    color: #cbd5e1;
-    font-size: 13px;
-}
-
-/* =========================================
-   MAIN
-   ========================================= */
-
-main {
-    width: min(1400px, 90%);
-    margin: 35px auto 70px;
-}
-
-/* =========================================
-   HERO / COVER
-   ========================================= */
-
-.hero {
-    min-height: 470px;
-    display: grid;
-    grid-template-columns: 1.35fr 1fr;
-    background: #0d1828;
-    border: 1px solid #26364c;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-}
-
-.hero > img {
     width: 100%;
-    height: 100%;
-    min-height: 470px;
-    object-fit: cover;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
-.hero > div {
-    padding: 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+/* Make every element respect the screen width */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-.hero label {
-    color: #e8b84a;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
+/* Images and media */
+img,
+video {
+    max-width: 100%;
+    height: auto;
 }
 
-.hero h1 {
-    font-size: clamp(30px, 4vw, 56px);
-    line-height: 1.05;
-    margin-bottom: 20px;
+/* Main containers */
+.site-header,
+main,
+.admin-container,
+.site-footer,
+.footer-container {
+    max-width: 100%;
 }
 
-.hero p {
-    color: #aebdce;
-    font-size: 17px;
-    margin-bottom: 28px;
-}
-
-.hero button {
-    width: fit-content;
-    border: 0;
-    background: #e8b84a;
-    color: #07111f;
-    padding: 13px 20px;
-    border-radius: 6px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.hero button:hover {
-    transform: translateY(-2px);
-}
-
-/* =========================================
-   SECTION TITLE
-   ========================================= */
-
-h2 {
-    margin: 45px 0 20px;
-    font-size: 28px;
-    border-left: 4px solid #e8b84a;
-    padding-left: 12px;
-}
-
-/* =========================================
-   NEWS GRID
-   ========================================= */
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.grid article {
-    background: #0d1828;
-    border: 1px solid #26364c;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.grid article:hover {
-    transform: translateY(-5px);
-    border-color: #e8b84a;
-}
-
-.grid article img {
-    display: block;
-    width: 100%;
-    height: 210px;
-    object-fit: cover;
-}
-
-.grid article small {
-    display: block;
-    color: #e8b84a;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.3px;
-    margin: 18px 20px 7px;
-}
-
-.grid article h3 {
-    font-size: 20px;
-    line-height: 1.2;
-    margin: 0 20px 10px;
-}
-
-.grid article p {
-    color: #9eacbd;
-    font-size: 14px;
-    margin: 0 20px 22px;
-}
-
-/* =========================================
-   FOOTER
-   ========================================= */
-
-footer {
-    text-align: center;
-    padding: 30px 5%;
-    background: #050b14;
-    border-top: 1px solid #243247;
-    color: #8493a7;
-    font-size: 12px;
-}
-
-footer a {
-    color: #e8b84a;
-    text-decoration: none;
-}
-
-/* =========================================
+/* =========================================================
    MOBILE
-   ========================================= */
+   ========================================================= */
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
 
-    header {
-        flex-wrap: wrap;
-        padding: 15px 4%;
-        gap: 12px;
-    }
-
-    .main-nav {
-        order: 3;
+    body {
         width: 100%;
-        justify-content: flex-start;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
     }
 
-    .hero {
-        grid-template-columns: 1fr;
+    /* Header */
+    .site-header {
+        width: 100%;
+        overflow: hidden;
     }
 
-    .hero > img {
-        min-height: 280px;
-        max-height: 350px;
-    }
-
-    .hero > div {
-        padding: 30px;
-    }
-
-    .grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 600px) {
-
-    main {
-        width: 94%;
-        margin-top: 20px;
+    .header-top {
+        width: 100%;
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
 
     .logo {
-        font-size: 21px;
+        font-size: 30px;
+        line-height: 1.1;
     }
 
-    .admin {
-        padding: 7px 10px;
+    .site-tagline {
+        font-size: 12px;
     }
 
-    .ticker {
-        padding: 0 3%;
+    /* Navigation */
+    .main-nav {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .hero h1 {
-        font-size: 32px;
+    .nav-inner {
+        width: max-content;
+        min-width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0;
     }
 
-    .hero > div {
-        padding: 24px;
+    .nav-inner a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 14px 15px;
+        font-size: 13px;
     }
 
-    .grid {
+    /* Breaking news bar */
+    .breaking-bar {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .breaking-bar-inner {
+        width: 100%;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Main page */
+    main {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container,
+    .content-container,
+    .page-container {
+        width: 100%;
+        max-width: 100%;
+        padding-left: 14px;
+        padding-right: 14px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Search */
+    .search-section,
+    .search-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px;
+    }
+
+    .search-section input,
+    .search-container input {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Top stories */
+    .top-stories,
+    .hero-section,
+    .hero-grid,
+    .news-grid,
+    .articles-grid {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .hero-grid,
+    .news-grid,
+    .articles-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Hero article */
+    .hero-card,
+    .featured-story {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .hero-card img,
+    .featured-story img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* Article cards */
+    .news-card,
+    .article-card {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .news-card img,
+    .article-card img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Article page */
+    .article-page,
+    .article-container,
+    .article-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .article-title {
+        font-size: 28px;
+        line-height: 1.2;
+        word-break: normal;
+    }
+
+    .article-content p {
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    /* Article image */
+    .article-image,
+    .article-hero-image {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Footer */
+    .site-footer {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .footer-container {
+        width: 100%;
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 30px 18px;
+    }
+
+    .footer-column {
+        width: 100%;
+    }
+
+    /* Tables */
+    table {
+        max-width: 100%;
+    }
+
+    .article-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* Forms */
+    input,
+    textarea,
+    select,
+    button {
+        max-width: 100%;
+    }
+
+    /* Admin */
+    .admin-container {
+        width: 100%;
+        padding: 15px;
+        margin: 0;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .admin-form-grid {
         grid-template-columns: 1fr;
     }
 
-    .grid article img {
-        height: 220px;
+    .admin-form-full {
+        grid-column: 1 / -1;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .admin-panel {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .header-top {
+        padding: 18px 14px;
+    }
+
+    .logo {
+        font-size: 27px;
+    }
+
+    .nav-inner a {
+        padding: 13px 12px;
+        font-size: 12px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .article-title {
+        font-size: 24px;
+    }
+
+    .article-content p {
+        font-size: 16px;
+    }
+
+    .footer-container {
+        padding: 25px 14px;
+    }
+
+}
+
+
+/* =========================================================
+   STOP FIXED WIDTH ELEMENTS FROM BREAKING MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    [style*="width: 100vw"],
+    [style*="width:100vw"] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    [style*="min-width"] {
+        max-width: 100%;
+    }
+
+    iframe {
+        max-width: 100%;
     }
 
 }
