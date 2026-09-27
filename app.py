@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from pathlib import Path
-from openai import OpenAI
+from google import genai
 import cloudinary
 import cloudinary.uploader
 import sqlite3
@@ -45,6 +45,7 @@ def get_db():
 
 
 def init_db():
+
     db = get_db()
 
     db.execute("""
@@ -71,7 +72,7 @@ def init_db():
         )
     """)
 
-    # Add video column if an older database does not have it
+    # Add video column to older databases
     columns = [
         row["name"]
         for row in db.execute(
@@ -80,17 +81,19 @@ def init_db():
     ]
 
     if "video" not in columns:
+
         db.execute(
             "ALTER TABLE articles ADD COLUMN video TEXT"
         )
 
-    # Create default admin account if none exists
+    # Create default admin account
     admin = db.execute(
         "SELECT id FROM admins WHERE username = ?",
         ("admin",)
     ).fetchone()
 
     if admin is None:
+
         db.execute(
             """
             INSERT INTO admins
@@ -134,6 +137,7 @@ def admin_required(function):
 
 @app.route("/")
 def home():
+
     return render_template("index.html")
 
 
@@ -141,6 +145,7 @@ def home():
 def login_page():
 
     if session.get("admin_logged_in"):
+
         return redirect("/admin")
 
     return render_template("login.html")
@@ -150,6 +155,7 @@ def login_page():
 def admin_page():
 
     if not session.get("admin_logged_in"):
+
         return redirect("/login")
 
     return render_template("admin.html")
@@ -162,10 +168,19 @@ def admin_page():
 @app.route("/api/login", methods=["POST"])
 def login():
 
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(
+        silent=True
+    ) or {}
 
-    username = data.get("username", "").strip()
-    password = data.get("password", "")
+    username = data.get(
+        "username",
+        ""
+    ).strip()
+
+    password = data.get(
+        "password",
+        ""
+    )
 
     if not username or not password:
 
@@ -242,7 +257,9 @@ def current_admin():
 
     return jsonify({
         "logged_in": True,
-        "username": session.get("admin_username")
+        "username": session.get(
+            "admin_username"
+        )
     })
 
 
@@ -253,7 +270,9 @@ def current_admin():
 @app.route("/api/articles")
 def get_articles():
 
-    category = request.args.get("category")
+    category = request.args.get(
+        "category"
+    )
 
     db = get_db()
 
@@ -283,9 +302,13 @@ def get_articles():
 
     db.close()
 
-    articles = [dict(row) for row in rows]
+    articles = [
+        dict(row)
+        for row in rows
+    ]
 
     for article in articles:
+
         article["breaking"] = bool(
             article["breaking"]
         )
@@ -316,9 +339,13 @@ def admin_articles():
 
     db.close()
 
-    articles = [dict(row) for row in rows]
+    articles = [
+        dict(row)
+        for row in rows
+    ]
 
     for article in articles:
+
         article["breaking"] = bool(
             article["breaking"]
         )
@@ -333,7 +360,10 @@ def admin_articles():
 # MEDIA UPLOAD
 # =========================================================
 
-@app.route("/api/admin/upload", methods=["POST"])
+@app.route(
+    "/api/admin/upload",
+    methods=["POST"]
+)
 @admin_required
 def upload_media():
 
@@ -370,11 +400,15 @@ def upload_media():
         ".m4v"
     )
 
-    if filename.endswith(image_extensions):
+    if filename.endswith(
+        image_extensions
+    ):
 
         resource_type = "image"
 
-    elif filename.endswith(video_extensions):
+    elif filename.endswith(
+        video_extensions
+    ):
 
         resource_type = "video"
 
@@ -407,8 +441,12 @@ def upload_media():
         return jsonify({
             "success": True,
             "type": resource_type,
-            "url": result.get("secure_url"),
-            "public_id": result.get("public_id")
+            "url": result.get(
+                "secure_url"
+            ),
+            "public_id": result.get(
+                "public_id"
+            )
         })
 
     except Exception:
@@ -777,7 +815,7 @@ def admin_stats():
 
 
 # =========================================================
-# AI NEWS ASSISTANT
+# GEMINI AI NEWS ASSISTANT
 # =========================================================
 
 @app.route(
@@ -788,14 +826,14 @@ def admin_stats():
 def ai_assistant():
 
     api_key = os.environ.get(
-        "OPENAI_API_KEY"
+        "GEMINI_API_KEY"
     )
 
     if not api_key:
 
         return jsonify({
             "success": False,
-            "error": "OPENAI_API_KEY is not configured."
+            "error": "GEMINI_API_KEY is not configured."
         }), 500
 
     data = request.get_json(
@@ -822,7 +860,7 @@ def ai_assistant():
     instructions = """
 You are the GLOBAL24 newsroom writing assistant.
 
-Help a human editor prepare news content.
+Help a human editor prepare professional news content.
 
 Rules:
 - Do not invent facts.
@@ -830,12 +868,15 @@ Rules:
 - Do not present guesses as facts.
 - Use only information supplied by the editor.
 - Write clear professional newsroom English.
+- Keep factual claims faithful to the supplied material.
 - The human editor must review the result before publication.
 """
 
     if action == "headline":
 
         prompt = f"""
+{instructions}
+
 Suggest 5 clear and factual news headlines
 based only on this material:
 
@@ -845,6 +886,8 @@ based only on this material:
     elif action == "summary":
 
         prompt = f"""
+{instructions}
+
 Write a concise news summary based only
 on this material:
 
@@ -854,6 +897,8 @@ on this material:
     elif action == "rewrite":
 
         prompt = f"""
+{instructions}
+
 Rewrite this material in professional
 news style without adding facts:
 
@@ -863,6 +908,8 @@ news style without adding facts:
     elif action == "translate":
 
         prompt = f"""
+{instructions}
+
 Translate the following material into
 clear English without adding facts:
 
@@ -872,7 +919,10 @@ clear English without adding facts:
     else:
 
         prompt = f"""
-Create a news article draft from these notes.
+{instructions}
+
+Create a professional news article draft
+from these notes.
 
 Include:
 
@@ -880,7 +930,7 @@ Include:
 2. Summary
 3. Article body
 
-Do not add facts that aren't supplied.
+Do not add facts that are not supplied.
 
 Notes:
 
@@ -889,30 +939,38 @@ Notes:
 
     try:
 
-        client = OpenAI(
+        client = genai.Client(
             api_key=api_key
         )
 
-        response = client.responses.create(
-            model="gpt-5.6-luna",
-            instructions=instructions,
-            input=prompt
+        response = client.models.generate_content(
+            model="gemini-3.8-flash",
+            contents=prompt
         )
+
+        result = response.text
+
+        if not result:
+
+            return jsonify({
+                "success": False,
+                "error": "Gemini returned an empty response."
+            }), 500
 
         return jsonify({
             "success": True,
-            "result": response.output_text
+            "result": result
         })
 
     except Exception as e:
 
         app.logger.exception(
-            "AI request failed"
+            "Gemini AI request failed"
         )
 
         return jsonify({
             "success": False,
-            "error": f"AI request failed: {str(e)}"
+            "error": f"Gemini request failed: {str(e)}"
         }), 500
 
 
