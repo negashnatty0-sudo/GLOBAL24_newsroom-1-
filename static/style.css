@@ -1,6 +1,6 @@
 /* =========================================================
    GLOBAL24 — COMPLETE STYLE SHEET
-   ========================================================= */
+========================================================= */
 
 
 /* =========================================================
@@ -40,6 +40,7 @@ body {
 img,
 video {
     max-width: 100%;
+    height: auto;
 }
 
 button,
@@ -56,10 +57,6 @@ select {
 
 a {
     color: inherit;
-}
-
-a:hover {
-    text-decoration: none;
 }
 
 
@@ -90,7 +87,6 @@ a:hover {
     font-size: 38px;
     font-weight: 900;
     line-height: 1;
-
     letter-spacing: -1.5px;
 }
 
@@ -111,14 +107,20 @@ a:hover {
 
 .main-nav {
     width: 100%;
+
     background: #0b1728;
-    border-top: 1px solid rgba(255,255,255,.08);
-    border-bottom: 1px solid rgba(255,255,255,.08);
+
+    border-top:
+        1px solid rgba(255,255,255,.08);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.08);
 }
 
 .nav-inner {
     width: 100%;
     max-width: 1400px;
+
     margin: 0 auto;
 
     display: flex;
@@ -140,6 +142,7 @@ a:hover {
     padding: 15px 17px;
 
     color: #e2e8f0;
+
     text-decoration: none;
 
     font-size: 14px;
@@ -164,6 +167,7 @@ a:hover {
 
 .breaking-news {
     width: 100%;
+
     background: #d4af37;
     color: #07111f;
 }
@@ -171,6 +175,7 @@ a:hover {
 .breaking-inner {
     width: 100%;
     max-width: 1400px;
+
     margin: 0 auto;
 
     min-height: 42px;
@@ -179,6 +184,7 @@ a:hover {
 
     display: flex;
     align-items: center;
+
     gap: 15px;
 
     overflow: hidden;
@@ -189,6 +195,7 @@ a:hover {
 
     font-size: 13px;
     font-weight: 900;
+
     letter-spacing: .8px;
 }
 
@@ -196,6 +203,7 @@ a:hover {
     min-width: 0;
 
     overflow: hidden;
+
     white-space: nowrap;
     text-overflow: ellipsis;
 
@@ -224,20 +232,19 @@ a:hover {
 
     background: #ffffff;
 
-    border: 1px solid #d5dbe3;
+    border:
+        1px solid #d5dbe3;
+
     border-radius: 10px;
 
     color: #172033;
+
     font-size: 16px;
 
     outline: none;
 
     box-shadow:
         0 2px 8px rgba(15,23,42,.04);
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
 }
 
 .search-box input:focus {
@@ -424,9 +431,6 @@ main {
     background: #ffffff;
 
     border-radius: 10px;
-
-    box-shadow:
-        0 4px 14px rgba(15,23,42,.06);
 }
 
 .side-story img {
@@ -464,13 +468,8 @@ main {
 
 
 /* =========================================================
-   SINGLE STORY HERO
+   SINGLE STORY
 ========================================================= */
-
-/*
-   When a category has only one article,
-   the JavaScript adds .single-story.
-*/
 
 .hero.single-story {
     display: block;
@@ -480,7 +479,8 @@ main {
     width: 100%;
 }
 
-.hero.single-story .hero-main > img {
+.hero.single-story .hero-main > img,
+.hero.single-story .news-image-placeholder {
     width: 100%;
     height: 500px;
 
@@ -489,11 +489,13 @@ main {
 
 
 /* =========================================================
-   IMAGE PLACEHOLDERS
+   GLOBAL24 IMAGE PLACEHOLDER
 ========================================================= */
 
-.news-image-placeholder,
-.card-image-placeholder {
+.news-image-placeholder {
+    width: 100%;
+    height: 430px;
+
     display: flex;
 
     align-items: center;
@@ -508,28 +510,39 @@ main {
 
     color: #d4af37;
 
+    font-size: 34px;
     font-weight: 900;
 
-    letter-spacing: 1.5px;
-}
-
-.news-image-placeholder {
-    width: 100%;
-    height: 430px;
-
-    font-size: 34px;
+    letter-spacing: 2px;
 }
 
 .card-image-placeholder {
     width: 100%;
     height: 220px;
 
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #07111f,
+            #1b2b43
+        );
+
+    color: #d4af37;
+
     font-size: 24px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
 }
 
 
 /* =========================================================
-   LATEST NEWS GRID
+   LATEST NEWS
 ========================================================= */
 
 .news-grid {
@@ -597,6 +610,7 @@ main {
 
 .article-link {
     color: inherit;
+
     text-decoration: none;
 }
 
@@ -611,7 +625,7 @@ main {
 
 
 /* =========================================================
-   EMPTY / LOADING
+   LOADING / EMPTY
 ========================================================= */
 
 .loading {
@@ -750,7 +764,7 @@ main {
 
 
 /* =========================================================
-   ADMIN PAGE
+   ADMIN
 ========================================================= */
 
 .admin-container {
@@ -787,11 +801,6 @@ main {
     color: #64748b;
 }
 
-
-/* =========================================================
-   ADMIN PANELS
-========================================================= */
-
 .admin-panel {
     width: 100%;
 
@@ -815,7 +824,7 @@ main {
 
 
 /* =========================================================
-   STATS
+   ADMIN STATS
 ========================================================= */
 
 .stats-grid {
@@ -942,20 +951,11 @@ button,
     font-weight: 800;
 
     cursor: pointer;
-
-    transition:
-        opacity .2s ease,
-        transform .2s ease;
 }
 
 button:hover,
 .btn:hover {
     opacity: .9;
-}
-
-button:active,
-.btn:active {
-    transform: translateY(1px);
 }
 
 
@@ -1046,20 +1046,6 @@ th {
 
 
 /* =========================================================
-   MEDIA
-========================================================= */
-
-video {
-    max-width: 100%;
-    height: auto;
-}
-
-iframe {
-    max-width: 100%;
-}
-
-
-/* =========================================================
    TABLET
 ========================================================= */
 
@@ -1076,7 +1062,8 @@ iframe {
             minmax(240px,1fr);
     }
 
-    .hero-main > img {
+    .hero-main > img,
+    .hero-main > .news-image-placeholder {
         height: 380px;
     }
 
@@ -1201,8 +1188,7 @@ iframe {
         margin: 24px 0 15px;
 
         padding:
-            0 14px
-            0 24px;
+            0 14px 0 24px;
 
         font-size: 27px;
     }
@@ -1236,27 +1222,22 @@ iframe {
         box-shadow: none;
     }
 
-    .hero-main > img {
+    .hero-main > img,
+    .hero-main > .news-image-placeholder {
         width: 100%;
 
-        height: 270px !important;
-        max-height: 270px !important;
+        height: 190px !important;
+        max-height: 190px !important;
 
         object-fit: cover;
 
         display: block;
     }
 
-    .news-image-placeholder {
-        width: 100%;
-
-        height: 270px !important;
-        max-height: 270px !important;
-    }
-
-    .hero.single-story .hero-main > img {
-        height: 270px !important;
-        max-height: 270px !important;
+    .hero.single-story .hero-main > img,
+    .hero.single-story .hero-main > .news-image-placeholder {
+        height: 190px !important;
+        max-height: 190px !important;
     }
 
     .hero-content {
@@ -1295,8 +1276,6 @@ iframe {
         grid-template-columns:
             105px
             minmax(0,1fr);
-
-        border-radius: 10px;
     }
 
     .side-story img {
@@ -1304,16 +1283,12 @@ iframe {
         height: 85px;
     }
 
-    .side-story-content {
-        padding-right: 8px;
-    }
-
     .side-story h3 {
         font-size: 16px;
     }
 
 
-    /* NEWS */
+    /* LATEST NEWS */
 
     .news-grid {
         width: 100%;
@@ -1335,7 +1310,7 @@ iframe {
     .card-image-placeholder {
         width: 100%;
 
-        height: 210px;
+        height: 190px;
     }
 
     .card-content {
@@ -1418,19 +1393,16 @@ iframe {
         font-size: 25px;
     }
 
-    .hero-main > img {
-        height: 230px !important;
-        max-height: 230px !important;
+    .hero-main > img,
+    .hero-main > .news-image-placeholder {
+        height: 180px !important;
+        max-height: 180px !important;
     }
 
-    .news-image-placeholder {
-        height: 230px !important;
-        max-height: 230px !important;
-    }
-
-    .hero.single-story .hero-main > img {
-        height: 230px !important;
-        max-height: 230px !important;
+    .hero.single-story .hero-main > img,
+    .hero.single-story .hero-main > .news-image-placeholder {
+        height: 180px !important;
+        max-height: 180px !important;
     }
 
     .hero-content h1 {
@@ -1454,7 +1426,7 @@ iframe {
 
     .card > img,
     .card-image-placeholder {
-        height: 190px;
+        height: 180px;
     }
 
     .stats-grid {
@@ -1470,7 +1442,7 @@ iframe {
 
 
 /* =========================================================
-   SAFETY AGAINST WIDE INLINE ELEMENTS
+   WIDE CONTENT PROTECTION
 ========================================================= */
 
 [style*="width: 100vw"],
@@ -1511,4 +1483,3 @@ iframe {
 /* =========================================================
    END GLOBAL24 CSS
 ========================================================= */
-
