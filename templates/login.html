@@ -2,132 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>GLOBAL24 — Admin Login</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body class="login-page">
-
-    <div class="login-container">
-
-        <div class="login-card">
-
-            <div class="login-logo">
-                <span>GLOBAL</span><strong>24</strong>
-            </div>
-
-            <p class="login-subtitle">
-                Newsroom Administration
-            </p>
-
-            <h1>Admin Login</h1>
-
-            <p class="login-description">
-                Sign in to manage GLOBAL24 news, breaking stories,
-                drafts and published articles.
-            </p>
-
-            <form id="loginForm">
-
-                <div class="form-group">
-                    <label for="username">Username</label>
-
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        placeholder="Enter username"
-                        autocomplete="username"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Enter password"
-                        autocomplete="current-password"
-                        required
-                    >
-                </div>
-
-                <div id="loginError" class="login-error"></div>
-
-                <button
-                    type="submit"
-                    class="login-button"
-                    id="loginButton"
-                >
-                    Sign In
-                </button>
-
-            </form>
-
-            <div class="login-footer">
-                <a href="/">← Back to GLOBAL24</a>
-            </div>
-
-        </div>
-
-    </div>
-
-    <script>
-        const form = document.getElementById("loginForm");
-        const errorBox = document.getElementById("loginError");
-        const loginButton = document.getElementById("loginButton");
-
-        form.addEventListener("submit", async function(event) {
-            event.preventDefault();
-
-            errorBox.textContent = "";
-            loginButton.disabled = true;
-            loginButton.textContent = "Signing in...";
-
-            const username =
-                document.getElementById("username").value.trim();
-
-            const password =
-                document.getElementById("password").value;
-
-            try {
-                const response = await fetch("/api/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.href = "/admin";
-                    return;
-                }
-
-                errorBox.textContent =
-                    data.error || "Invalid username or password.";
-
-            } catch (error) {
-                errorBox.textContent =
-                    "Unable to connect to the server.";
-            }
-
-            loginButton.disabled = false;
-            loginButton.textContent = "Sign In";
-        });
-    </script>
-
-</body>
-</html>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #07111f, #1c2b42);
+            font-family: system-ui, sans-serif;
+            color: #fff;
+        }
+        .box {
+            width: 100%;
+            max-width: 380px;
+            background: #fff;
+            color: #172033;
+            padding: 32px 28px;
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.4);
+        }
+        h1 { margin: 0 0 6px; font-size: 26px; }
+        h1 span { color: #d4af37; }
+        p.sub { margin: 0 0 22px; color: #64748b; font-size: 14px; }
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d5dbe3;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+        input:focus { border-color: #d4af37; }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #07111f;
+            color: #d4af37;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .5px;
