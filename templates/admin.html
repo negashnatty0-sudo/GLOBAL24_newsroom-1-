@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -16,12 +14,9 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
-
 </head>
 
-
 <body class="admin-page">
-
 
 <header class="site-header">
 
@@ -36,7 +31,6 @@
         </div>
 
     </div>
-
 
     <nav class="main-nav">
 
@@ -64,9 +58,7 @@
 </header>
 
 
-
 <main class="admin-container">
-
 
     <!-- ADMIN HEADER -->
 
@@ -83,7 +75,6 @@
 
         </div>
 
-
         <button
             class="admin-button primary"
             onclick="showCreateForm()"
@@ -94,13 +85,11 @@
     </div>
 
 
-
     <!-- =================================================
          STATS
          ================================================= -->
 
     <section class="stats-grid">
-
 
         <div class="stat-card">
 
@@ -157,9 +146,7 @@
 
         </div>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -181,7 +168,6 @@
             Always review AI output before publishing.
         </p>
 
-
         <div class="form-group">
 
             <label for="aiText">
@@ -196,12 +182,10 @@
 
         </div>
 
-
         <div
             class="admin-form-actions"
             style="flex-wrap:wrap;"
         >
-
 
             <button
                 type="button"
@@ -211,7 +195,6 @@
                 📰 Draft Article
             </button>
 
-
             <button
                 type="button"
                 class="admin-button secondary"
@@ -219,7 +202,6 @@
             >
                 ✍️ Headlines
             </button>
-
 
             <button
                 type="button"
@@ -229,7 +211,6 @@
                 📝 Summary
             </button>
 
-
             <button
                 type="button"
                 class="admin-button secondary"
@@ -237,7 +218,6 @@
             >
                 🔄 Rewrite
             </button>
-
 
             <button
                 type="button"
@@ -247,15 +227,12 @@
                 🌍 Translate
             </button>
 
-
         </div>
-
 
         <div
             id="aiStatus"
             style="margin-top:15px;"
         ></div>
-
 
         <textarea
             id="aiResult"
@@ -272,7 +249,6 @@
             "
         ></textarea>
 
-
         <button
             type="button"
             class="admin-button primary"
@@ -282,9 +258,7 @@
             Use AI Result in Article
         </button>
 
-
     </section>
-
 
 
     <!-- =================================================
@@ -296,20 +270,16 @@
         id="create"
     >
 
-
         <h2 id="formTitle">
             Create News Article
         </h2>
 
-
         <form id="articleForm">
-
 
             <input
                 type="hidden"
                 id="articleId"
             >
-
 
             <div class="admin-form-grid">
 
@@ -330,7 +300,6 @@
                     >
 
                 </div>
-
 
 
                 <!-- CATEGORY -->
@@ -388,7 +357,6 @@
                 </div>
 
 
-
                 <!-- AUTHOR -->
 
                 <div class="form-group">
@@ -406,7 +374,6 @@
                 </div>
 
 
-
                 <!-- =================================================
                      IMAGE UPLOAD
                      ================================================= -->
@@ -414,29 +381,19 @@
                 <div class="form-group admin-form-full">
 
                     <label for="imageFile">
-
                         📷 Article Image
-
                     </label>
-
 
                     <input
                         type="file"
                         id="imageFile"
-                        accept="
-                            image/jpeg,
-                            image/png,
-                            image/webp,
-                            image/gif
-                        "
+                        accept="image/jpeg,image/png,image/webp,image/gif"
                     >
-
 
                     <div
                         id="imageStatus"
                         style="margin-top:8px;"
                     ></div>
-
 
                     <img
                         id="imagePreview"
@@ -455,7 +412,6 @@
                 </div>
 
 
-
                 <!-- =================================================
                      VIDEO UPLOAD
                      ================================================= -->
@@ -463,29 +419,19 @@
                 <div class="form-group admin-form-full">
 
                     <label for="videoFile">
-
                         🎥 Article Video
-
                     </label>
-
 
                     <input
                         type="file"
                         id="videoFile"
-                        accept="
-                            video/mp4,
-                            video/webm,
-                            video/quicktime,
-                            video/x-m4v
-                        "
+                        accept="video/mp4,video/webm,video/quicktime,video/x-m4v"
                     >
-
 
                     <div
                         id="videoStatus"
                         style="margin-top:8px;"
                     ></div>
-
 
                     <video
                         id="videoPreview"
@@ -503,7 +449,6 @@
                 </div>
 
 
-
                 <!-- SUMMARY -->
 
                 <div class="form-group admin-form-full">
@@ -511,7 +456,6 @@
                     <label for="summary">
                         Summary
                     </label>
-
 
                     <textarea
                         id="summary"
@@ -522,7 +466,6 @@
                 </div>
 
 
-
                 <!-- CONTENT -->
 
                 <div class="form-group admin-form-full">
@@ -530,7 +473,6 @@
                     <label for="content">
                         Article Content
                     </label>
-
 
                     <textarea
                         id="content"
@@ -542,7 +484,6 @@
                 </div>
 
 
-
                 <!-- STATUS -->
 
                 <div class="form-group">
@@ -550,7 +491,6 @@
                     <label for="status">
                         Status
                     </label>
-
 
                     <select id="status">
 
@@ -565,7 +505,6 @@
                     </select>
 
                 </div>
-
 
 
                 <!-- BREAKING -->
@@ -586,13 +525,11 @@
                 </div>
 
 
-
                 <!-- BUTTONS -->
 
                 <div
                     class="admin-form-actions admin-form-full"
                 >
-
 
                     <button
                         type="submit"
@@ -602,7 +539,6 @@
                         Publish Article
                     </button>
 
-
                     <button
                         type="button"
                         class="admin-button secondary"
@@ -611,16 +547,13 @@
                         Clear
                     </button>
 
-
                 </div>
-
 
             </div>
 
         </form>
 
     </section>
-
 
 
     <!-- =================================================
@@ -632,17 +565,13 @@
         id="articles"
     >
 
-
         <h2>
             Manage Articles
         </h2>
 
-
         <div class="article-table-wrapper">
 
-
             <table class="article-table">
-
 
                 <thead>
 
@@ -672,7 +601,6 @@
 
                 </thead>
 
-
                 <tbody id="articlesTable">
 
                     <tr>
@@ -685,22 +613,16 @@
 
                 </tbody>
 
-
             </table>
-
 
         </div>
 
-
     </section>
-
 
 </main>
 
 
-
 <script>
-
 
 /* =========================================================
    GLOBAL VARIABLES
@@ -712,6 +634,9 @@ let uploadedImageUrl = "";
 
 let uploadedVideoUrl = "";
 
+let imageUploading = false;
+
+let videoUploading = false;
 
 
 /* =========================================================
@@ -727,7 +652,6 @@ async function checkLogin() {
 
         const data =
             await response.json();
-
 
         if (!data.logged_in) {
 
@@ -746,7 +670,6 @@ async function checkLogin() {
 }
 
 
-
 /* =========================================================
    LOAD STATISTICS
    ========================================================= */
@@ -760,35 +683,32 @@ async function loadStats() {
                 "/api/admin/stats"
             );
 
-
         if (!response.ok) {
             return;
         }
 
-
         const data =
             await response.json();
 
-
         document.getElementById(
             "totalArticles"
-        ).textContent = data.total;
-
+        ).textContent =
+            data.total ?? 0;
 
         document.getElementById(
             "publishedArticles"
-        ).textContent = data.published;
-
+        ).textContent =
+            data.published ?? 0;
 
         document.getElementById(
             "draftArticles"
-        ).textContent = data.drafts;
-
+        ).textContent =
+            data.drafts ?? 0;
 
         document.getElementById(
             "breakingArticles"
-        ).textContent = data.breaking;
-
+        ).textContent =
+            data.breaking ?? 0;
 
     } catch (error) {
 
@@ -802,7 +722,6 @@ async function loadStats() {
 }
 
 
-
 /* =========================================================
    LOAD ARTICLES
    ========================================================= */
@@ -813,9 +732,11 @@ async function loadArticles() {
 
         const response =
             await fetch(
-                "/api/admin/articles"
+                "/api/admin/articles",
+                {
+                    cache: "no-store"
+                }
             );
-
 
         if (response.status === 401) {
 
@@ -826,22 +747,19 @@ async function loadArticles() {
 
         }
 
-
         const data =
             await response.json();
-
 
         if (!data.success) {
             return;
         }
 
-
         articles =
-            data.articles;
-
+            Array.isArray(data.articles)
+                ? data.articles
+                : [];
 
         renderArticles();
-
 
     } catch (error) {
 
@@ -855,7 +773,6 @@ async function loadArticles() {
 }
 
 
-
 /* =========================================================
    RENDER ARTICLES
    ========================================================= */
@@ -867,7 +784,6 @@ function renderArticles() {
             "articlesTable"
         );
 
-
     if (articles.length === 0) {
 
         table.innerHTML = `
@@ -875,9 +791,7 @@ function renderArticles() {
             <tr>
 
                 <td colspan="5">
-
                     No articles yet.
-
                 </td>
 
             </tr>
@@ -888,41 +802,28 @@ function renderArticles() {
 
     }
 
-
     table.innerHTML =
         articles.map(
             article => {
 
-
                 const statusClass =
                     article.status === "Published"
-                    ? "published"
-                    : "draft";
-
+                        ? "published"
+                        : "draft";
 
                 let media = "";
 
-
                 if (article.image) {
-
                     media += "📷 ";
-
                 }
-
 
                 if (article.video) {
-
                     media += "🎥";
-
                 }
-
 
                 if (!media) {
-
                     media = "—";
-
                 }
-
 
                 return `
 
@@ -931,53 +832,38 @@ function renderArticles() {
                         <td>
 
                             <strong>
-
                                 ${escapeHtml(
-                                    article.headline
+                                    article.headline || ""
                                 )}
-
                             </strong>
 
                         </td>
 
-
                         <td>
-
                             ${escapeHtml(
                                 article.category || ""
                             )}
-
                         </td>
-
 
                         <td>
 
                             <span
                                 class="status ${statusClass}"
                             >
-
                                 ${escapeHtml(
-                                    article.status
+                                    article.status || ""
                                 )}
-
                             </span>
 
                         </td>
 
-
                         <td>
-
                             ${media}
-
                         </td>
 
-
                         <td>
 
-                            <div
-                                class="table-actions"
-                            >
-
+                            <div class="table-actions">
 
                                 <button
                                     class="admin-button secondary"
@@ -990,7 +876,6 @@ function renderArticles() {
                                     Edit
                                 </button>
 
-
                                 <button
                                     class="admin-button danger"
                                     onclick="
@@ -1001,7 +886,6 @@ function renderArticles() {
                                 >
                                     Delete
                                 </button>
-
 
                             </div>
 
@@ -1017,54 +901,41 @@ function renderArticles() {
 }
 
 
-
 /* =========================================================
    IMAGE FILE SELECTED
    ========================================================= */
 
 document
-    .getElementById(
-        "imageFile"
-    )
+    .getElementById("imageFile")
     .addEventListener(
         "change",
         async function() {
 
-
             const file =
                 this.files[0];
-
 
             if (!file) {
                 return;
             }
-
 
             const preview =
                 document.getElementById(
                     "imagePreview"
                 );
 
-
             preview.src =
-                URL.createObjectURL(
-                    file
-                );
-
+                URL.createObjectURL(file);
 
             preview.style.display =
                 "block";
-
 
             await uploadMedia(
                 file,
                 "imageStatus"
             );
 
-
         }
     );
-
 
 
 /* =========================================================
@@ -1072,48 +943,36 @@ document
    ========================================================= */
 
 document
-    .getElementById(
-        "videoFile"
-    )
+    .getElementById("videoFile")
     .addEventListener(
         "change",
         async function() {
 
-
             const file =
                 this.files[0];
-
 
             if (!file) {
                 return;
             }
-
 
             const preview =
                 document.getElementById(
                     "videoPreview"
                 );
 
-
             preview.src =
-                URL.createObjectURL(
-                    file
-                );
-
+                URL.createObjectURL(file);
 
             preview.style.display =
                 "block";
-
 
             await uploadMedia(
                 file,
                 "videoStatus"
             );
 
-
         }
     );
-
 
 
 /* =========================================================
@@ -1125,20 +984,34 @@ async function uploadMedia(
     statusId
 ) {
 
-
     const status =
         document.getElementById(
             statusId
         );
 
+    const isImage =
+        statusId === "imageStatus";
+
+    if (isImage) {
+
+        imageUploading = true;
+
+        uploadedImageUrl = "";
+
+    } else {
+
+        videoUploading = true;
+
+        uploadedVideoUrl = "";
+
+    }
 
     status.textContent =
-        "Uploading...";
+        "Uploading media...";
 
 
     const formData =
         new FormData();
-
 
     formData.append(
         "file",
@@ -1147,7 +1020,6 @@ async function uploadMedia(
 
 
     try {
-
 
         const response =
             await fetch(
@@ -1165,22 +1037,16 @@ async function uploadMedia(
 
         if (
             !response.ok ||
-            !data.success
+            !data.success ||
+            !data.url
         ) {
 
-
-            status.textContent =
+            throw new Error(
                 data.error ||
-                "Upload failed.";
-
-
-            return;
+                "Media upload failed."
+            );
 
         }
-
-
-        status.textContent =
-            "✓ Upload complete";
 
 
         if (
@@ -1190,6 +1056,12 @@ async function uploadMedia(
 
             uploadedImageUrl =
                 data.url;
+
+            imageUploading =
+                false;
+
+            status.innerHTML =
+                "✓ Image uploaded successfully";
 
         }
 
@@ -1202,20 +1074,61 @@ async function uploadMedia(
             uploadedVideoUrl =
                 data.url;
 
+            videoUploading =
+                false;
+
+            status.innerHTML =
+                "✓ Video uploaded successfully";
+
         }
+
+
+        console.log(
+            "GLOBAL24 media URL:",
+            data.url
+        );
+
+
+        return data.url;
 
 
     } catch (error) {
 
+        if (isImage) {
+
+            imageUploading =
+                false;
+
+            uploadedImageUrl =
+                "";
+
+        } else {
+
+            videoUploading =
+                false;
+
+            uploadedVideoUrl =
+                "";
+
+        }
+
 
         status.textContent =
-            "Upload failed.";
+            "❌ " +
+            error.message;
 
+
+        console.error(
+            "Media upload error:",
+            error
+        );
+
+
+        return null;
 
     }
 
 }
-
 
 
 /* =========================================================
@@ -1223,15 +1136,72 @@ async function uploadMedia(
    ========================================================= */
 
 document
-    .getElementById(
-        "articleForm"
-    )
+    .getElementById("articleForm")
     .addEventListener(
         "submit",
         async function(event) {
 
-
             event.preventDefault();
+
+
+            /*
+             * NEVER publish while media is uploading.
+             */
+
+            if (
+                imageUploading ||
+                videoUploading
+            ) {
+
+                alert(
+                    "Please wait until the picture or video finishes uploading."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * If the user selected an image,
+             * it MUST have a Cloudinary URL.
+             */
+
+            if (
+                document.getElementById(
+                    "imageFile"
+                ).files.length > 0 &&
+                !uploadedImageUrl
+            ) {
+
+                alert(
+                    "The picture has not finished uploading successfully."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * If the user selected a video,
+             * it MUST have a Cloudinary URL.
+             */
+
+            if (
+                document.getElementById(
+                    "videoFile"
+                ).files.length > 0 &&
+                !uploadedVideoUrl
+            ) {
+
+                alert(
+                    "The video has not finished uploading successfully."
+                );
+
+                return;
+
+            }
 
 
             const id =
@@ -1247,44 +1217,36 @@ document
                         "headline"
                     ).value.trim(),
 
-
                 category:
                     document.getElementById(
                         "category"
                     ).value,
-
 
                 author:
                     document.getElementById(
                         "author"
                     ).value.trim(),
 
-
                 image:
                     uploadedImageUrl,
 
-
                 video:
                     uploadedVideoUrl,
-
 
                 summary:
                     document.getElementById(
                         "summary"
                     ).value.trim(),
 
-
                 content:
                     document.getElementById(
                         "content"
                     ).value.trim(),
 
-
                 status:
                     document.getElementById(
                         "status"
                     ).value,
-
 
                 breaking:
                     document.getElementById(
@@ -1292,6 +1254,28 @@ document
                     ).checked
 
             };
+
+
+            if (!article.headline) {
+
+                alert(
+                    "Headline is required."
+                );
+
+                return;
+
+            }
+
+
+            if (!article.content) {
+
+                alert(
+                    "Article content is required."
+                );
+
+                return;
+
+            }
 
 
             const button =
@@ -1303,19 +1287,16 @@ document
             button.disabled =
                 true;
 
-
             button.textContent =
                 "Saving...";
 
 
             try {
 
-
                 let response;
 
 
                 if (id) {
-
 
                     response =
                         await fetch(
@@ -1338,9 +1319,7 @@ document
                             }
                         );
 
-
                 } else {
-
 
                     response =
                         await fetch(
@@ -1375,12 +1354,10 @@ document
                     !data.success
                 ) {
 
-
                     alert(
                         data.error ||
                         "Unable to save article."
                     );
-
 
                     return;
 
@@ -1389,8 +1366,8 @@ document
 
                 alert(
                     id
-                    ? "Article updated successfully."
-                    : "Article published successfully."
+                        ? "Article updated successfully."
+                        : "Article published successfully."
                 );
 
 
@@ -1399,12 +1376,15 @@ document
 
                 await loadStats();
 
-
                 await loadArticles();
 
 
             } catch (error) {
 
+                console.error(
+                    "Article save error:",
+                    error
+                );
 
                 alert(
                     "Server connection error."
@@ -1413,21 +1393,16 @@ document
 
             } finally {
 
-
                 button.disabled =
                     false;
-
 
                 button.textContent =
                     "Publish Article";
 
-
             }
-
 
         }
     );
-
 
 
 /* =========================================================
@@ -1435,7 +1410,6 @@ document
    ========================================================= */
 
 function editArticle(id) {
-
 
     const article =
         articles.find(
@@ -1497,7 +1471,7 @@ function editArticle(id) {
     document.getElementById(
         "breaking"
     ).checked =
-        article.breaking;
+        Boolean(article.breaking);
 
 
     uploadedImageUrl =
@@ -1508,42 +1482,76 @@ function editArticle(id) {
         article.video || "";
 
 
-    if (article.image) {
+    imageUploading =
+        false;
 
+
+    videoUploading =
+        false;
+
+
+    if (article.image) {
 
         const imagePreview =
             document.getElementById(
                 "imagePreview"
             );
 
-
         imagePreview.src =
             article.image;
-
 
         imagePreview.style.display =
             "block";
 
+        document.getElementById(
+            "imageStatus"
+        ).textContent =
+            "✓ Existing image loaded";
+
+    } else {
+
+        document.getElementById(
+            "imagePreview"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "imageStatus"
+        ).textContent =
+            "";
 
     }
 
 
     if (article.video) {
 
-
         const videoPreview =
             document.getElementById(
                 "videoPreview"
             );
 
-
         videoPreview.src =
             article.video;
-
 
         videoPreview.style.display =
             "block";
 
+        document.getElementById(
+            "videoStatus"
+        ).textContent =
+            "✓ Existing video loaded";
+
+    } else {
+
+        document.getElementById(
+            "videoPreview"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "videoStatus"
+        ).textContent =
+            "";
 
     }
 
@@ -1566,9 +1574,7 @@ function editArticle(id) {
         behavior: "smooth"
     });
 
-
 }
-
 
 
 /* =========================================================
@@ -1576,7 +1582,6 @@ function editArticle(id) {
    ========================================================= */
 
 async function deleteArticle(id) {
-
 
     const article =
         articles.find(
@@ -1603,7 +1608,6 @@ async function deleteArticle(id) {
 
     try {
 
-
         const response =
             await fetch(
                 `/api/admin/articles/${id}`,
@@ -1622,12 +1626,10 @@ async function deleteArticle(id) {
             !data.success
         ) {
 
-
             alert(
                 data.error ||
                 "Unable to delete article."
             );
-
 
             return;
 
@@ -1636,22 +1638,23 @@ async function deleteArticle(id) {
 
         await loadStats();
 
-
         await loadArticles();
 
 
     } catch (error) {
 
+        console.error(
+            "Delete error:",
+            error
+        );
 
         alert(
             "Delete failed."
         );
 
-
     }
 
 }
-
 
 
 /* =========================================================
@@ -1659,7 +1662,6 @@ async function deleteArticle(id) {
    ========================================================= */
 
 async function runAI(action) {
-
 
     const text =
         document.getElementById(
@@ -1669,11 +1671,9 @@ async function runAI(action) {
 
     if (!text) {
 
-
         alert(
             "Enter notes or article text first."
         );
-
 
         return;
 
@@ -1701,7 +1701,6 @@ async function runAI(action) {
 
 
     try {
-
 
         const response =
             await fetch(
@@ -1738,11 +1737,9 @@ async function runAI(action) {
             !data.success
         ) {
 
-
             status.textContent =
                 data.error ||
                 "AI request failed.";
-
 
             return;
 
@@ -1759,15 +1756,17 @@ async function runAI(action) {
 
     } catch (error) {
 
+        console.error(
+            "AI error:",
+            error
+        );
 
         status.textContent =
             "AI connection failed.";
 
-
     }
 
 }
-
 
 
 /* =========================================================
@@ -1775,7 +1774,6 @@ async function runAI(action) {
    ========================================================= */
 
 function useAIResult() {
-
 
     const result =
         document.getElementById(
@@ -1785,11 +1783,9 @@ function useAIResult() {
 
     if (!result) {
 
-
         alert(
             "There is no AI result to use."
         );
-
 
         return;
 
@@ -1808,9 +1804,7 @@ function useAIResult() {
         behavior: "smooth"
     });
 
-
 }
-
 
 
 /* =========================================================
@@ -1818,7 +1812,6 @@ function useAIResult() {
    ========================================================= */
 
 function resetForm() {
-
 
     document.getElementById(
         "articleForm"
@@ -1858,20 +1851,39 @@ function resetForm() {
     uploadedImageUrl =
         "";
 
-
     uploadedVideoUrl =
         "";
 
+    imageUploading =
+        false;
 
-    document.getElementById(
-        "imagePreview"
-    ).style.display =
+    videoUploading =
+        false;
+
+
+    const imagePreview =
+        document.getElementById(
+            "imagePreview"
+        );
+
+    imagePreview.removeAttribute(
+        "src"
+    );
+
+    imagePreview.style.display =
         "none";
 
 
-    document.getElementById(
-        "videoPreview"
-    ).style.display =
+    const videoPreview =
+        document.getElementById(
+            "videoPreview"
+        );
+
+    videoPreview.removeAttribute(
+        "src"
+    );
+
+    videoPreview.style.display =
         "none";
 
 
@@ -1886,9 +1898,7 @@ function resetForm() {
     ).textContent =
         "";
 
-
 }
-
 
 
 /* =========================================================
@@ -1896,7 +1906,6 @@ function resetForm() {
    ========================================================= */
 
 function showCreateForm() {
-
 
     resetForm();
 
@@ -1907,9 +1916,7 @@ function showCreateForm() {
         behavior: "smooth"
     });
 
-
 }
-
 
 
 /* =========================================================
@@ -1917,7 +1924,6 @@ function showCreateForm() {
    ========================================================= */
 
 async function logout() {
-
 
     await fetch(
         "/api/logout",
@@ -1930,9 +1936,7 @@ async function logout() {
     window.location.href =
         "/login";
 
-
 }
-
 
 
 /* =========================================================
@@ -1941,8 +1945,7 @@ async function logout() {
 
 function escapeHtml(value) {
 
-
-    return String(value)
+    return String(value ?? "")
 
         .replace(
             /&/g,
@@ -1972,7 +1975,6 @@ function escapeHtml(value) {
 }
 
 
-
 /* =========================================================
    START
    ========================================================= */
@@ -1983,10 +1985,7 @@ loadStats();
 
 loadArticles();
 
-
 </script>
 
-
 </body>
-
 </html>
