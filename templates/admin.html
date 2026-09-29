@@ -2,1989 +2,490 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>GLOBAL24 Admin</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLOBAL24 — Admin Dashboard</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f1f5f9;
+            color: #172033;
+        }
+        header {
+            background: #07111f;
+            color: #fff;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; font-size: 22px; }
+        header h1 span { color: #d4af37; }
+        header button {
+            background: #d4af37;
+            color: #07111f;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat {
+            background: #fff;
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        }
+        .stat .num { font-size: 30px; font-weight: 900; color: #07111f; }
+        .stat .label { color: #64748b; font-size: 13px; margin-top: 4px; }
+        .card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            margin-bottom: 24px;
+        }
+        .card h2 { margin: 0 0 18px; font-size: 20px; }
+        label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; margin-top: 14px; }
+        input[type=text], input[type=file], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d5dbe3;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+        }
+        input:focus, textarea:focus, select:focus { border-color: #d4af37; }
+        textarea { min-height: 120px; resize: vertical; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .checkbox-row input { width: auto; }
+        .btn {
+            background: #07111f;
+            color: #d4af37;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn:hover { background: #1c2b42; }
+        .btn:disabled { opacity: .6; cursor: not-allowed; }
+        .preview {
+            margin-top: 12px;
+            max-width: 260px;
+            border-radius: 8px;
+            display: none;
+        }
+        .msg {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+        .msg.ok { background: #dcfce7; color: #166534; display: block; }
+        .msg.err { background: #fee2e2; color: #991b1b; display: block; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        th { background: #f8fafc; font-size: 12px; text-transform: uppercase; color: #64748b; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge.pub { background: #dcfce7; color: #166534; }
+        .badge.draft { background: #fef3c7; color: #854d0e; }
+        .del {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+    </style>
 </head>
+<body>
 
-<body class="admin-page">
-
-<header class="site-header">
-
-    <div class="header-top">
-
-        <div class="logo">
-            GLOBAL<strong>24</strong>
-        </div>
-
-        <div class="site-tagline">
-            GLOBAL24 Newsroom Administration
-        </div>
-
-    </div>
-
-    <nav class="main-nav">
-
-        <div class="nav-inner">
-
-            <a href="/">Website</a>
-
-            <a href="/admin">Dashboard</a>
-
-            <a href="#create">Create News</a>
-
-            <a href="#ai">AI Assistant</a>
-
-            <a
-                href="#"
-                onclick="logout(); return false;"
-            >
-                Logout
-            </a>
-
-        </div>
-
-    </nav>
-
+<header>
+    <h1>GLOBAL<span>24</span> Admin</h1>
+    <button id="logoutBtn">Log out</button>
 </header>
 
+<div class="container">
 
-<main class="admin-container">
-
-    <!-- ADMIN HEADER -->
-
-    <div class="admin-header">
-
-        <div>
-
-            <h1>GLOBAL24 Admin</h1>
-
-            <p>
-                Manage news, images, videos and
-                AI-assisted newsroom content.
-            </p>
-
-        </div>
-
-        <button
-            class="admin-button primary"
-            onclick="showCreateForm()"
-        >
-            + Create Article
-        </button>
-
+    <div class="stats" id="stats">
+        <div class="stat"><div class="num" id="statTotal">–</div><div class="label">Total</div></div>
+        <div class="stat"><div class="num" id="statPublished">–</div><div class="label">Published</div></div>
+        <div class="stat"><div class="num" id="statDrafts">–</div><div class="label">Drafts</div></div>
+        <div class="stat"><div class="num" id="statBreaking">–</div><div class="label">Breaking</div></div>
     </div>
 
-
-    <!-- =================================================
-         STATS
-         ================================================= -->
-
-    <section class="stats-grid">
-
-        <div class="stat-card">
-
-            <h3>Total Articles</h3>
-
-            <div
-                class="stat-number"
-                id="totalArticles"
-            >
-                0
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <h3>Published</h3>
-
-            <div
-                class="stat-number"
-                id="publishedArticles"
-            >
-                0
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <h3>Drafts</h3>
-
-            <div
-                class="stat-number"
-                id="draftArticles"
-            >
-                0
-            </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-            <h3>Breaking News</h3>
-
-            <div
-                class="stat-number"
-                id="breakingArticles"
-            >
-                0
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         AI ASSISTANT
-         ================================================= -->
-
-    <section
-        class="admin-panel"
-        id="ai"
-    >
-
-        <h2>🤖 GLOBAL24 AI Assistant</h2>
-
-        <p style="
-            color:#6b7280;
-            margin-bottom:18px;
-        ">
-            Use AI to help prepare newsroom content.
-            Always review AI output before publishing.
-        </p>
-
-        <div class="form-group">
-
-            <label for="aiText">
-                Notes or Article Text
-            </label>
-
-            <textarea
-                id="aiText"
-                rows="8"
-                placeholder="Paste your notes, facts or article text here..."
-            ></textarea>
-
-        </div>
-
-        <div
-            class="admin-form-actions"
-            style="flex-wrap:wrap;"
-        >
-
-            <button
-                type="button"
-                class="admin-button primary"
-                onclick="runAI('draft')"
-            >
-                📰 Draft Article
-            </button>
-
-            <button
-                type="button"
-                class="admin-button secondary"
-                onclick="runAI('headline')"
-            >
-                ✍️ Headlines
-            </button>
-
-            <button
-                type="button"
-                class="admin-button secondary"
-                onclick="runAI('summary')"
-            >
-                📝 Summary
-            </button>
-
-            <button
-                type="button"
-                class="admin-button secondary"
-                onclick="runAI('rewrite')"
-            >
-                🔄 Rewrite
-            </button>
-
-            <button
-                type="button"
-                class="admin-button secondary"
-                onclick="runAI('translate')"
-            >
-                🌍 Translate
-            </button>
-
-        </div>
-
-        <div
-            id="aiStatus"
-            style="margin-top:15px;"
-        ></div>
-
-        <textarea
-            id="aiResult"
-            rows="12"
-            readonly
-            placeholder="AI result will appear here..."
-            style="
-                width:100%;
-                margin-top:15px;
-                padding:14px;
-                border:1px solid #e5e7eb;
-                border-radius:8px;
-                resize:vertical;
-            "
-        ></textarea>
-
-        <button
-            type="button"
-            class="admin-button primary"
-            onclick="useAIResult()"
-            style="margin-top:10px;"
-        >
-            Use AI Result in Article
-        </button>
-
-    </section>
-
-
-    <!-- =================================================
-         CREATE ARTICLE
-         ================================================= -->
-
-    <section
-        class="admin-panel"
-        id="create"
-    >
-
-        <h2 id="formTitle">
-            Create News Article
-        </h2>
+    <div class="card">
+        <h2>Publish new article</h2>
 
         <form id="articleForm">
 
-            <input
-                type="hidden"
-                id="articleId"
-            >
+            <label for="headline">Headline *</label>
+            <input type="text" id="headline" required>
 
-            <div class="admin-form-grid">
-
-
-                <!-- HEADLINE -->
-
-                <div class="form-group admin-form-full">
-
-                    <label for="headline">
-                        Headline
-                    </label>
-
-                    <input
-                        type="text"
-                        id="headline"
-                        placeholder="Enter news headline"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- CATEGORY -->
-
-                <div class="form-group">
-
-                    <label for="category">
-                        Category
-                    </label>
-
+            <div class="row">
+                <div>
+                    <label for="category">Category</label>
                     <select id="category">
-
-                        <option value="World">
-                            World
-                        </option>
-
-                        <option value="Africa">
-                            Africa
-                        </option>
-
-                        <option value="Ethiopia">
-                            Ethiopia
-                        </option>
-
-                        <option value="Politics">
-                            Politics
-                        </option>
-
-                        <option value="Business">
-                            Business
-                        </option>
-
-                        <option value="Technology">
-                            Technology
-                        </option>
-
-                        <option value="Sports">
-                            Sports
-                        </option>
-
-                        <option value="Health">
-                            Health
-                        </option>
-
-                        <option value="Science">
-                            Science
-                        </option>
-
-                        <option value="Culture">
-                            Culture
-                        </option>
-
+                        <option>World</option>
+                        <option>Africa</option>
+                        <option>Ethiopia</option>
+                        <option>Politics</option>
+                        <option>Business</option>
+                        <option>Technology</option>
+                        <option>Sports</option>
+                        <option>Health</option>
                     </select>
-
                 </div>
-
-
-                <!-- AUTHOR -->
-
-                <div class="form-group">
-
-                    <label for="author">
-                        Author
-                    </label>
-
-                    <input
-                        type="text"
-                        id="author"
-                        value="GLOBAL24"
-                    >
-
+                <div>
+                    <label for="author">Author</label>
+                    <input type="text" id="author" value="GLOBAL24">
                 </div>
-
-
-                <!-- =================================================
-                     IMAGE UPLOAD
-                     ================================================= -->
-
-                <div class="form-group admin-form-full">
-
-                    <label for="imageFile">
-                        📷 Article Image
-                    </label>
-
-                    <input
-                        type="file"
-                        id="imageFile"
-                        accept="image/jpeg,image/png,image/webp,image/gif"
-                    >
-
-                    <div
-                        id="imageStatus"
-                        style="margin-top:8px;"
-                    ></div>
-
-                    <img
-                        id="imagePreview"
-                        alt="Image preview"
-                        style="
-                            display:none;
-                            width:100%;
-                            max-height:350px;
-                            margin-top:12px;
-                            object-fit:cover;
-                            border-radius:10px;
-                            background:#eee;
-                        "
-                    >
-
-                </div>
-
-
-                <!-- =================================================
-                     VIDEO UPLOAD
-                     ================================================= -->
-
-                <div class="form-group admin-form-full">
-
-                    <label for="videoFile">
-                        🎥 Article Video
-                    </label>
-
-                    <input
-                        type="file"
-                        id="videoFile"
-                        accept="video/mp4,video/webm,video/quicktime,video/x-m4v"
-                    >
-
-                    <div
-                        id="videoStatus"
-                        style="margin-top:8px;"
-                    ></div>
-
-                    <video
-                        id="videoPreview"
-                        controls
-                        style="
-                            display:none;
-                            width:100%;
-                            max-height:450px;
-                            margin-top:12px;
-                            border-radius:10px;
-                            background:#000;
-                        "
-                    ></video>
-
-                </div>
-
-
-                <!-- SUMMARY -->
-
-                <div class="form-group admin-form-full">
-
-                    <label for="summary">
-                        Summary
-                    </label>
-
-                    <textarea
-                        id="summary"
-                        rows="4"
-                        placeholder="Write a short description..."
-                    ></textarea>
-
-                </div>
-
-
-                <!-- CONTENT -->
-
-                <div class="form-group admin-form-full">
-
-                    <label for="content">
-                        Article Content
-                    </label>
-
-                    <textarea
-                        id="content"
-                        rows="12"
-                        placeholder="Write the full article..."
-                        required
-                    ></textarea>
-
-                </div>
-
-
-                <!-- STATUS -->
-
-                <div class="form-group">
-
-                    <label for="status">
-                        Status
-                    </label>
-
-                    <select id="status">
-
-                        <option value="Published">
-                            Published
-                        </option>
-
-                        <option value="Draft">
-                            Draft
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- BREAKING -->
-
-                <div class="form-group">
-
-                    <label>
-
-                        <input
-                            type="checkbox"
-                            id="breaking"
-                        >
-
-                        Breaking News
-
-                    </label>
-
-                </div>
-
-
-                <!-- BUTTONS -->
-
-                <div
-                    class="admin-form-actions admin-form-full"
-                >
-
-                    <button
-                        type="submit"
-                        class="admin-button primary"
-                        id="saveButton"
-                    >
-                        Publish Article
-                    </button>
-
-                    <button
-                        type="button"
-                        class="admin-button secondary"
-                        onclick="resetForm()"
-                    >
-                        Clear
-                    </button>
-
-                </div>
-
             </div>
 
+            <label for="imageFile">Image (jpg, png, webp, gif)</label>
+            <input type="file" id="imageFile" accept="image/*">
+            <img id="imagePreview" class="preview" alt="Preview">
+
+            <label for="videoFile">Video (mp4, webm, mov — optional)</label>
+            <input type="file" id="videoFile" accept="video/*">
+
+            <label for="summary">Summary</label>
+            <textarea id="summary" style="min-height:80px;"></textarea>
+
+            <label for="content">Article content *</label>
+            <textarea id="content" required></textarea>
+
+            <div class="checkbox-row">
+                <input type="checkbox" id="breaking">
+                <label for="breaking" style="margin:0;">Mark as breaking news</label>
+            </div>
+
+            <label for="status">Status</label>
+            <select id="status">
+                <option value="Draft">Draft</option>
+                <option value="Published">Published</option>
+            </select>
+
+            <button type="submit" class="btn" id="submitBtn">Publish article</button>
+
+            <div class="msg" id="formMsg"></div>
         </form>
+    </div>
 
-    </section>
+    <div class="card">
+        <h2>All articles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Headline</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="articleRows">
+                <tr><td colspan="5">Loading…</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-
-    <!-- =================================================
-         ARTICLES
-         ================================================= -->
-
-    <section
-        class="admin-panel"
-        id="articles"
-    >
-
-        <h2>
-            Manage Articles
-        </h2>
-
-        <div class="article-table-wrapper">
-
-            <table class="article-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Headline
-                        </th>
-
-                        <th>
-                            Category
-                        </th>
-
-                        <th>
-                            Status
-                        </th>
-
-                        <th>
-                            Media
-                        </th>
-
-                        <th>
-                            Actions
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="articlesTable">
-
-                    <tr>
-
-                        <td colspan="5">
-                            Loading articles...
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-</main>
-
+</div>
 
 <script>
+// =========================================================
+// HELPERS
+// =========================================================
 
-/* =========================================================
-   GLOBAL VARIABLES
-   ========================================================= */
-
-let articles = [];
-
-let uploadedImageUrl = "";
-
-let uploadedVideoUrl = "";
-
-let imageUploading = false;
-
-let videoUploading = false;
-
-
-/* =========================================================
-   LOGIN CHECK
-   ========================================================= */
-
-async function checkLogin() {
-
-    try {
-
-        const response =
-            await fetch("/api/me");
-
-        const data =
-            await response.json();
-
-        if (!data.logged_in) {
-
-            window.location.href =
-                "/login";
-
-        }
-
-    } catch (error) {
-
-        window.location.href =
-            "/login";
-
-    }
-
+function showMsg(text, ok = true) {
+    const box = document.getElementById("formMsg");
+    box.textContent = text;
+    box.className = "msg " + (ok ? "ok" : "err");
 }
 
-
-/* =========================================================
-   LOAD STATISTICS
-   ========================================================= */
-
-async function loadStats() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/stats"
-            );
-
-        if (!response.ok) {
-            return;
-        }
-
-        const data =
-            await response.json();
-
-        document.getElementById(
-            "totalArticles"
-        ).textContent =
-            data.total ?? 0;
-
-        document.getElementById(
-            "publishedArticles"
-        ).textContent =
-            data.published ?? 0;
-
-        document.getElementById(
-            "draftArticles"
-        ).textContent =
-            data.drafts ?? 0;
-
-        document.getElementById(
-            "breakingArticles"
-        ).textContent =
-            data.breaking ?? 0;
-
-    } catch (error) {
-
-        console.error(
-            "Stats error:",
-            error
-        );
-
-    }
-
+function hideMsg() {
+    document.getElementById("formMsg").className = "msg";
 }
 
+// =========================================================
+// IMAGE PREVIEW
+// =========================================================
 
-/* =========================================================
-   LOAD ARTICLES
-   ========================================================= */
+document.getElementById("imageFile").addEventListener("change", function () {
+    const file = this.files[0];
+    const preview = document.getElementById("imagePreview");
 
-async function loadArticles() {
+    if (!file) {
+        preview.style.display = "none";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+});
+
+// =========================================================
+// UPLOAD FILE TO CLOUDINARY VIA BACKEND
+// =========================================================
+
+async function uploadFile(file) {
+    const fd = new FormData();
+    fd.append("file", file);
+
+    const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+        throw new Error(data.error || "Upload failed");
+    }
+
+    return data.url;
+}
+
+// =========================================================
+// SUBMIT ARTICLE
+// =========================================================
+
+document.getElementById("articleForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    hideMsg();
+
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Publishing…";
 
     try {
+        let imageUrl = "";
+        let videoUrl = "";
 
-        const response =
-            await fetch(
-                "/api/admin/articles",
-                {
-                    cache: "no-store"
-                }
-            );
+        const imageFile = document.getElementById("imageFile").files[0];
+        const videoFile = document.getElementById("videoFile").files[0];
 
-        if (response.status === 401) {
-
-            window.location.href =
-                "/login";
-
-            return;
-
+        if (imageFile) {
+            showMsg("Uploading image…", true);
+            imageUrl = await uploadFile(imageFile);
         }
 
-        const data =
-            await response.json();
+        if (videoFile) {
+            showMsg("Uploading video…", true);
+            videoUrl = await uploadFile(videoFile);
+        }
+
+        const payload = {
+            headline: document.getElementById("headline").value.trim(),
+            category: document.getElementById("category").value,
+            author: document.getElementById("author").value.trim() || "GLOBAL24",
+            image: imageUrl,
+            video: videoUrl,
+            summary: document.getElementById("summary").value.trim(),
+            content: document.getElementById("content").value.trim(),
+            breaking: document.getElementById("breaking").checked,
+            status: document.getElementById("status").value
+        };
+
+        const res = await fetch("/api/admin/articles", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
 
         if (!data.success) {
+            throw new Error(data.error || "Could not save article.");
+        }
+
+        showMsg("Article saved successfully.", true);
+
+        this.reset();
+        document.getElementById("imagePreview").style.display = "none";
+
+        loadStats();
+        loadArticles();
+
+    } catch (err) {
+        showMsg(err.message, false);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Publish article";
+    }
+});
+
+// =========================================================
+// LOAD STATS
+// =========================================================
+
+async function loadStats() {
+    try {
+        const res = await fetch("/api/admin/stats");
+        const data = await res.json();
+
+        if (!data.success) return;
+
+        document.getElementById("statTotal").textContent = data.total;
+        document.getElementById("statPublished").textContent = data.published;
+        document.getElementById("statDrafts").textContent = data.drafts;
+        document.getElementById("statBreaking").textContent = data.breaking;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// =========================================================
+// LOAD ARTICLES
+// =========================================================
+
+async function loadArticles() {
+    const tbody = document.getElementById("articleRows");
+
+    try {
+        const res = await fetch("/api/admin/articles");
+        const data = await res.json();
+
+        if (!data.success) {
+            tbody.innerHTML = "<tr><td colspan='5'>Could not load articles.</td></tr>";
             return;
         }
 
-        articles =
-            Array.isArray(data.articles)
-                ? data.articles
-                : [];
+        if (!data.articles.length) {
+            tbody.innerHTML = "<tr><td colspan='5'>No articles yet.</td></tr>";
+            return;
+        }
 
-        renderArticles();
+        tbody.innerHTML = data.articles.map(a => {
+            const badge = a.status === "Published"
+                ? "<span class='badge pub'>Published</span>"
+                : "<span class='badge draft'>Draft</span>";
 
-    } catch (error) {
+            const date = a.created_at
+                ? new Date(a.created_at).toLocaleDateString("en-GB")
+                : "";
 
-        console.error(
-            "Articles error:",
-            error
-        );
+            return `
+                <tr>
+                    <td>${escapeHTML(a.headline)}</td>
+                    <td>${escapeHTML(a.category || "")}</td>
+                    <td>${badge}</td>
+                    <td>${date}</td>
+                    <td>
+                        <button class="del" data-id="${a.id}">Delete</button>
+                    </td>
+                </tr>
+            `;
+        }).join("");
 
+        tbody.querySelectorAll(".del").forEach(btn => {
+            btn.addEventListener("click", () => deleteArticle(btn.dataset.id));
+        });
+
+    } catch (err) {
+        tbody.innerHTML = "<tr><td colspan='5'>Error loading articles.</td></tr>";
     }
-
 }
 
-
-/* =========================================================
-   RENDER ARTICLES
-   ========================================================= */
-
-function renderArticles() {
-
-    const table =
-        document.getElementById(
-            "articlesTable"
-        );
-
-    if (articles.length === 0) {
-
-        table.innerHTML = `
-
-            <tr>
-
-                <td colspan="5">
-                    No articles yet.
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-
-    }
-
-    table.innerHTML =
-        articles.map(
-            article => {
-
-                const statusClass =
-                    article.status === "Published"
-                        ? "published"
-                        : "draft";
-
-                let media = "";
-
-                if (article.image) {
-                    media += "📷 ";
-                }
-
-                if (article.video) {
-                    media += "🎥";
-                }
-
-                if (!media) {
-                    media = "—";
-                }
-
-                return `
-
-                    <tr>
-
-                        <td>
-
-                            <strong>
-                                ${escapeHtml(
-                                    article.headline || ""
-                                )}
-                            </strong>
-
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                article.category || ""
-                            )}
-                        </td>
-
-                        <td>
-
-                            <span
-                                class="status ${statusClass}"
-                            >
-                                ${escapeHtml(
-                                    article.status || ""
-                                )}
-                            </span>
-
-                        </td>
-
-                        <td>
-                            ${media}
-                        </td>
-
-                        <td>
-
-                            <div class="table-actions">
-
-                                <button
-                                    class="admin-button secondary"
-                                    onclick="
-                                        editArticle(
-                                            ${article.id}
-                                        )
-                                    "
-                                >
-                                    Edit
-                                </button>
-
-                                <button
-                                    class="admin-button danger"
-                                    onclick="
-                                        deleteArticle(
-                                            ${article.id}
-                                        )
-                                    "
-                                >
-                                    Delete
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
-        ).join("");
-
-}
-
-
-/* =========================================================
-   IMAGE FILE SELECTED
-   ========================================================= */
-
-document
-    .getElementById("imageFile")
-    .addEventListener(
-        "change",
-        async function() {
-
-            const file =
-                this.files[0];
-
-            if (!file) {
-                return;
-            }
-
-            const preview =
-                document.getElementById(
-                    "imagePreview"
-                );
-
-            preview.src =
-                URL.createObjectURL(file);
-
-            preview.style.display =
-                "block";
-
-            await uploadMedia(
-                file,
-                "imageStatus"
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   VIDEO FILE SELECTED
-   ========================================================= */
-
-document
-    .getElementById("videoFile")
-    .addEventListener(
-        "change",
-        async function() {
-
-            const file =
-                this.files[0];
-
-            if (!file) {
-                return;
-            }
-
-            const preview =
-                document.getElementById(
-                    "videoPreview"
-                );
-
-            preview.src =
-                URL.createObjectURL(file);
-
-            preview.style.display =
-                "block";
-
-            await uploadMedia(
-                file,
-                "videoStatus"
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   UPLOAD MEDIA
-   ========================================================= */
-
-async function uploadMedia(
-    file,
-    statusId
-) {
-
-    const status =
-        document.getElementById(
-            statusId
-        );
-
-    const isImage =
-        statusId === "imageStatus";
-
-    if (isImage) {
-
-        imageUploading = true;
-
-        uploadedImageUrl = "";
-
-    } else {
-
-        videoUploading = true;
-
-        uploadedVideoUrl = "";
-
-    }
-
-    status.textContent =
-        "Uploading media...";
-
-
-    const formData =
-        new FormData();
-
-    formData.append(
-        "file",
-        file
-    );
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/upload",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.success ||
-            !data.url
-        ) {
-
-            throw new Error(
-                data.error ||
-                "Media upload failed."
-            );
-
-        }
-
-
-        if (
-            data.type ===
-            "image"
-        ) {
-
-            uploadedImageUrl =
-                data.url;
-
-            imageUploading =
-                false;
-
-            status.innerHTML =
-                "✓ Image uploaded successfully";
-
-        }
-
-
-        if (
-            data.type ===
-            "video"
-        ) {
-
-            uploadedVideoUrl =
-                data.url;
-
-            videoUploading =
-                false;
-
-            status.innerHTML =
-                "✓ Video uploaded successfully";
-
-        }
-
-
-        console.log(
-            "GLOBAL24 media URL:",
-            data.url
-        );
-
-
-        return data.url;
-
-
-    } catch (error) {
-
-        if (isImage) {
-
-            imageUploading =
-                false;
-
-            uploadedImageUrl =
-                "";
-
-        } else {
-
-            videoUploading =
-                false;
-
-            uploadedVideoUrl =
-                "";
-
-        }
-
-
-        status.textContent =
-            "❌ " +
-            error.message;
-
-
-        console.error(
-            "Media upload error:",
-            error
-        );
-
-
-        return null;
-
-    }
-
-}
-
-
-/* =========================================================
-   CREATE / UPDATE ARTICLE
-   ========================================================= */
-
-document
-    .getElementById("articleForm")
-    .addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            /*
-             * NEVER publish while media is uploading.
-             */
-
-            if (
-                imageUploading ||
-                videoUploading
-            ) {
-
-                alert(
-                    "Please wait until the picture or video finishes uploading."
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * If the user selected an image,
-             * it MUST have a Cloudinary URL.
-             */
-
-            if (
-                document.getElementById(
-                    "imageFile"
-                ).files.length > 0 &&
-                !uploadedImageUrl
-            ) {
-
-                alert(
-                    "The picture has not finished uploading successfully."
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * If the user selected a video,
-             * it MUST have a Cloudinary URL.
-             */
-
-            if (
-                document.getElementById(
-                    "videoFile"
-                ).files.length > 0 &&
-                !uploadedVideoUrl
-            ) {
-
-                alert(
-                    "The video has not finished uploading successfully."
-                );
-
-                return;
-
-            }
-
-
-            const id =
-                document.getElementById(
-                    "articleId"
-                ).value;
-
-
-            const article = {
-
-                headline:
-                    document.getElementById(
-                        "headline"
-                    ).value.trim(),
-
-                category:
-                    document.getElementById(
-                        "category"
-                    ).value,
-
-                author:
-                    document.getElementById(
-                        "author"
-                    ).value.trim(),
-
-                image:
-                    uploadedImageUrl,
-
-                video:
-                    uploadedVideoUrl,
-
-                summary:
-                    document.getElementById(
-                        "summary"
-                    ).value.trim(),
-
-                content:
-                    document.getElementById(
-                        "content"
-                    ).value.trim(),
-
-                status:
-                    document.getElementById(
-                        "status"
-                    ).value,
-
-                breaking:
-                    document.getElementById(
-                        "breaking"
-                    ).checked
-
-            };
-
-
-            if (!article.headline) {
-
-                alert(
-                    "Headline is required."
-                );
-
-                return;
-
-            }
-
-
-            if (!article.content) {
-
-                alert(
-                    "Article content is required."
-                );
-
-                return;
-
-            }
-
-
-            const button =
-                document.getElementById(
-                    "saveButton"
-                );
-
-
-            button.disabled =
-                true;
-
-            button.textContent =
-                "Saving...";
-
-
-            try {
-
-                let response;
-
-
-                if (id) {
-
-                    response =
-                        await fetch(
-                            `/api/admin/articles/${id}`,
-                            {
-
-                                method:
-                                    "PUT",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        article
-                                    )
-
-                            }
-                        );
-
-                } else {
-
-                    response =
-                        await fetch(
-                            "/api/admin/articles",
-                            {
-
-                                method:
-                                    "POST",
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        article
-                                    )
-
-                            }
-                        );
-
-                }
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !data.success
-                ) {
-
-                    alert(
-                        data.error ||
-                        "Unable to save article."
-                    );
-
-                    return;
-
-                }
-
-
-                alert(
-                    id
-                        ? "Article updated successfully."
-                        : "Article published successfully."
-                );
-
-
-                resetForm();
-
-
-                await loadStats();
-
-                await loadArticles();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Article save error:",
-                    error
-                );
-
-                alert(
-                    "Server connection error."
-                );
-
-
-            } finally {
-
-                button.disabled =
-                    false;
-
-                button.textContent =
-                    "Publish Article";
-
-            }
-
-        }
-    );
-
-
-/* =========================================================
-   EDIT ARTICLE
-   ========================================================= */
-
-function editArticle(id) {
-
-    const article =
-        articles.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!article) {
-        return;
-    }
-
-
-    document.getElementById(
-        "articleId"
-    ).value =
-        article.id;
-
-
-    document.getElementById(
-        "headline"
-    ).value =
-        article.headline || "";
-
-
-    document.getElementById(
-        "category"
-    ).value =
-        article.category ||
-        "World";
-
-
-    document.getElementById(
-        "author"
-    ).value =
-        article.author ||
-        "GLOBAL24";
-
-
-    document.getElementById(
-        "summary"
-    ).value =
-        article.summary || "";
-
-
-    document.getElementById(
-        "content"
-    ).value =
-        article.content || "";
-
-
-    document.getElementById(
-        "status"
-    ).value =
-        article.status ||
-        "Draft";
-
-
-    document.getElementById(
-        "breaking"
-    ).checked =
-        Boolean(article.breaking);
-
-
-    uploadedImageUrl =
-        article.image || "";
-
-
-    uploadedVideoUrl =
-        article.video || "";
-
-
-    imageUploading =
-        false;
-
-
-    videoUploading =
-        false;
-
-
-    if (article.image) {
-
-        const imagePreview =
-            document.getElementById(
-                "imagePreview"
-            );
-
-        imagePreview.src =
-            article.image;
-
-        imagePreview.style.display =
-            "block";
-
-        document.getElementById(
-            "imageStatus"
-        ).textContent =
-            "✓ Existing image loaded";
-
-    } else {
-
-        document.getElementById(
-            "imagePreview"
-        ).style.display =
-            "none";
-
-        document.getElementById(
-            "imageStatus"
-        ).textContent =
-            "";
-
-    }
-
-
-    if (article.video) {
-
-        const videoPreview =
-            document.getElementById(
-                "videoPreview"
-            );
-
-        videoPreview.src =
-            article.video;
-
-        videoPreview.style.display =
-            "block";
-
-        document.getElementById(
-            "videoStatus"
-        ).textContent =
-            "✓ Existing video loaded";
-
-    } else {
-
-        document.getElementById(
-            "videoPreview"
-        ).style.display =
-            "none";
-
-        document.getElementById(
-            "videoStatus"
-        ).textContent =
-            "";
-
-    }
-
-
-    document.getElementById(
-        "formTitle"
-    ).textContent =
-        "Edit News Article";
-
-
-    document.getElementById(
-        "saveButton"
-    ).textContent =
-        "Update Article";
-
-
-    document.getElementById(
-        "create"
-    ).scrollIntoView({
-        behavior: "smooth"
-    });
-
-}
-
-
-/* =========================================================
-   DELETE ARTICLE
-   ========================================================= */
+// =========================================================
+// DELETE ARTICLE
+// =========================================================
 
 async function deleteArticle(id) {
-
-    const article =
-        articles.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!article) {
-        return;
-    }
-
-
-    if (
-        !confirm(
-            `Delete "${article.headline}"?`
-        )
-    ) {
-
-        return;
-
-    }
-
+    if (!confirm("Delete this article?")) return;
 
     try {
+        const res = await fetch("/api/admin/articles/" + id, {
+            method: "DELETE"
+        });
+        const data = await res.json();
 
-        const response =
-            await fetch(
-                `/api/admin/articles/${id}`,
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.success
-        ) {
-
-            alert(
-                data.error ||
-                "Unable to delete article."
-            );
-
+        if (!data.success) {
+            alert(data.error || "Delete failed.");
             return;
-
         }
 
+        loadStats();
+        loadArticles();
 
-        await loadStats();
-
-        await loadArticles();
-
-
-    } catch (error) {
-
-        console.error(
-            "Delete error:",
-            error
-        );
-
-        alert(
-            "Delete failed."
-        );
-
+    } catch (err) {
+        alert("Network error.");
     }
-
 }
 
+// =========================================================
+// ESCAPE HTML
+// =========================================================
 
-/* =========================================================
-   AI ASSISTANT
-   ========================================================= */
-
-async function runAI(action) {
-
-    const text =
-        document.getElementById(
-            "aiText"
-        ).value.trim();
-
-
-    if (!text) {
-
-        alert(
-            "Enter notes or article text first."
-        );
-
-        return;
-
-    }
-
-
-    const status =
-        document.getElementById(
-            "aiStatus"
-        );
-
-
-    const result =
-        document.getElementById(
-            "aiResult"
-        );
-
-
-    status.textContent =
-        "🤖 AI is working...";
-
-
-    result.value =
-        "";
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/admin/ai",
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            action:
-                                action,
-
-                            text:
-                                text
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !response.ok ||
-            !data.success
-        ) {
-
-            status.textContent =
-                data.error ||
-                "AI request failed.";
-
-            return;
-
-        }
-
-
-        result.value =
-            data.result;
-
-
-        status.textContent =
-            "✓ AI result ready.";
-
-
-    } catch (error) {
-
-        console.error(
-            "AI error:",
-            error
-        );
-
-        status.textContent =
-            "AI connection failed.";
-
-    }
-
+function escapeHTML(text) {
+    if (text == null) return "";
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
-
-/* =========================================================
-   USE AI RESULT
-   ========================================================= */
-
-function useAIResult() {
-
-    const result =
-        document.getElementById(
-            "aiResult"
-        ).value.trim();
-
-
-    if (!result) {
-
-        alert(
-            "There is no AI result to use."
-        );
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "content"
-    ).value =
-        result;
-
-
-    document.getElementById(
-        "create"
-    ).scrollIntoView({
-        behavior: "smooth"
-    });
-
-}
-
-
-/* =========================================================
-   RESET FORM
-   ========================================================= */
-
-function resetForm() {
-
-    document.getElementById(
-        "articleForm"
-    ).reset();
-
-
-    document.getElementById(
-        "articleId"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "author"
-    ).value =
-        "GLOBAL24";
-
-
-    document.getElementById(
-        "status"
-    ).value =
-        "Published";
-
-
-    document.getElementById(
-        "formTitle"
-    ).textContent =
-        "Create News Article";
-
-
-    document.getElementById(
-        "saveButton"
-    ).textContent =
-        "Publish Article";
-
-
-    uploadedImageUrl =
-        "";
-
-    uploadedVideoUrl =
-        "";
-
-    imageUploading =
-        false;
-
-    videoUploading =
-        false;
-
-
-    const imagePreview =
-        document.getElementById(
-            "imagePreview"
-        );
-
-    imagePreview.removeAttribute(
-        "src"
-    );
-
-    imagePreview.style.display =
-        "none";
-
-
-    const videoPreview =
-        document.getElementById(
-            "videoPreview"
-        );
-
-    videoPreview.removeAttribute(
-        "src"
-    );
-
-    videoPreview.style.display =
-        "none";
-
-
-    document.getElementById(
-        "imageStatus"
-    ).textContent =
-        "";
-
-
-    document.getElementById(
-        "videoStatus"
-    ).textContent =
-        "";
-
-}
-
-
-/* =========================================================
-   CREATE BUTTON
-   ========================================================= */
-
-function showCreateForm() {
-
-    resetForm();
-
-
-    document.getElementById(
-        "create"
-    ).scrollIntoView({
-        behavior: "smooth"
-    });
-
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-async function logout() {
-
-    await fetch(
-        "/api/logout",
-        {
-            method: "POST"
-        }
-    );
-
-
-    window.location.href =
-        "/login";
-
-}
-
-
-/* =========================================================
-   HTML ESCAPE
-   ========================================================= */
-
-function escapeHtml(value) {
-
-    return String(value ?? "")
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   START
-   ========================================================= */
-
-checkLogin();
+// =========================================================
+// LOGOUT
+// =========================================================
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await fetch("/api/logout", { method: "POST" });
+    window.location.href = "/login";
+});
+
+// =========================================================
+// START
+// =========================================================
 
 loadStats();
-
 loadArticles();
-
 </script>
 
 </body>
